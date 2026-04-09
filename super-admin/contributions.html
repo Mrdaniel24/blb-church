@@ -88,12 +88,20 @@
 
     .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
   </style>
 </head>
 
 <body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
 
-<!-- ═══════════ SIDEBAR ═══════════ -->
 <aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
   <div class="px-10 mb-10">
     <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
@@ -155,10 +163,7 @@
   </div>
 </aside>
 
-<!-- ═══════════ MAIN ═══════════ -->
 <main class="ml-72 min-h-screen p-12">
-
-  <!-- Header -->
   <header class="flex justify-between items-end mb-12">
     <div>
       <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
@@ -169,6 +174,10 @@
       <button id="btn-export" class="flex items-center gap-2 px-5 py-3 rounded-xl border border-outline-variant text-primary font-bold text-sm hover:bg-surface-container transition-colors">
         <span class="material-symbols-outlined text-sm">download</span>
         Export
+      </button>
+      <button id="btn-add-contribution" class="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-container transition-colors">
+        <span class="material-symbols-outlined text-sm">add</span>
+        New Contribution
       </button>
       <div class="text-right">
         <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
@@ -182,7 +191,6 @@
     </div>
   </header>
 
-  <!-- Stat Cards Skeleton -->
   <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
     <div class="skeleton h-36"></div>
     <div class="skeleton h-36"></div>
@@ -190,7 +198,6 @@
     <div class="skeleton h-36"></div>
   </div>
 
-  <!-- Stat Cards -->
   <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
     <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
       <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">account_balance_wallet</span></div>
@@ -214,16 +221,17 @@
     </div>
   </section>
 
-  <!-- Filters -->
   <div class="flex flex-wrap gap-4 mb-8">
     <div class="relative flex-1 min-w-[240px]">
       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-      <input id="search-input" type="text" placeholder="Search member, reference…"
+      <input id="search-input" type="text" placeholder="Search member, reference, payment method..."
         class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
     </div>
+
     <select id="dept-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
       <option value="">All Departments</option>
     </select>
+
     <select id="type-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
       <option value="">All Types</option>
       <option value="tithe">Tithe</option>
@@ -232,11 +240,15 @@
       <option value="thanksgiving">Thanksgiving</option>
       <option value="special">Special</option>
     </select>
+
     <input id="date-from" type="date" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
     <input id="date-to" type="date" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+
+    <button id="btn-monthly-summary" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm font-semibold text-primary hover:bg-surface-container">
+      Monthly Summary
+    </button>
   </div>
 
-  <!-- Table Skeleton -->
   <div id="table-skeleton" class="space-y-3">
     <div class="skeleton h-14"></div>
     <div class="skeleton h-14"></div>
@@ -245,7 +257,6 @@
     <div class="skeleton h-14"></div>
   </div>
 
-  <!-- Table -->
   <div id="table-content" class="bg-surface-container-lowest rounded-xl overflow-hidden hidden">
     <table class="w-full text-sm">
       <thead class="bg-surface-container-low">
@@ -256,10 +267,12 @@
           <th class="px-6 py-4">Amount</th>
           <th class="px-6 py-4">Date</th>
           <th class="px-6 py-4">Notes</th>
+          <th class="px-6 py-4">Actions</th>
         </tr>
       </thead>
       <tbody id="contributions-tbody"></tbody>
     </table>
+
     <div id="empty-state" class="hidden py-16 text-center">
       <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">payments</span>
       <p class="font-bold text-primary">No contributions found</p>
@@ -283,74 +296,26 @@
   const profile = await initPageGuard();
   if (!profile) return;
 
+  document.querySelector('[data-user-name]').textContent = profile.full_name || 'Super Admin';
   document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  if (profile.avatar_url) {
+    const img = document.createElement('img');
+    img.src = profile.avatar_url;
+    img.className = 'w-full h-full object-cover';
+    img.alt = profile.full_name || 'Super Admin';
+    const avatarEl = document.getElementById('header-avatar');
+    avatarEl.innerHTML = '';
+    avatarEl.appendChild(img);
+  }
 
   const PAGE_SIZE = 25;
   let allContributions = [];
   let currentPage = 1;
-
-  async function loadDepartments() {
-    const { data } = await supabase.from('departments').select('id, name').order('name');
-    const sel = document.getElementById('dept-filter');
-    (data || []).forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d.id;
-      opt.textContent = d.name;
-      sel.appendChild(opt);
-    });
-  }
-
-  async function loadContributions() {
-    // Super admin: no department filter — fetch ALL contributions church-wide
-    const { data, error } = await supabase
-      .from('contributions')
-      .select(`
-        id, amount, type, date, notes,
-        member:profiles(id, full_name, email, department_id, departments(name))
-      `)
-      .order('date', { ascending: false });
-
-    if (error) { Toast.error('Failed to load contributions.'); return; }
-    allContributions = data || [];
-    renderStats();
-    renderTable();
-  }
-
-  function renderStats() {
-    const now = new Date();
-    const total = allContributions.reduce((s, c) => s + (c.amount || 0), 0);
-    const month = allContributions
-      .filter(c => { const d = new Date(c.date); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(); })
-      .reduce((s, c) => s + (c.amount || 0), 0);
-    const typeCounts = allContributions.reduce((acc, c) => { acc[c.type] = (acc[c.type] || 0) + 1; return acc; }, {});
-    const topType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
-
-    document.getElementById('stat-total').textContent = formatTZS(total);
-    document.getElementById('stat-month').textContent = formatTZS(month);
-    document.getElementById('stat-count').textContent = allContributions.length;
-    document.getElementById('stat-top-type').textContent = topType;
-
-    document.getElementById('stats-skeleton').classList.add('hidden');
-    document.getElementById('stats-content').classList.remove('hidden');
-  }
-
-  function getFiltered() {
-    const q = document.getElementById('search-input').value.trim().toLowerCase();
-    const dept = document.getElementById('dept-filter').value;
-    const type = document.getElementById('type-filter').value;
-    const from = document.getElementById('date-from').value;
-    const to = document.getElementById('date-to').value;
-    return allContributions.filter(c => {
-      const name = c.member?.full_name || '';
-      const email = c.member?.email || '';
-      const searchOk = !q || [name, email].join(' ').toLowerCase().includes(q);
-      const deptOk = !dept || String(c.member?.department_id) === dept;
-      const typeOk = !type || c.type === type;
-      const fromOk = !from || c.date >= from;
-      const toOk = !to || c.date <= to;
-      return searchOk && deptOk && typeOk && fromOk && toOk;
-    });
-  }
+  let allProfiles = [];
+  let allDepartments = [];
+  let memberMap = {};
+  let departmentMap = {};
 
   const TYPE_COLORS = {
     tithe:         'bg-blue-50 text-blue-700',
@@ -360,10 +325,181 @@
     special:       'bg-rose-50 text-rose-700',
   };
 
+  function normType(value) {
+    return String(value || 'offering').trim().toLowerCase().replace(/\s+/g, '_');
+  }
+
+  function prettyType(value) {
+    return String(value || '—')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, s => s.toUpperCase());
+  }
+
+  async function loadDepartments() {
+    const { data, error } = await supabase
+      .from('departments')
+      .select('id, name')
+      .order('name');
+
+    if (error) {
+      console.error('Departments load error:', error);
+      Toast.error('Failed to load departments.');
+      return;
+    }
+
+    allDepartments = data || [];
+    departmentMap = Object.fromEntries(allDepartments.map(d => [String(d.id), d.name]));
+
+    const sel = document.getElementById('dept-filter');
+    sel.innerHTML = '<option value="">All Departments</option>';
+    allDepartments.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  async function loadProfiles() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, department_id, role, status')
+      .order('full_name');
+
+    if (error) {
+      console.error('Profiles load error:', error);
+      Toast.error('Failed to load members.');
+      return;
+    }
+
+    allProfiles = data || [];
+    memberMap = Object.fromEntries(allProfiles.map(p => [String(p.id), p]));
+  }
+
+  async function loadContributions() {
+    const { data, error } = await supabase
+      .from('contributions')
+      .select('*')
+      .order('contribution_date', { ascending: false });
+
+    if (error) {
+      console.error('Contributions load error:', error);
+      Toast.error('Failed to load contributions.');
+      return;
+    }
+
+    allContributions = (data || []).map(normalizeContribution);
+    renderStats();
+    renderTable();
+  }
+
+  function normalizeContribution(row) {
+    const memberId = row.member_id ?? null;
+    const member = memberId ? memberMap[String(memberId)] : null;
+
+    const amount = Number(row.amount || 0) || 0;
+    const type = normType(row.category || 'offering');
+    const date = row.contribution_date || row.created_at || null;
+    const notes = row.notes || '';
+    const method = row.payment_method || '—';
+    const reference = row.reference_number || '';
+    const currency = row.currency || 'TZS';
+    const status = row.status || 'completed';
+
+    const departmentId = member?.department_id || null;
+    const departmentName = departmentMap[String(departmentId)] || 'Unassigned';
+
+    return {
+      id: row.id,
+      member_id: memberId,
+      amount,
+      type,
+      date,
+      notes,
+      method,
+      reference,
+      currency,
+      status,
+      member_name: member?.full_name || 'Unknown Member',
+      member_email: member?.email || '',
+      department_id: departmentId,
+      department_name: departmentName,
+      raw: row
+    };
+  }
+
+  function renderStats() {
+    const now = new Date();
+
+    const total = allContributions.reduce((sum, c) => sum + (c.amount || 0), 0);
+
+    const month = allContributions
+      .filter(c => {
+        const d = parseDateSafe(c.date);
+        return d && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      })
+      .reduce((sum, c) => sum + (c.amount || 0), 0);
+
+    const typeCounts = allContributions.reduce((acc, c) => {
+      acc[c.type] = (acc[c.type] || 0) + 1;
+      return acc;
+    }, {});
+
+    const topType = Object.entries(typeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
+
+    document.getElementById('stat-total').textContent = formatTZS(total);
+    document.getElementById('stat-month').textContent = formatTZS(month);
+    document.getElementById('stat-count').textContent = allContributions.length.toLocaleString();
+    document.getElementById('stat-top-type').textContent = prettyType(topType);
+
+    document.getElementById('stats-skeleton').classList.add('hidden');
+    document.getElementById('stats-content').classList.remove('hidden');
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('search-input').value.trim().toLowerCase();
+    const dept = document.getElementById('dept-filter').value;
+    const type = normType(document.getElementById('type-filter').value);
+    const from = document.getElementById('date-from').value;
+    const to = document.getElementById('date-to').value;
+
+    return allContributions.filter(c => {
+      const searchBag = [
+        c.member_name,
+        c.member_email,
+        c.reference,
+        c.method,
+        c.department_name,
+        c.notes
+      ].join(' ').toLowerCase();
+
+      const searchOk = !q || searchBag.includes(q);
+      const deptOk = !dept || String(c.department_id) === dept;
+      const typeOk = !type || c.type === type;
+
+      let fromOk = true;
+      let toOk = true;
+      const d = parseDateSafe(c.date);
+
+      if (from) {
+        const f = parseDateSafe(from);
+        fromOk = d && f ? d >= startOfDay(f) : false;
+      }
+
+      if (to) {
+        const t = parseDateSafe(to);
+        toOk = d && t ? d <= endOfDay(t) : false;
+      }
+
+      return searchOk && deptOk && typeOk && fromOk && toOk;
+    });
+  }
+
   function renderTable() {
     const filtered = getFiltered();
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = 1;
+
     const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     document.getElementById('table-skeleton').classList.add('hidden');
@@ -380,16 +516,22 @@
       tbody.innerHTML = slice.map(c => `
         <tr class="table-row border-t border-surface-container-low">
           <td class="px-6 py-4">
-            <p class="font-bold text-on-surface">${escapeHtml(c.member?.full_name || '—')}</p>
-            <p class="text-xs text-on-surface-variant">${escapeHtml(c.member?.email || '')}</p>
+            <p class="font-bold text-on-surface">${escapeHtml(c.member_name || '—')}</p>
+            <p class="text-xs text-on-surface-variant">${escapeHtml(c.member_email || c.reference || '')}</p>
           </td>
-          <td class="px-6 py-4 text-on-surface-variant">${escapeHtml(c.member?.departments?.name || 'Unassigned')}</td>
+          <td class="px-6 py-4 text-on-surface-variant">${escapeHtml(c.department_name || 'Unassigned')}</td>
           <td class="px-6 py-4">
-            <span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${TYPE_COLORS[c.type] || 'bg-slate-100 text-slate-600'}">${escapeHtml(c.type || '—')}</span>
+            <span class="pill ${TYPE_COLORS[c.type] || 'bg-slate-100 text-slate-600'}">${escapeHtml(prettyType(c.type))}</span>
           </td>
           <td class="px-6 py-4 font-extrabold text-primary">${formatTZS(c.amount)}</td>
           <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(c.date)}</td>
           <td class="px-6 py-4 text-on-surface-variant text-xs">${escapeHtml(c.notes || '—')}</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <button onclick="viewContribution('${c.id}')" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</button>
+              <button onclick="deleteContribution('${c.id}')" class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-error hover:bg-red-100 transition-colors">Delete</button>
+            </div>
+          </td>
         </tr>
       `).join('');
     }
@@ -402,28 +544,358 @@
     const container = document.getElementById('pagination-controls');
     container.innerHTML = '';
     if (totalPages <= 1) return;
+
     for (let i = 1; i <= totalPages; i++) {
       const btn = document.createElement('button');
       btn.textContent = i;
       btn.className = i === currentPage
         ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
         : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
-      btn.addEventListener('click', () => { currentPage = i; renderTable(); });
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderTable();
+      });
       container.appendChild(btn);
     }
   }
 
-  document.getElementById('btn-export').addEventListener('click', () => Toast.info('Export functionality coming soon.'));
+  function renderMonthlySummaryModal() {
+    const now = new Date();
+    const monthRows = allContributions.filter(c => {
+      const d = parseDateSafe(c.date);
+      return d && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
 
-  const debouncedRender = debounce(() => { currentPage = 1; renderTable(); }, 300);
+    const grouped = monthRows.reduce((acc, row) => {
+      acc[row.type] = (acc[row.type] || 0) + row.amount;
+      return acc;
+    }, {});
+
+    const total = monthRows.reduce((s, row) => s + row.amount, 0);
+    const items = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+
+    Modal.show({
+      title: 'Monthly Summary',
+      size: 'md',
+      content: `
+        <div class="space-y-4">
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Total This Month</p>
+            <h3 class="text-2xl font-black text-primary">${formatTZS(total)}</h3>
+          </div>
+          <div class="space-y-3">
+            ${items.length ? items.map(([type, amount]) => `
+              <div class="flex items-center justify-between rounded-xl bg-surface-container-low p-4">
+                <span class="font-bold text-on-surface">${escapeHtml(prettyType(type))}</span>
+                <span class="font-black text-primary">${formatTZS(amount)}</span>
+              </div>
+            `).join('') : `
+              <p class="text-sm text-on-surface-variant">No contribution records for this month.</p>
+            `}
+          </div>
+        </div>
+      `
+    });
+  }
+
+  async function openAddContributionModal() {
+    const memberOptions = allProfiles
+      .filter(p => p.role === 'member')
+      .sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''))
+      .map(p => `
+        <option value="${escapeHtml(String(p.id))}">
+          ${escapeHtml(p.full_name || 'Unnamed')} ${p.email ? `(${escapeHtml(p.email)})` : ''}
+        </option>
+      `).join('');
+
+    const { close } = Modal.show({
+      title: 'New Contribution',
+      size: 'md',
+      content: `
+        <form id="contribution-form" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Member *</label>
+            <select id="contribution-member" required class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+              <option value="">Select member</option>
+              ${memberOptions}
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Type *</label>
+              <select id="contribution-type" required class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+                <option value="tithe">Tithe</option>
+                <option value="offering">Offering</option>
+                <option value="building_fund">Building Fund</option>
+                <option value="thanksgiving">Thanksgiving</option>
+                <option value="special">Special</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Amount *</label>
+              <input id="contribution-amount" type="number" min="0" step="0.01" required
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                placeholder="0"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Date *</label>
+              <input id="contribution-date" type="date" required
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Payment Method</label>
+              <input id="contribution-method" type="text"
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                placeholder="Cash, Bank, M-Pesa..."/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Currency *</label>
+              <input id="contribution-currency" type="text" value="TZS" required
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Reference Number</label>
+              <input id="contribution-reference" type="text"
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                placeholder="Optional reference"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Notes</label>
+            <textarea id="contribution-notes" rows="3"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary resize-none"
+              placeholder="Optional notes..."></textarea>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" id="contribution-cancel"
+              class="flex-1 py-3 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+              Cancel
+            </button>
+            <button type="submit"
+              class="flex-1 py-3 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+              Save Contribution
+            </button>
+          </div>
+        </form>
+      `
+    });
+
+    document.getElementById('contribution-cancel').addEventListener('click', close);
+    document.getElementById('contribution-date').value = new Date().toISOString().split('T')[0];
+
+    document.getElementById('contribution-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const memberId = document.getElementById('contribution-member').value;
+      const type = normType(document.getElementById('contribution-type').value);
+      const amount = Number(document.getElementById('contribution-amount').value || 0);
+      const contributionDate = document.getElementById('contribution-date').value;
+      const paymentMethod = document.getElementById('contribution-method').value.trim();
+      const currency = document.getElementById('contribution-currency').value.trim() || 'TZS';
+      const referenceNumber = document.getElementById('contribution-reference').value.trim();
+      const notes = document.getElementById('contribution-notes').value.trim();
+
+      if (!memberId || !amount || !contributionDate || !currency) {
+        Toast.warning('Please fill all required fields.');
+        return;
+      }
+
+      const payload = {
+        member_id: memberId,
+        amount,
+        currency,
+        category: type,
+        payment_method: paymentMethod || null,
+        status: 'completed',
+        reference_number: referenceNumber || null,
+        notes: notes || null,
+        recorded_by: profile.id || null,
+        contribution_date: contributionDate
+      };
+
+      Loader.show('Saving contribution...');
+
+      const { error } = await supabase
+        .from('contributions')
+        .insert([payload]);
+
+      Loader.hide();
+
+      if (error) {
+        console.error('Contribution create error:', error);
+        Toast.error('Failed to save contribution.');
+        return;
+      }
+
+      close();
+      Toast.success('Contribution saved successfully.');
+      await loadContributions();
+    });
+  }
+
+  function exportCSV() {
+    const rows = getFiltered();
+    if (!rows.length) {
+      Toast.warning('No contribution records to export.');
+      return;
+    }
+
+    const headers = ['Member', 'Email', 'Department', 'Type', 'Amount', 'Currency', 'Date', 'Method', 'Reference', 'Status', 'Notes'];
+    const csvRows = [
+      headers.join(','),
+      ...rows.map(r => [
+        csvCell(r.member_name),
+        csvCell(r.member_email),
+        csvCell(r.department_name),
+        csvCell(prettyType(r.type)),
+        csvCell(r.amount),
+        csvCell(r.currency),
+        csvCell(r.date),
+        csvCell(r.method),
+        csvCell(r.reference),
+        csvCell(r.status),
+        csvCell(r.notes)
+      ].join(','))
+    ];
+
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `blb-contributions-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    Toast.success('Contribution export downloaded.');
+  }
+
+  window.viewContribution = (id) => {
+    const item = allContributions.find(c => String(c.id) === String(id));
+    if (!item) return;
+
+    Modal.show({
+      title: 'Contribution Details',
+      size: 'sm',
+      content: `
+        <div class="space-y-4">
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Member</p>
+            <h3 class="text-lg font-black text-primary">${escapeHtml(item.member_name)}</h3>
+            <p class="text-sm text-on-surface-variant mt-1">${escapeHtml(item.member_email || '')}</p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Type</p>
+              <p class="font-bold text-on-surface">${escapeHtml(prettyType(item.type))}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Amount</p>
+              <p class="font-black text-primary">${formatTZS(item.amount)}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Date</p>
+              <p class="font-bold text-on-surface">${formatDate(item.date)}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Department</p>
+              <p class="font-bold text-on-surface">${escapeHtml(item.department_name)}</p>
+            </div>
+          </div>
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Payment Method</p>
+            <p class="text-sm text-on-surface">${escapeHtml(item.method || '—')}</p>
+          </div>
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Reference</p>
+            <p class="text-sm text-on-surface">${escapeHtml(item.reference || '—')}</p>
+          </div>
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Notes</p>
+            <p class="text-sm text-on-surface">${escapeHtml(item.notes || 'No notes')}</p>
+          </div>
+        </div>
+      `
+    });
+  };
+
+  window.deleteContribution = async (id) => {
+    Modal.confirm('Are you sure you want to delete this contribution record? This cannot be undone.', async () => {
+      Loader.show('Deleting contribution...');
+
+      const { error } = await supabase
+        .from('contributions')
+        .delete()
+        .eq('id', id);
+
+      Loader.hide();
+
+      if (error) {
+        console.error('Contribution delete error:', error);
+        Toast.error('Failed to delete contribution.');
+        return;
+      }
+
+      Toast.success('Contribution deleted.');
+      await loadContributions();
+    });
+  };
+
+  document.getElementById('btn-export').addEventListener('click', exportCSV);
+  document.getElementById('btn-monthly-summary').addEventListener('click', renderMonthlySummaryModal);
+  document.getElementById('btn-add-contribution').addEventListener('click', openAddContributionModal);
+
+  const debouncedRender = debounce(() => {
+    currentPage = 1;
+    renderTable();
+  }, 300);
+
   document.getElementById('search-input').addEventListener('input', debouncedRender);
-  ['dept-filter', 'type-filter', 'date-from', 'date-to'].forEach(id =>
-    document.getElementById(id).addEventListener('change', () => { currentPage = 1; renderTable(); })
-  );
+  ['dept-filter', 'type-filter', 'date-from', 'date-to'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      currentPage = 1;
+      renderTable();
+    });
+  });
 
   await loadDepartments();
+  await loadProfiles();
   await loadContributions();
 })();
+
+function parseDateSafe(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function startOfDay(d) {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+}
+
+function endOfDay(d) {
+  const x = new Date(d);
+  x.setHours(23, 59, 59, 999);
+  return x;
+}
+
+function csvCell(value) {
+  const safe = String(value ?? '').replace(/"/g, '""');
+  return `"${safe}"`;
+}
 </script>
 </body>
 </html>

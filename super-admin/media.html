@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>All Media | Super Admin — BLB Church</title>
-  <meta name="description" content="BLB Church Super Admin — Manage all media content across every department."/>
+  <meta name="description" content="BLB Church Super Admin — Manage all media content across the church."/>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -48,7 +48,12 @@
             "body":     ["Plus Jakarta Sans"],
             "label":    ["Plus Jakarta Sans"]
           },
-          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
         },
       },
     }
@@ -81,13 +86,17 @@
       animation: shimmer 1.4s infinite;
       border-radius: 12px;
     }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-    .media-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .media-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
 
     .table-row { transition: background 0.15s; }
     .table-row:hover { background: rgba(243,243,244,0.6); }
+
+    .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
   </style>
 </head>
 
@@ -163,7 +172,7 @@
     <div>
       <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
       <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">All Media</h2>
-      <p class="text-on-surface-variant">All media content from every department — sermons, documents, images, and more.</p>
+      <p class="text-on-surface-variant">All media content across the church — sermons, documents, images, audio, and more.</p>
     </div>
     <div class="flex items-center gap-4">
       <button id="btn-upload"
@@ -193,23 +202,34 @@
 
   <!-- Stats -->
   <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
-    <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">perm_media</span></div>
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-primary">perm_media</span>
+      </div>
       <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Items</p>
       <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
-    <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-green-700">public</span></div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Public</p>
+
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-green-700">public</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Published</p>
       <h3 id="stat-public" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
-    <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-amber-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-amber-700">lock</span></div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Private</p>
+
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-amber-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-amber-700">visibility_off</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Draft</p>
       <h3 id="stat-private" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
-    <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-purple-700">category</span></div>
+
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-purple-700">category</span>
+      </div>
       <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Categories</p>
       <h3 id="stat-cats" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
@@ -219,19 +239,18 @@
   <div class="flex flex-wrap gap-4 mb-8">
     <div class="relative flex-1 min-w-[240px]">
       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-      <input id="search-input" type="text" placeholder="Search title, category…"
+      <input id="search-input" type="text" placeholder="Search title, category, description..."
         class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
     </div>
+
     <select id="category-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
       <option value="">All Categories</option>
     </select>
-    <select id="department-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
-  <option value="">All Departments</option>
-</select>
+
     <select id="visibility-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
-      <option value="">All Visibility</option>
-      <option value="true">Public</option>
-      <option value="false">Private</option>
+      <option value="">All Status</option>
+      <option value="true">Published</option>
+      <option value="false">Draft</option>
     </select>
   </div>
 
@@ -251,14 +270,14 @@
         <tr class="text-left text-xs uppercase tracking-widest text-on-surface-variant">
           <th class="px-6 py-4">Title</th>
           <th class="px-6 py-4">Category</th>
-          <th class="px-6 py-4">Visibility</th>
-          <th class="px-6 py-4">Department</th>
+          <th class="px-6 py-4">Status</th>
           <th class="px-6 py-4">Uploaded</th>
           <th class="px-6 py-4">Actions</th>
         </tr>
       </thead>
       <tbody id="media-tbody"></tbody>
     </table>
+
     <div id="empty-state" class="hidden py-16 text-center">
       <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">subscriptions</span>
       <p class="font-bold text-primary">No media found</p>
@@ -298,44 +317,15 @@
   const PAGE_SIZE = 20;
   let allMedia = [];
   let currentPage = 1;
-  let departments = [];
-  let departmentMap = {};
-
-  async function loadDepartments() {
-    const { data, error } = await supabase
-      .from('departments')
-      .select('id, name')
-      .order('name');
-
-    if (error) {
-      console.error(error);
-      Toast.error('Failed to load departments.');
-      return;
-    }
-
-    departments = data || [];
-    departmentMap = Object.fromEntries(departments.map(d => [String(d.id), d.name]));
-
-    const sel = document.getElementById('department-filter');
-    if (sel) {
-      sel.innerHTML = '<option value="">All Departments</option>';
-      departments.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = d.name;
-        sel.appendChild(opt);
-      });
-    }
-  }
 
   async function loadMedia() {
     const { data, error } = await supabase
       .from('media_items')
-      .select('id, title, file_url, file_path, category, is_public, department_id, uploaded_by, created_at')
+      .select('id, title, description, category, file_url, file_type, file_size, thumbnail_url, is_published, uploaded_by, created_at')
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error(error);
+      console.error('Media load error:', error);
       Toast.error('Failed to load media.');
       return;
     }
@@ -360,13 +350,13 @@
   }
 
   function renderStats() {
-    const pub = allMedia.filter(m => m.is_public).length;
-    const priv = allMedia.filter(m => !m.is_public).length;
+    const published = allMedia.filter(m => m.is_published === true).length;
+    const drafts = allMedia.filter(m => !m.is_published).length;
     const cats = new Set(allMedia.map(m => m.category).filter(Boolean)).size;
 
     document.getElementById('stat-total').textContent = allMedia.length.toLocaleString();
-    document.getElementById('stat-public').textContent = pub.toLocaleString();
-    document.getElementById('stat-private').textContent = priv.toLocaleString();
+    document.getElementById('stat-public').textContent = published.toLocaleString();
+    document.getElementById('stat-private').textContent = drafts.toLocaleString();
     document.getElementById('stat-cats').textContent = cats.toLocaleString();
 
     document.getElementById('stats-skeleton').classList.add('hidden');
@@ -377,16 +367,12 @@
     const q = document.getElementById('search-input').value.trim().toLowerCase();
     const cat = document.getElementById('category-filter').value;
     const vis = document.getElementById('visibility-filter').value;
-    const deptEl = document.getElementById('department-filter');
-    const dept = deptEl ? deptEl.value : '';
 
     return allMedia.filter(m => {
-      const deptName = departmentMap[String(m.department_id)] || 'General / Unassigned';
-      const searchOk = !q || [m.title, m.category, deptName].join(' ').toLowerCase().includes(q);
+      const searchOk = !q || [m.title, m.category, m.description, m.file_type].join(' ').toLowerCase().includes(q);
       const catOk = !cat || m.category === cat;
-      const visOk = vis === '' || String(m.is_public) === vis;
-      const deptOk = !dept || String(m.department_id) === dept;
-      return searchOk && catOk && visOk && deptOk;
+      const visOk = vis === '' || String(m.is_published) === vis;
+      return searchOk && catOk && visOk;
     });
   }
 
@@ -408,39 +394,36 @@
       empty.classList.remove('hidden');
     } else {
       empty.classList.add('hidden');
-      tbody.innerHTML = slice.map(m => {
-        const deptName = departmentMap[String(m.department_id)] || 'General / Unassigned';
-        return `
-          <tr class="table-row border-t border-surface-container-low">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="h-9 w-9 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
-                  <span class="material-symbols-outlined text-on-surface-variant text-sm">insert_drive_file</span>
-                </div>
-                <div>
-                  <p class="font-bold text-on-surface">${escapeHtml(m.title || '—')}</p>
-                  <p class="text-xs text-on-surface-variant">${escapeHtml(deptName)}</p>
-                </div>
+      tbody.innerHTML = slice.map(m => `
+        <tr class="table-row border-t border-surface-container-low">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="h-9 w-9 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-on-surface-variant text-sm">${getFileIcon(m.file_type)}</span>
               </div>
-            </td>
-            <td class="px-6 py-4">
-              <span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-surface-container text-on-surface-variant">
-                ${escapeHtml(m.category || '—')}
-              </span>
-            </td>
-            <td class="px-6 py-4">
-              ${m.is_public
-                ? '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-green-50 text-green-700">Public</span>'
-                : '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-slate-100 text-slate-500">Private</span>'}
-            </td>
-            <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(m.created_at)}</td>
-            <td class="px-6 py-4 flex gap-2">
-              ${m.file_url ? `<a href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</a>` : ''}
-              <button onclick="deleteMedia('${m.id}', ${m.file_path ? `'${m.file_path}'` : 'null'})" class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-error hover:bg-red-100 transition-colors">Delete</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+              <div>
+                <p class="font-bold text-on-surface">${escapeHtml(m.title || '—')}</p>
+                <p class="text-xs text-on-surface-variant">${escapeHtml(m.file_type || '')}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-surface-container text-on-surface-variant">
+              ${escapeHtml(m.category || '—')}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            ${m.is_published
+              ? '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-green-50 text-green-700">Published</span>'
+              : '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-slate-100 text-slate-500">Draft</span>'}
+          </td>
+          <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(m.created_at)}</td>
+          <td class="px-6 py-4 flex gap-2">
+            ${m.file_url ? `<a href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</a>` : ''}
+            <button onclick="deleteMedia('${m.id}')" class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-error hover:bg-red-100 transition-colors">Delete</button>
+          </td>
+        </tr>
+      `).join('');
     }
 
     document.getElementById('pagination-info').textContent = `Showing ${slice.length} of ${filtered.length} items`;
@@ -468,29 +451,166 @@
     }
   }
 
-  window.deleteMedia = async (id, filePath = null) => {
-    Modal.confirm('Are you sure you want to delete this media item? This cannot be undone.', async () => {
-      Loader.show('Deleting media...');
+  function getFileIcon(fileType = '') {
+    const type = (fileType || '').toLowerCase();
+    if (type.includes('image')) return 'image';
+    if (type.includes('video')) return 'movie';
+    if (type.includes('audio')) return 'music_note';
+    if (type.includes('pdf')) return 'picture_as_pdf';
+    if (type.includes('word') || type.includes('document')) return 'description';
+    return 'insert_drive_file';
+  }
 
-      // Futa file storage kama path ipo
-      if (filePath) {
-        const { error: storageError } = await supabase.storage
-          .from('church-media')
-          .remove([filePath]);
+  async function openUploadModal() {
+    const { close } = Modal.show({
+      title: 'Upload Media',
+      size: 'md',
+      content: `
+        <form id="media-upload-form" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Title *</label>
+            <input id="media-title" type="text" required maxlength="160"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+              placeholder="Enter media title"/>
+          </div>
 
-        if (storageError) {
-          Loader.hide();
-          Toast.error('Failed to delete media file from storage.');
-          return;
-        }
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Description</label>
+            <textarea id="media-description" rows="3"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary resize-none"
+              placeholder="Write a short description..."></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Category *</label>
+            <select id="media-category"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+              required>
+              <option value="">Select category</option>
+              <option value="Sermon">Sermon</option>
+              <option value="Document">Document</option>
+              <option value="Image">Image</option>
+              <option value="Video">Video</option>
+              <option value="Audio">Audio</option>
+              <option value="Announcement">Announcement</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Status</label>
+            <select id="media-published"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+              <option value="true">Published</option>
+              <option value="false">Draft</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Choose File *</label>
+            <input id="media-file" type="file" required
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" id="media-cancel"
+              class="flex-1 py-3 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+              Cancel
+            </button>
+            <button type="submit"
+              class="flex-1 py-3 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+              Upload Media
+            </button>
+          </div>
+        </form>
+      `
+    });
+
+    document.getElementById('media-cancel').addEventListener('click', close);
+
+    document.getElementById('media-upload-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('media-title').value.trim();
+      const description = document.getElementById('media-description').value.trim();
+      const category = document.getElementById('media-category').value;
+      const isPublished = document.getElementById('media-published').value === 'true';
+      const fileInput = document.getElementById('media-file');
+      const file = fileInput.files[0];
+
+      if (!title || !category || !file) {
+        Toast.warning('Please fill all required fields.');
+        return;
       }
 
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const fileName = `${Date.now()}_${safeName}`;
+      const folder = category.toLowerCase().replace(/\s+/g, '-');
+      const filePath = `${folder}/${fileName}`;
+
+      Loader.show('Uploading media...');
+
+      const { error: uploadError } = await supabase.storage
+        .from('church-media')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        Loader.hide();
+        console.error(uploadError);
+        Toast.error('Failed to upload file.');
+        return;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('church-media')
+        .getPublicUrl(filePath);
+
+      const fileUrl = publicUrlData?.publicUrl || null;
+      const fileType = file.type || 'application/octet-stream';
+      const fileSize = file.size || null;
+      let thumbnailUrl = null;
+
+      if (fileType.startsWith('image/')) {
+        thumbnailUrl = fileUrl;
+      }
+
+      const { error: insertError } = await supabase
+        .from('media_items')
+        .insert([{
+          title,
+          description: description || null,
+          category,
+          file_url: fileUrl,
+          file_type: fileType,
+          file_size: fileSize,
+          thumbnail_url: thumbnailUrl,
+          is_published: isPublished,
+          uploaded_by: profile.id
+        }]);
+
+      Loader.hide();
+
+      if (insertError) {
+        console.error(insertError);
+        Toast.error('Failed to save media record.');
+        return;
+      }
+
+      close();
+      Toast.success('Media uploaded successfully.');
+      await loadMedia();
+    });
+  }
+
+  window.deleteMedia = async (id) => {
+    Modal.confirm('Are you sure you want to delete this media item? This cannot be undone.', async () => {
       const { error } = await supabase
         .from('media_items')
         .delete()
         .eq('id', id);
-
-      Loader.hide();
 
       if (error) {
         Toast.error('Failed to delete media item.');
@@ -502,9 +622,7 @@
     });
   };
 
-  document.getElementById('btn-upload').addEventListener('click', () => {
-    Toast.info('Upload modal not connected yet.');
-  });
+  document.getElementById('btn-upload').addEventListener('click', openUploadModal);
 
   const debouncedRender = debounce(() => {
     currentPage = 1;
@@ -513,7 +631,7 @@
 
   document.getElementById('search-input').addEventListener('input', debouncedRender);
 
-  ['category-filter', 'visibility-filter', 'department-filter'].forEach(id => {
+  ['category-filter', 'visibility-filter'].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('change', () => {
@@ -523,7 +641,6 @@
     }
   });
 
-  await loadDepartments();
   await loadMedia();
 })();
 </script>

@@ -5,11 +5,11 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>BLB Church | The Digital Sanctuary — Welcome Home</title>
   <meta name="description" content="Welcome to BLB Church — A modern stewardship of tradition. Join our community for worship, fellowship, and spiritual growth.">
-  
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -38,314 +38,1224 @@
   </script>
 
   <link rel="stylesheet" href="../assets/css/shared.css"/>
+
   <style>
-    .hero-gradient { background: linear-gradient(135deg, #00236f 0%, #1e3a8a 100%); }
-    .editorial-shadow { box-shadow: 0px 24px 48px rgba(0, 35, 111, 0.06); }
+    /* ── Base ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    /* ── WebGL Canvas ── */
+    #hero-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+    }
+
+    /* ── Navbar ── */
+    #main-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      transition: background 0.4s ease, box-shadow 0.4s ease, padding 0.3s ease;
+      padding: 0 1.5rem;
+    }
+    #main-nav.scrolled {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 32px rgba(0,35,111,0.10);
+    }
+    #main-nav.at-top {
+      background: transparent;
+    }
+    .nav-inner {
+      max-width: 1280px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 80px;
+      transition: height 0.3s ease;
+    }
+    #main-nav.scrolled .nav-inner { height: 68px; }
+
+    .nav-logo-text { color: #ffffff; transition: color 0.4s; }
+    #main-nav.scrolled .nav-logo-text { color: #00236f; }
+
+    .nav-link {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 2px; background: #fed01b;
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+    .nav-link:hover { color: #ffffff; }
+    #main-nav.scrolled .nav-link { color: #444651; }
+    #main-nav.scrolled .nav-link:hover { color: #00236f; }
+
+    .nav-btn-login {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.9);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    #main-nav.scrolled .nav-btn-login { color: #00236f; }
+    .nav-btn-login:hover { color: #fed01b; }
+    #main-nav.scrolled .nav-btn-login:hover { color: #1e3a8a; }
+
+    .nav-btn-cta {
+      background: #fed01b; color: #231b00;
+      padding: 0.6rem 1.5rem; border-radius: 9999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.75rem; font-weight: 800;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+    }
+    .nav-btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(254,208,27,0.35);
+    }
+    #main-nav.at-top .nav-btn-cta { background: #fed01b; }
+
+    /* Mobile menu */
+    #mobile-menu {
+      display: none;
+      position: fixed; top: 80px; left: 0; right: 0; z-index: 99;
+      background: rgba(0,35,111,0.97);
+      backdrop-filter: blur(20px);
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      transform: translateY(-10px); opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #mobile-menu.open { display: block; transform: translateY(0); opacity: 1; }
+    .mobile-nav-link {
+      display: block; padding: 0.875rem 0;
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.875rem; font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      transition: color 0.2s;
+    }
+    .mobile-nav-link:hover { color: #fed01b; }
+
+    /* ── Hero Section ── */
+    #hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center;
+      overflow: hidden;
+      background: #00236f;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to right,
+        rgba(0,35,111,0.75) 0%,
+        rgba(0,35,111,0.45) 50%,
+        rgba(0,35,111,0.2) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; }
+
+    /* Badge pill */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(254,208,27,0.15);
+      border: 1px solid rgba(254,208,27,0.35);
+      backdrop-filter: blur(8px);
+      padding: 0.4rem 1rem; border-radius: 9999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.7rem; font-weight: 800;
+      color: #fed01b; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 9999px;
+      background: #fed01b;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    /* Hero heading */
+    .hero-h1 {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+    .hero-h1 .gold { color: #ffe083; }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      animation: bounce-slow 3s ease-in-out infinite;
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+    }
+
+    /* ── Reveal Animations ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ── Service Cards ── */
+    .service-card {
+      position: relative; overflow: hidden;
+      background: #ffffff;
+      border-radius: 1.25rem;
+      padding: 2.5rem;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      box-shadow: 0 4px 24px rgba(0,35,111,0.06);
+      cursor: default;
+    }
+    .service-card::before {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(to right, #00236f, #fed01b);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(0,35,111,0.14); }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon-wrap {
+      width: 3.25rem; height: 3.25rem; border-radius: 0.875rem;
+      background: rgba(0,35,111,0.07);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.75rem;
+      transition: background 0.3s;
+    }
+    .service-card:hover .service-icon-wrap { background: #00236f; }
+    .service-icon-wrap .material-symbols-outlined { color: #00236f; transition: color 0.3s; }
+    .service-card:hover .service-icon-wrap .material-symbols-outlined { color: #ffe083; }
+
+    /* ── Gold Divider ── */
+    .gold-line { display: block; width: 3rem; height: 3px; background: #fed01b; border-radius: 2px; }
+
+    /* ── Bento Grid ── */
+    .bento-featured {
+      position: relative; overflow: hidden; border-radius: 1.25rem;
+      min-height: 420px;
+    }
+    .bento-featured img { transition: transform 0.7s ease; }
+    .bento-featured:hover img { transform: scale(1.04); }
+
+    /* ── Stats Counter ── */
+    .stat-num {
+      font-family: 'Inter', sans-serif;
+      font-size: 2.75rem; font-weight: 900;
+      line-height: 1; color: #00236f;
+      letter-spacing: -0.03em;
+    }
+
+    /* ── CTA Strip ── */
+    .cta-card {
+      background: #ffffff;
+      border-radius: 2rem;
+      padding: 4rem 3rem;
+      box-shadow: 0 32px 80px rgba(0,35,111,0.18);
+      position: relative; overflow: hidden;
+    }
+    .cta-card::after {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(254,208,27,0.25) 0%, transparent 70%);
+      border-radius: 9999px;
+    }
+
+    /* ── Hamburger ── */
+    .hamburger { background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #ffffff; border-radius: 2px;
+      margin: 5px 0;
+      transition: transform 0.3s, opacity 0.3s, background 0.4s;
+    }
+    #main-nav.scrolled .hamburger span { background: #00236f; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* ── About image stack ── */
+    .img-stack { position: relative; display: inline-block; }
+
+    /* ── Footer ── */
+    .footer-link { color: #00236f; font-weight: 700; text-decoration: none; transition: color 0.2s; }
+    .footer-link:hover { color: #fed01b; }
+
+    /* ── Utility ── */
+    .editorial-shadow { box-shadow: 0 24px 48px rgba(0,35,111,0.07); }
   </style>
 </head>
 
-<body class="bg-surface text-on-surface">
+<body class="bg-surface text-on-surface font-body" style="margin:0; padding:0;">
 
-<!-- Top Navigation -->
-<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm duration-300 ease-in-out">
-  <div class="flex justify-between items-center px-6 md:px-12 h-20 max-w-[1920px] mx-auto">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-        <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings: 'FILL' 1;">church</span>
+<!-- ════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════ -->
+<nav id="main-nav" class="at-top">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-3 no-underline" style="text-decoration:none;">
+      <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center flex-shrink-0"
+           style="box-shadow:0 4px 16px rgba(0,35,111,0.3);">
+        <span class="material-symbols-outlined text-secondary-container text-xl"
+              style="font-variation-settings:'FILL' 1;">church</span>
       </div>
-      <span class="text-xl font-bold tracking-tighter text-primary font-headline">BLB Church</span>
+      <span class="nav-logo-text text-xl font-bold tracking-tighter font-headline">BLB Church</span>
+    </a>
+
+    <!-- Desktop Links -->
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#" class="nav-link active">Home</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#contact" class="nav-link">Contact</a>
     </div>
-    <div class="hidden md:flex items-center space-x-8">
-      <a class="text-primary font-bold border-b-2 border-secondary-container pb-1 font-label text-sm tracking-wide uppercase" href="#">Home</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#services">Services</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#about">About</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#contact">Contact</a>
+
+    <!-- Desktop CTA -->
+    <div class="hidden md:flex items-center gap-5">
+      <a href="login.html" class="nav-btn-login" id="nav-login-btn">Login</a>
+      <a href="register.html" class="nav-btn-cta">Join Us</a>
     </div>
-    <div class="flex items-center gap-4">
-      <a href="login.html" class="font-label text-sm tracking-wide uppercase text-primary font-bold hover:text-primary-container transition-colors" id="nav-login-btn">Login</a>
-      <a href="register.html" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-sm font-bold tracking-wider uppercase transition-all hover:opacity-90 hidden md:inline-block">Join Us</a>
-    </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="hamburger md:hidden" id="hamburger-btn" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
-<main>
-  <!-- Hero Section -->
-  <section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-primary text-white">
-    <div class="absolute inset-0 z-0">
-      <img class="w-full h-full object-cover opacity-30 mix-blend-overlay" alt="Church interior with light rays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChBWWr5Aqa1ZDMJZilhYE64t86eeyGf4ziZ5jifHJKqJWrJut9uh3jUIcqJWO2p_2j1jnAT0eBB4Vp63m7tirbcwug8vIbAKcRoJM_6EjYDl-mQP_Cc-feXaM981opIk3B1i4OdbL_TuJ4ViHEvud_965c4J0OgCsbhocJ_nQyoUQ6LZoTaon2AVCSlKkUWdmPdr6jRxLNYxiujNRORrJnzZyYmNTuhIM9kxnMTJbh8wmujNv099DyDtMWmyPb9-xehu0p-u3yFIRY"/>
-      <div class="absolute inset-0 hero-gradient opacity-80"></div>
-    </div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-      <div class="md:col-span-8 space-y-8">
-        <span class="inline-block px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs font-extrabold tracking-[0.1em] uppercase">The Digital Sanctuary</span>
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.03em] leading-tight text-white font-headline">
-          Welcome to <br/><span class="text-secondary-fixed">BLB Church</span>
-        </h1>
-        <p class="text-lg md:text-xl font-body font-medium text-primary-fixed max-w-2xl leading-relaxed">
-          A modern stewardship of tradition. Join a community where faith meets fellowship and shared purpose.
-        </p>
-        <div class="flex flex-wrap gap-4 pt-4">
-          <a href="#services" class="bg-primary-container text-white px-10 py-5 rounded-full font-label font-bold text-sm uppercase tracking-widest editorial-shadow flex items-center gap-2 hover:translate-y-[-2px] transition-transform">
-            Join Us This Sunday <span class="material-symbols-outlined text-base">arrow_forward</span>
-          </a>
-          <a href="register.html" class="bg-secondary-fixed text-on-secondary-fixed px-10 py-5 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:translate-y-[-2px] transition-transform">
-            Become a Member
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- Mobile Menu -->
+<div id="mobile-menu">
+  <a href="#services" class="mobile-nav-link" onclick="closeMobileMenu()">Services</a>
+  <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
+  <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact</a>
+  <div style="padding-top:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
+    <a href="login.html"
+       style="text-align:center; padding:0.875rem; border-radius:0.75rem;
+              border:2px solid rgba(255,255,255,0.2); color:#ffffff;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem;
+              font-weight:700; text-decoration:none; text-transform:uppercase;
+              letter-spacing:0.08em;" id="mobile-login-btn">
+      Sign In
+    </a>
+    <a href="register.html"
+       style="text-align:center; padding:0.875rem; border-radius:0.75rem;
+              background:#fed01b; color:#231b00;
+              font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem;
+              font-weight:800; text-decoration:none; text-transform:uppercase;
+              letter-spacing:0.08em;">
+      Become a Member
+    </a>
+  </div>
+</div>
 
-  <!-- Service Times -->
-  <section id="services" class="bg-surface-container-low py-24 px-6 md:px-12">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
-        <div class="space-y-4">
-          <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tight font-headline">Weekly Gatherings</h2>
-          <div class="h-1.5 w-24 bg-secondary-container"></div>
-        </div>
-        <p class="max-w-md text-on-surface-variant font-medium leading-relaxed">
-          We offer multiple services designed to accommodate every season of life. Experience worship and fellowship.
-        </p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group hover:bg-primary transition-colors duration-500">
-          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
-            <span class="material-symbols-outlined text-4xl">auto_awesome</span>
-          </div>
-          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">Saturday Vigil</h3>
-          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">Traditional liturgical experience with choral accompaniment.</p>
-          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">5:00 PM</div>
-        </div>
-        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group hover:bg-primary transition-colors duration-500">
-          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
-            <span class="material-symbols-outlined text-4xl">light_mode</span>
-          </div>
-          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">Sunday Morning</h3>
-          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">Contemporary service with our live ministry band and youth program.</p>
-          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">9:00 AM</div>
-        </div>
-        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow border-2 border-secondary-container group hover:bg-primary transition-colors duration-500">
-          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
-            <span class="material-symbols-outlined text-4xl">sunny</span>
-          </div>
-          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">The Gathering</h3>
-          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">A focused teaching session followed by community communion.</p>
-          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">11:30 AM</div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- Bento Grid: Latest Updates -->
-  <section class="py-24 md:py-32 px-6 md:px-12 bg-surface">
-    <div class="max-w-7xl mx-auto">
-      <div class="mb-16 md:mb-20">
-        <span class="text-secondary font-label text-xs font-black uppercase tracking-widest mb-4 block">The Latest</span>
-        <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tighter font-headline">Insights & Announcements</h2>
+<!-- ════════════════════════════════════
+     HERO SECTION — WebGL Shader
+════════════════════════════════════ -->
+<section id="hero">
+  <!-- WebGL Canvas Background -->
+  <canvas id="hero-canvas"></canvas>
+
+  <!-- Gradient overlay for readability -->
+  <div class="hero-overlay"></div>
+
+  <!-- Hero Content -->
+  <div class="hero-content w-full max-w-7xl mx-auto px-6 md:px-12 pt-24 pb-24">
+    <div class="max-w-3xl">
+
+      <!-- Live Badge -->
+      <div class="hero-badge reveal mb-8">
+        <span class="badge-dot"></span>
+        The Digital Sanctuary
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-8 h-full" id="homepage-updates">
-        <!-- Featured Item -->
-        <div class="md:col-span-7 md:row-span-2 relative group overflow-hidden rounded-xl bg-surface-container-lowest min-h-[400px]">
-          <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Featured sermon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkq-Vr97EHm9XQ3SaMg1D4xQDaofdZSeQTHooEnpG0LL032VyZXgyrrzqBpm8T57Kyife9mbLOeWAx3O7p7-Ku5XUyhrgf9CaMPGA9heXh_CtggXMHCK3mod_eetGKySnUgl7u5UIWAU0-LTB3pI7M11WgxEc2tOYCctuvDrOH2ZwYL2IGvQDDe3tHXdhfhUiOT9C_hGi1JkshGJU53AlmzG-n-8dqN0KOz3JVrgUym20mUnLoPk_2K6OoA6gXGLFgaOID1y-TUIfH"/>
-          <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent"></div>
-          <div class="absolute bottom-0 p-8 md:p-12 text-white">
-            <div class="flex items-center gap-3 mb-4">
-              <span class="bg-secondary text-on-secondary-fixed px-3 py-1 text-[10px] font-black uppercase rounded">Welcome</span>
+
+      <!-- Main Heading -->
+      <h1 class="hero-h1 reveal reveal-delay-1 mb-6">
+        Welcome to<br/>
+        <span class="gold">BLB Church</span>
+      </h1>
+
+      <!-- Subline -->
+      <p class="reveal reveal-delay-2 mb-10 text-lg md:text-xl font-medium leading-relaxed"
+         style="color:rgba(220,225,255,0.88); max-width:38rem;">
+        A modern stewardship of tradition. Join a community where faith meets fellowship and shared purpose — Sunday and every day.
+      </p>
+
+      <!-- CTAs -->
+      <div class="reveal reveal-delay-3 flex flex-wrap gap-4">
+        <a href="register.html"
+           style="display:inline-flex; align-items:center; gap:0.5rem;
+                  background:#fed01b; color:#231b00;
+                  padding:1.1rem 2.25rem; border-radius:9999px;
+                  font-family:'Plus Jakarta Sans',sans-serif;
+                  font-size:0.8rem; font-weight:800;
+                  letter-spacing:0.1em; text-transform:uppercase;
+                  text-decoration:none;
+                  box-shadow:0 12px 32px rgba(254,208,27,0.35);
+                  transition:transform 0.2s, box-shadow 0.2s;"
+           onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 18px 40px rgba(254,208,27,0.45)';"
+           onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 12px 32px rgba(254,208,27,0.35)';">
+          Become a Member
+          <span class="material-symbols-outlined" style="font-size:1.1rem;">arrow_forward</span>
+        </a>
+        <a href="#services"
+           style="display:inline-flex; align-items:center; gap:0.5rem;
+                  background:rgba(255,255,255,0.12); color:#ffffff;
+                  border:1.5px solid rgba(255,255,255,0.3);
+                  padding:1.1rem 2.25rem; border-radius:9999px;
+                  font-family:'Plus Jakarta Sans',sans-serif;
+                  font-size:0.8rem; font-weight:700;
+                  letter-spacing:0.1em; text-transform:uppercase;
+                  text-decoration:none;
+                  backdrop-filter:blur(8px);
+                  transition:background 0.25s, transform 0.2s;"
+           onmouseover="this.style.background='rgba(255,255,255,0.22)';this.style.transform='translateY(-3px)';"
+           onmouseout="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(0)';">
+          Service Times
+          <span class="material-symbols-outlined" style="font-size:1.1rem;">expand_more</span>
+        </a>
+      </div>
+
+      <!-- Trust line -->
+      <div class="reveal reveal-delay-4 flex items-center gap-4 mt-12">
+        <div style="display:flex;">
+          <div style="width:32px;height:32px;border-radius:9999px;border:2px solid rgba(255,255,255,0.3);background:rgba(0,35,111,0.6);margin-left:-4px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e3a8a,#4059aa);display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ffe083;">person</span>
             </div>
-            <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight font-headline">A Home for <br/>Every Believer</h3>
-            <p class="text-primary-fixed/80 max-w-lg font-medium mb-8">Discover the heart of our community through worship, fellowship, and service.</p>
-            <a href="login.html" class="flex items-center gap-2 font-label text-sm font-bold tracking-widest uppercase text-secondary-fixed group-hover:gap-4 transition-all">
-              Enter Sanctuary <span class="material-symbols-outlined">arrow_forward</span>
+          </div>
+          <div style="width:32px;height:32px;border-radius:9999px;border:2px solid rgba(255,255,255,0.3);background:rgba(0,35,111,0.6);margin-left:-4px;overflow:hidden;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#264191,#1e3a8a);display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined" style="font-size:14px;color:#ffe083;">person</span>
+            </div>
+          </div>
+          <div style="width:32px;height:32px;border-radius:9999px;border:2px solid rgba(255,255,255,0.3);background:rgba(0,35,111,0.6);margin-left:-4px;display:flex;align-items:center;justify-content:center;">
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:800;color:#ffe083;">+</span>
+          </div>
+        </div>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;font-weight:600;color:rgba(220,225,255,0.75);">
+          Hundreds of members already in the sanctuary
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="material-symbols-outlined" style="color:rgba(255,255,255,0.45);font-size:1.1rem;">keyboard_arrow_down</span>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     STATS BAR
+════════════════════════════════════ -->
+<section style="background:#00236f; padding:2rem 1.5rem;">
+  <div style="max-width:1280px; margin:0 auto;
+              display:grid; grid-template-columns:repeat(3,1fr);
+              gap:2rem; text-align:center;">
+    <div class="reveal">
+      <div class="stat-num" style="color:#ffe083;" id="stat-members">–</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                  letter-spacing:0.18em;text-transform:uppercase;color:rgba(220,225,255,0.6);margin-top:0.4rem;">
+        Members
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="stat-num" style="color:#ffe083;" id="stat-departments">–</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                  letter-spacing:0.18em;text-transform:uppercase;color:rgba(220,225,255,0.6);margin-top:0.4rem;">
+        Ministries
+      </div>
+    </div>
+    <div class="reveal reveal-delay-3">
+      <div class="stat-num" style="color:#ffe083;">100%</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                  letter-spacing:0.18em;text-transform:uppercase;color:rgba(220,225,255,0.6);margin-top:0.4rem;">
+        Welcome
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     SERVICE TIMES
+════════════════════════════════════ -->
+<section id="services" style="background:#f3f3f4; padding:6rem 1.5rem;">
+  <div style="max-width:1280px; margin:0 auto;">
+
+    <!-- Header -->
+    <div class="reveal" style="margin-bottom:3.5rem;">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#735c00;display:block;margin-bottom:1rem;">
+        Gather With Us
+      </span>
+      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
+                 letter-spacing:-0.03em;color:#00236f;line-height:1.1;margin:0 0 1rem;">
+        Weekly Gatherings
+      </h2>
+      <span class="gold-line"></span>
+    </div>
+
+    <!-- Cards Grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+
+      <!-- Card 1 -->
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon-wrap">
+          <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">auto_awesome</span>
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                    letter-spacing:0.18em;text-transform:uppercase;color:#735c00;margin-bottom:0.75rem;">
+          Saturday
+        </div>
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:800;
+                   color:#00236f;margin:0 0 0.6rem;letter-spacing:-0.02em;">
+          Vigil Service
+        </h3>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;
+                  color:#444651;line-height:1.65;margin:0 0 1.5rem;">
+          Traditional liturgical experience with choral accompaniment.
+        </p>
+        <div style="font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;
+                    color:#00236f;letter-spacing:-0.03em;">
+          5:00 <span style="font-size:1rem;color:#735c00;">PM</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="service-card reveal reveal-delay-2"
+           style="background:#00236f; color:#fff;">
+        <div class="service-icon-wrap" style="background:rgba(255,255,255,0.12);">
+          <span class="material-symbols-outlined text-2xl" style="color:#ffe083 !important;font-variation-settings:'FILL' 1;">light_mode</span>
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                    letter-spacing:0.18em;text-transform:uppercase;color:#fed01b;margin-bottom:0.75rem;">
+          Sunday
+        </div>
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:800;
+                   color:#ffffff;margin:0 0 0.6rem;letter-spacing:-0.02em;">
+          Morning Service
+        </h3>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;
+                  color:rgba(220,225,255,0.75);line-height:1.65;margin:0 0 1.5rem;">
+          Contemporary service with our live ministry band and youth program.
+        </p>
+        <div style="font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;
+                    color:#ffe083;letter-spacing:-0.03em;">
+          9:00 <span style="font-size:1rem;color:rgba(255,255,255,0.55);">AM</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-icon-wrap">
+          <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">sunny</span>
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                    letter-spacing:0.18em;text-transform:uppercase;color:#735c00;margin-bottom:0.75rem;">
+          Sunday
+        </div>
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:800;
+                   color:#00236f;margin:0 0 0.6rem;letter-spacing:-0.02em;">
+          The Gathering
+        </h3>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;
+                  color:#444651;line-height:1.65;margin:0 0 1.5rem;">
+          A focused teaching session followed by community communion.
+        </p>
+        <div style="font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;
+                    color:#00236f;letter-spacing:-0.03em;">
+          11:30 <span style="font-size:1rem;color:#735c00;">AM</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     BENTO GRID — Latest Updates
+════════════════════════════════════ -->
+<section style="background:#ffffff; padding:6rem 1.5rem;">
+  <div style="max-width:1280px; margin:0 auto;">
+
+    <!-- Header -->
+    <div class="reveal" style="margin-bottom:3.5rem;">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#735c00;display:block;margin-bottom:1rem;">
+        The Latest
+      </span>
+      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
+                 letter-spacing:-0.03em;color:#00236f;line-height:1.1;margin:0 0 1rem;">
+        Insights & Announcements
+      </h2>
+      <span class="gold-line"></span>
+    </div>
+
+    <!-- Bento Grid -->
+    <div style="display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:auto auto;gap:1.25rem;">
+
+      <!-- Featured -->
+      <div class="bento-featured reveal"
+           style="grid-column:span 12; background:#00236f; border-radius:1.25rem; overflow:hidden; position:relative; min-height:400px;"
+           id="bento-featured-wrap">
+        <!-- Will be overridden by md breakpoint via JS -->
+        <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;"
+             src="https://images.unsplash.com/photo-1438232992991-995b671e4688?w=1200&q=80"
+             alt="Church interior" loading="lazy"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,35,111,0.95) 0%,rgba(0,35,111,0.3) 60%,transparent 100%);"></div>
+        <div style="position:absolute;bottom:0;padding:2.5rem 3rem;color:#fff;">
+          <span style="display:inline-block;background:#fed01b;color:#231b00;
+                       font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                       letter-spacing:0.1em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:0.375rem;
+                       margin-bottom:1rem;">
+            Welcome
+          </span>
+          <h3 style="font-family:'Inter',sans-serif;font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;
+                     line-height:1.15;letter-spacing:-0.02em;color:#ffffff;margin:0 0 0.875rem;max-width:480px;">
+            A Home for Every Believer
+          </h3>
+          <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;
+                    color:rgba(220,225,255,0.75);max-width:420px;line-height:1.65;margin:0 0 1.5rem;">
+            Discover the heart of our community through worship, fellowship, and service.
+          </p>
+          <a href="login.html"
+             style="display:inline-flex;align-items:center;gap:0.5rem;
+                    font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:800;
+                    letter-spacing:0.1em;text-transform:uppercase;
+                    color:#ffe083;text-decoration:none;
+                    transition:gap 0.2s;">
+            Enter Sanctuary
+            <span class="material-symbols-outlined" style="font-size:1rem;">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Fellowship Card -->
+      <div class="reveal reveal-delay-1"
+           style="grid-column:span 12;background:#f3f3f4;border-radius:1.25rem;padding:2rem;
+                  display:flex;flex-direction:column;justify-content:space-between;min-height:200px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;">
+            <div style="background:#00236f;border-radius:0.75rem;padding:0.75rem;
+                        display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined" style="color:#ffe083;font-size:1.4rem;font-variation-settings:'FILL' 1;">diversity_3</span>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:900;color:#00236f;letter-spacing:-0.02em;">
+                EVERY WEEK
+              </div>
+              <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                          letter-spacing:0.18em;text-transform:uppercase;color:#735c00;">
+                Community
+              </div>
+            </div>
+          </div>
+          <h3 style="font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:800;color:#00236f;
+                     margin:0 0 0.5rem;letter-spacing:-0.02em;">
+            Fellowship & Growth
+          </h3>
+          <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:500;
+                    color:#444651;line-height:1.6;margin:0;">
+            Join Bible study, prayer groups, and youth programs throughout the week.
+          </p>
+        </div>
+        <a href="login.html"
+           style="margin-top:1.5rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                  letter-spacing:0.15em;text-transform:uppercase;color:#00236f;text-decoration:none;
+                  border-bottom:2px solid rgba(0,35,111,0.15);width:fit-content;
+                  padding-bottom:0.25rem;transition:border-color 0.2s;"
+           onmouseover="this.style.borderColor='#fed01b';"
+           onmouseout="this.style.borderColor='rgba(0,35,111,0.15)';">
+          View Events →
+        </a>
+      </div>
+
+      <!-- Membership CTA Card -->
+      <div class="reveal reveal-delay-2"
+           style="grid-column:span 12;background:#fed01b;border-radius:1.25rem;padding:2rem;
+                  display:flex;flex-direction:column;align-items:center;justify-content:center;
+                  text-align:center;min-height:200px;">
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.5rem;font-weight:900;color:#231b00;
+                   letter-spacing:-0.03em;margin:0 0 0.75rem;">
+          Become a Member
+        </h3>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;
+                  color:#574500;margin:0 0 1.5rem;">
+          Start your journey into our community today.
+        </p>
+        <a href="register.html"
+           style="display:inline-block;background:#00236f;color:#ffffff;
+                  padding:0.75rem 2rem;border-radius:9999px;
+                  font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:800;
+                  letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;
+                  transition:background 0.2s,transform 0.2s;"
+           onmouseover="this.style.background='#1e3a8a';this.style.transform='translateY(-2px)';"
+           onmouseout="this.style.background='#00236f';this.style.transform='translateY(0)';">
+          Get Started
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     ABOUT SECTION
+════════════════════════════════════ -->
+<section id="about" style="background:#f9f9f9; padding:6rem 1.5rem;">
+  <div style="max-width:1280px; margin:0 auto;
+              display:grid;grid-template-columns:1fr;gap:4rem;align-items:center;">
+
+    <!-- Images (stacked) -->
+    <div class="img-stack reveal" style="position:relative;display:flex;justify-content:center;">
+      <div style="position:relative;width:75%;max-width:380px;">
+        <div style="border-radius:1.25rem;overflow:hidden;box-shadow:0 32px 64px rgba(0,35,111,0.16);aspect-ratio:3/4;">
+          <img style="width:100%;height:100%;object-fit:cover;"
+               src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80"
+               alt="Church community" loading="lazy"/>
+        </div>
+        <!-- floating accent card -->
+        <div style="position:absolute;bottom:-2rem;right:-2rem;
+                    width:60%;border-radius:1rem;overflow:hidden;
+                    border:5px solid #ffffff;
+                    box-shadow:0 16px 40px rgba(0,35,111,0.18);aspect-ratio:1/1;">
+          <img style="width:100%;height:100%;object-fit:cover;"
+               src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
+               alt="Bible study" loading="lazy"/>
+        </div>
+        <!-- gold accent dot -->
+        <div style="position:absolute;top:-1rem;left:-1rem;
+                    width:3rem;height:3rem;border-radius:9999px;
+                    background:linear-gradient(135deg,#fed01b,#f5bc00);
+                    box-shadow:0 8px 24px rgba(254,208,27,0.4);"></div>
+      </div>
+    </div>
+
+    <!-- Text Content -->
+    <div class="reveal reveal-delay-2" style="padding-top:2rem;">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#735c00;display:block;margin-bottom:1rem;">
+        Our Presence
+      </span>
+      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(1.8rem,4vw,2.75rem);font-weight:900;
+                 letter-spacing:-0.03em;color:#00236f;line-height:1.1;margin:0 0 1rem;">
+        A Sanctuary For<br/>Every Soul
+      </h2>
+      <span class="gold-line" style="margin-bottom:1.75rem;display:block;"></span>
+
+      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;
+                color:#444651;font-style:italic;line-height:1.75;
+                border-left:3px solid #fed01b;padding-left:1.25rem;margin:0 0 1.5rem;">
+        "We don't just build buildings; we cultivate spaces where the human spirit finds room to breathe and the heart finds reason to hope."
+      </p>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:500;
+                color:#444651;line-height:1.75;margin:0 0 2.5rem;">
+        Through every ministry, every fellowship gathering, and every note played in our sanctuary, we are writing a story of connection. Our community is united by a common call to love and serve.
+      </p>
+
+      <a href="register.html"
+         style="display:inline-flex;align-items:center;gap:0.5rem;
+                background:#00236f;color:#ffffff;
+                padding:1rem 2rem;border-radius:9999px;
+                font-family:'Plus Jakarta Sans',sans-serif;
+                font-size:0.78rem;font-weight:800;
+                letter-spacing:0.1em;text-transform:uppercase;
+                text-decoration:none;
+                transition:background 0.2s,transform 0.2s;"
+         onmouseover="this.style.background='#1e3a8a';this.style.transform='translateY(-2px)';"
+         onmouseout="this.style.background='#00236f';this.style.transform='translateY(0)';">
+        Join Our Community
+        <span class="material-symbols-outlined" style="font-size:1rem;">arrow_forward</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     CTA SECTION
+════════════════════════════════════ -->
+<section style="background:#00236f; padding:6rem 1.5rem;">
+  <div style="max-width:1000px; margin:0 auto;">
+    <div class="cta-card reveal">
+      <!-- Decorative church icon -->
+      <div style="position:absolute;top:2rem;right:2rem;opacity:0.06;pointer-events:none;">
+        <span class="material-symbols-outlined" style="font-size:8rem;color:#00236f;font-variation-settings:'FILL' 1;">church</span>
+      </div>
+
+      <div style="position:relative;z-index:1;text-align:center;">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;
+                    background:rgba(0,35,111,0.08);border-radius:9999px;
+                    padding:0.4rem 1.1rem;margin-bottom:1.5rem;">
+          <span class="material-symbols-outlined" style="font-size:1rem;color:#00236f;font-variation-settings:'FILL' 1;">favorite</span>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                       letter-spacing:0.15em;text-transform:uppercase;color:#00236f;">
+            Join The Family
+          </span>
+        </div>
+
+        <h2 style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
+                   letter-spacing:-0.03em;color:#00236f;margin:0 0 1rem;line-height:1.1;">
+          Join Our Community
+        </h2>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:500;
+                  color:#444651;max-width:480px;margin:0 auto 2.5rem;line-height:1.7;">
+          Create your free member account and access sermons, events, announcements, and stay connected with BLB Church.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;">
+          <a href="register.html"
+             style="display:inline-flex;align-items:center;gap:0.5rem;
+                    background:#00236f;color:#ffffff;
+                    padding:1rem 2.25rem;border-radius:9999px;
+                    font-family:'Plus Jakarta Sans',sans-serif;
+                    font-size:0.8rem;font-weight:800;
+                    letter-spacing:0.1em;text-transform:uppercase;
+                    text-decoration:none;
+                    transition:background 0.2s,transform 0.2s;"
+             onmouseover="this.style.background='#1e3a8a';this.style.transform='translateY(-2px)';"
+             onmouseout="this.style.background='#00236f';this.style.transform='translateY(0)';">
+            Create Account
+            <span class="material-symbols-outlined" style="font-size:1rem;">person_add</span>
+          </a>
+          <a href="login.html"
+             style="display:inline-flex;align-items:center;gap:0.5rem;
+                    background:transparent;color:#00236f;
+                    border:2px solid #00236f;
+                    padding:1rem 2.25rem;border-radius:9999px;
+                    font-family:'Plus Jakarta Sans',sans-serif;
+                    font-size:0.8rem;font-weight:800;
+                    letter-spacing:0.1em;text-transform:uppercase;
+                    text-decoration:none;
+                    transition:background 0.2s,color 0.2s,transform 0.2s;"
+             onmouseover="this.style.background='#00236f';this.style.color='#ffffff';this.style.transform='translateY(-2px)';"
+             onmouseout="this.style.background='transparent';this.style.color='#00236f';this.style.transform='translateY(0)';">
+            Sign In
+            <span class="material-symbols-outlined" style="font-size:1rem;">login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     FOOTER
+════════════════════════════════════ -->
+<footer id="contact" style="background:#f3f3f4; padding:5rem 1.5rem 3rem;">
+  <div style="max-width:1280px; margin:0 auto;">
+    <div style="display:grid;grid-template-columns:1fr;gap:3rem;">
+
+      <!-- Brand -->
+      <div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;">
+          <div style="width:2.25rem;height:2.25rem;background:#00236f;border-radius:0.625rem;
+                      display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="color:#fed01b;font-size:1.1rem;font-variation-settings:'FILL' 1;">church</span>
+          </div>
+          <span style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:900;
+                       letter-spacing:-0.02em;color:#00236f;">BLB Church</span>
+        </div>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:500;
+                  color:#444651;line-height:1.65;max-width:280px;">
+          The Digital Sanctuary — Faith, fellowship, and community in Dar es Salaam, Tanzania.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#735c00;margin:0 0 1.5rem;">
+          Quick Links
+        </h4>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.875rem;">
+          <li><a class="footer-link" href="#about">Our Story</a></li>
+          <li><a class="footer-link" href="#services">Service Times</a></li>
+          <li><a class="footer-link" href="login.html">Member Portal</a></li>
+          <li><a class="footer-link" href="register.html">Join Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#735c00;margin:0 0 1.5rem;">
+          Visit Us
+        </h4>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div style="display:flex;align-items:flex-start;gap:0.875rem;">
+            <span class="material-symbols-outlined" style="color:#00236f;font-size:1.2rem;margin-top:1px;flex-shrink:0;">location_on</span>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:500;color:#444651;">
+              <strong style="color:#00236f;display:block;margin-bottom:0.2rem;">BLB Church HQ</strong>
+              Dar es Salaam, Tanzania
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.875rem;">
+            <span class="material-symbols-outlined" style="color:#00236f;font-size:1.2rem;flex-shrink:0;">mail</span>
+            <a href="mailto:bondelabalaka@gmail.com"
+               style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:600;
+                      color:#00236f;text-decoration:none;">
+              bondelabalaka@gmail.com
             </a>
           </div>
         </div>
-
-        <!-- Quick Stat -->
-        <div class="md:col-span-5 bg-surface-container-high p-8 flex flex-col justify-between rounded-xl">
-          <div>
-            <div class="flex justify-between items-start mb-6">
-              <span class="bg-primary text-white p-3 rounded-lg"><span class="material-symbols-outlined">diversity_3</span></span>
-              <div class="text-right">
-                <div class="text-2xl font-black text-primary font-headline" id="upcoming-event-date">EVERY WEEK</div>
-                <div class="text-xs font-bold text-secondary uppercase tracking-widest">Community</div>
-              </div>
-            </div>
-            <h3 class="text-2xl font-bold text-primary mb-2 font-headline">Fellowship & Growth</h3>
-            <p class="text-on-surface-variant font-medium text-sm leading-relaxed">Join our community for Bible study, prayer groups, and youth programs throughout the week.</p>
-          </div>
-          <a href="login.html" class="mt-8 text-primary font-label text-xs font-black uppercase border-b-2 border-primary/10 w-fit hover:border-secondary transition-colors">View Events</a>
-        </div>
-
-        <!-- CTA -->
-        <div class="md:col-span-5 bg-secondary-fixed p-8 flex flex-col justify-center items-center text-center rounded-xl">
-          <h3 class="text-3xl font-black text-primary mb-4 tracking-tight font-headline">Become a Member</h3>
-          <p class="text-on-secondary-fixed-variant font-bold mb-6">Start your journey into our community today.</p>
-          <a href="register.html" class="bg-primary text-white px-8 py-3 rounded-full font-label font-black text-xs uppercase tracking-widest transition-all hover:bg-primary-container">Get Started</a>
-        </div>
       </div>
+
     </div>
-  </section>
 
-  <!-- About Section -->
-  <section id="about" class="py-24 md:py-32 bg-white">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
-        <div class="relative">
-          <div class="relative z-10 w-[85%] aspect-[3/4] overflow-hidden rounded-xl editorial-shadow">
-            <img class="w-full h-full object-cover" alt="Church community" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCPBauNdwhynmlznJz66BoJZU3V6AFzAuRMCpwR1547Ci7D470_v02dZoqtECypu2wA39CUfE7S5UgJ8Yedwv0D6MWqLn7sptupSOXgocIUk_BxKBzesTS5QGQ0stM8t6iYvhSdTAWCEhvsRfy8R0zxnVbzqZ-9YfhiIWRAjN9hQZdETmcYZ6w0sPllWvPDLRoDYjJApl4bSxFBU2n-fipmJevaQ4zhe-QoPWJnxIodC1qW_LZfCQlzD9_8dZpVrH6M465ajuixUrG"/>
-          </div>
-          <div class="absolute -bottom-8 md:-bottom-12 -right-4 w-[60%] aspect-square z-20 overflow-hidden rounded-xl border-8 border-white editorial-shadow">
-            <img class="w-full h-full object-cover" alt="Bible study" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTqod3M39k3IGVDmI1RsWRiQmo7cuDi3EUr8XKEqoW1DwQP25sUEiFgx2yYygZsUU5OecDRoUUrjKJ74DLlAdt3cMIqcpAY-i0OinjtXh4xG9Og-yDk2N_UTxrBPMRyvgnJVqgbT8jgnIagAowP-cVjj-RnyzKiH0jO4wTkHBP73V1x0yXI9GbROr71o-uhbnx5PMe8iJSBJfNEKHTB-lfPY4bKwuVBfbv4DD0KdSXAMpZ_v95lFQFd4RAL_AVdMv0vcIinJjaFJ_s"/>
-          </div>
-        </div>
-        <div class="space-y-8">
-          <span class="text-secondary font-label text-xs font-black uppercase tracking-widest">Our Presence</span>
-          <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tighter leading-tight font-headline">A Sanctuary <br/>For Every Soul</h2>
-          <p class="text-on-surface-variant text-lg font-medium leading-relaxed italic">
-            "We don't just build buildings; we cultivate spaces where the human spirit finds room to breathe and the heart finds reason to hope."
-          </p>
-          <p class="text-on-surface-variant font-medium leading-relaxed">
-            Through every ministry, every fellowship gathering, and every note played in our sanctuary, we are writing a story of connection. Our community is united by a common call to love and serve.
-          </p>
-          <div class="flex items-center gap-12 pt-8">
-            <div class="text-center">
-              <div class="text-4xl font-black text-primary font-headline" id="stat-members">–</div>
-              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Members</div>
-            </div>
-            <div class="text-center">
-              <div class="text-4xl font-black text-primary font-headline" id="stat-departments">–</div>
-              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Ministries</div>
-            </div>
-            <div class="text-center">
-              <div class="text-4xl font-black text-primary font-headline">100%</div>
-              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Welcome</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="py-24 px-6 md:px-12 bg-primary">
-    <div class="max-w-5xl mx-auto bg-surface-container-lowest p-12 md:p-20 rounded-3xl relative overflow-hidden flex flex-col items-center text-center">
-      <div class="absolute top-0 right-0 p-8 opacity-10">
-        <span class="material-symbols-outlined text-9xl text-primary">church</span>
-      </div>
-      <h2 class="text-4xl md:text-5xl font-bold text-primary mb-6 font-headline">Join Our Community</h2>
-      <p class="text-on-surface-variant text-lg font-medium max-w-xl mb-10 leading-relaxed">
-        Create your free member account and access sermons, events, announcements, and stay connected with BLB Church.
+    <!-- Divider + bottom bar -->
+    <div style="margin-top:3.5rem;padding-top:2rem;border-top:1px solid rgba(197,197,211,0.4);
+                display:flex;flex-direction:column;gap:0.75rem;align-items:center;text-align:center;">
+      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:700;
+                letter-spacing:0.15em;text-transform:uppercase;color:#757682;margin:0;">
+        &copy; 2026 BLB Church. All rights reserved.
       </p>
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a href="register.html" class="bg-primary text-white px-10 py-4 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:bg-primary-container transition-all">
-          Create Account
-        </a>
-        <a href="login.html" class="border-2 border-primary text-primary px-10 py-4 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
-          Sign In
-        </a>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- Footer -->
-<footer id="contact" class="bg-surface-container-high py-20 px-6 md:px-12">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-16">
-      <div class="md:col-span-1">
-        <div class="flex items-center gap-2 mb-6">
-          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span class="material-symbols-outlined text-secondary-container text-base" style="font-variation-settings: 'FILL' 1;">church</span>
-          </div>
-          <span class="text-xl font-black tracking-tighter text-primary font-headline">BLB Church</span>
-        </div>
-        <p class="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
-          The Digital Sanctuary — Faith, fellowship, and community.
-        </p>
-      </div>
-      <div>
-        <h4 class="font-label text-xs font-black uppercase tracking-[0.2em] text-secondary mb-8">Quick Links</h4>
-        <ul class="space-y-4">
-          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="#about">Our Story</a></li>
-          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="#services">Services</a></li>
-          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="login.html">Member Portal</a></li>
-          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="register.html">Join Us</a></li>
-        </ul>
-      </div>
-      <div class="md:col-span-2">
-        <h4 class="font-label text-xs font-black uppercase tracking-[0.2em] text-secondary mb-8">Visit Us</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <div class="flex items-start gap-4 mb-4">
-              <span class="material-symbols-outlined text-primary mt-1">location_on</span>
-              <div class="text-sm font-medium text-on-surface-variant">
-                <p class="font-bold text-primary mb-1">BLB Church HQ</p>
-                <p>Dar es Salaam, Tanzania</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 mb-4">
-              <span class="material-symbols-outlined text-primary">call</span>
-              <p class="text-sm font-bold text-primary">Contact us via portal</p>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="material-symbols-outlined text-primary">mail</span>
-              <p class="text-sm font-bold text-primary">bondelabalaka@gmail.com</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="mt-20 pt-10 border-t border-outline-variant/15 flex flex-col md:flex-row justify-between items-center gap-6">
-      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">&copy; 2026 BLB Church. All rights reserved.</p>
-      <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">The Digital Sanctuary</p>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
+                letter-spacing:0.2em;text-transform:uppercase;color:#c5c5d3;margin:0;">
+        The Digital Sanctuary
+      </p>
     </div>
   </div>
 </footer>
 
-<!-- Supabase CDN (for dynamic stats) -->
+
+<!-- ════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../assets/js/supabase-client.js"></script>
 
 <script>
-  // Load dynamic stats
-  (async () => {
-    try {
-      const { count: memberCount } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
+/* ─────────────────────────────────────
+   1. WEBGL PLASMA SHADER BACKGROUND
+───────────────────────────────────── */
+(function initShader() {
+  const canvas = document.getElementById('hero-canvas');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) { canvas.style.display = 'none'; return; }
 
-      const { count: deptCount } = await supabase
-        .from('departments')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true);
+  const VS = `
+    attribute vec4 aPos;
+    void main() { gl_Position = aPos; }
+  `;
 
-      if (memberCount !== null) document.getElementById('stat-members').textContent = memberCount + '+';
-      if (deptCount !== null) document.getElementById('stat-departments').textContent = deptCount;
-    } catch (e) {
-      // Stats are non-critical, fail silently
+  const FS = `
+    precision highp float;
+    uniform vec2 iResolution;
+    uniform float iTime;
+
+    const float overallSpeed     = 0.18;
+    const float gridSmoothWidth  = 0.015;
+    const float axisWidth        = 0.05;
+    const float majorLineWidth   = 0.025;
+    const float minorLineWidth   = 0.0125;
+    const float majorLineFreq    = 5.0;
+    const float minorLineFreq    = 1.0;
+    const float scale            = 5.0;
+    const float minLineWidth     = 0.01;
+    const float maxLineWidth     = 0.18;
+    const float lineSpeed        = 1.0 * overallSpeed;
+    const float lineAmplitude    = 1.0;
+    const float lineFrequency    = 0.2;
+    const float warpSpeed        = 0.2 * overallSpeed;
+    const float warpFrequency    = 0.5;
+    const float warpAmplitude    = 1.0;
+    const float offsetFrequency  = 0.5;
+    const float offsetSpeed      = 1.33 * overallSpeed;
+    const float minOffsetSpread  = 0.6;
+    const float maxOffsetSpread  = 2.0;
+    const int   linesPerGroup    = 14;
+
+    /* BLB Church gold line color */
+    const vec4 lineColor = vec4(1.0, 0.82, 0.1, 1.0);
+
+    #define drawSmoothLine(pos,hw,t)  smoothstep(hw,0.0,abs(pos-(t)))
+    #define drawCrispLine(pos,hw,t)   smoothstep(hw+gridSmoothWidth,hw,abs(pos-(t)))
+    #define drawCircle(pos,r,coord)   smoothstep(r+gridSmoothWidth,r,length(coord-(pos)))
+
+    float random(float t){
+      return (cos(t)+cos(t*1.3+1.3)+cos(t*1.4+1.4))/3.0;
+    }
+    float getPlasmaY(float x, float hFade, float offset){
+      return random(x*lineFrequency+iTime*lineSpeed)*hFade*lineAmplitude+offset;
     }
 
-    // If user is logged in, change Login button to Dashboard
+    void main(){
+      vec2 uv   = gl_FragCoord.xy / iResolution.xy;
+      vec2 space = (gl_FragCoord.xy - iResolution.xy*0.5) / iResolution.x * 2.0 * scale;
+
+      float hFade = 1.0-(cos(uv.x*6.2832)*0.5+0.5);
+      float vFade = 1.0-(cos(uv.y*6.2832)*0.5+0.5);
+
+      space.y += random(space.x*warpFrequency+iTime*warpSpeed)*warpAmplitude*(0.5+hFade);
+      space.x += random(space.y*warpFrequency+iTime*warpSpeed+2.0)*warpAmplitude*hFade;
+
+      /* Deep navy blue BLB brand colours */
+      vec4 bgColor1 = vec4(0.0,  0.088, 0.275, 1.0);
+      vec4 bgColor2 = vec4(0.047,0.170, 0.412, 1.0);
+
+      vec4 lines = vec4(0.0);
+      for(int l=0;l<linesPerGroup;l++){
+        float nIdx = float(l)/float(linesPerGroup);
+        float offT = iTime*offsetSpeed;
+        float offP = float(l)+space.x*offsetFrequency;
+        float rand = random(offP+offT)*0.5+0.5;
+        float hw   = mix(minLineWidth,maxLineWidth,rand*hFade)*0.5;
+        float off  = random(offP+offT*(1.0+nIdx))*mix(minOffsetSpread,maxOffsetSpread,hFade);
+        float lp   = getPlasmaY(space.x,hFade,off);
+        float line = drawSmoothLine(lp,hw,space.y)/2.0
+                   + drawCrispLine(lp,hw*0.15,space.y);
+        float cx   = mod(float(l)+iTime*lineSpeed,25.0)-12.0;
+        vec2  cpos = vec2(cx,getPlasmaY(cx,hFade,off));
+        line      += drawCircle(cpos,0.01,space)*4.0;
+        lines     += line*lineColor*rand;
+      }
+
+      vec4 col = mix(bgColor1,bgColor2,uv.x);
+      col      *= vFade;
+      col.a     = 1.0;
+      col      += lines;
+      gl_FragColor = col;
+    }
+  `;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { gl.deleteShader(s); return null; }
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('Shader link failed'); return; }
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+  const posLoc = gl.getAttribLocation(prog, 'aPos');
+  const resLoc = gl.getUniformLocation(prog, 'iResolution');
+  const timLoc = gl.getUniformLocation(prog, 'iTime');
+
+  function resize() {
+    const h = document.getElementById('hero');
+    canvas.width  = h.offsetWidth;
+    canvas.height = h.offsetHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const t0 = Date.now();
+  function render() {
+    const t = (Date.now() - t0) / 1000;
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(prog);
+    gl.uniform2f(resLoc, canvas.width, canvas.height);
+    gl.uniform1f(timLoc, t);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(posLoc);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+
+
+/* ─────────────────────────────────────
+   2. NAVBAR SCROLL BEHAVIOUR
+───────────────────────────────────── */
+(function initNav() {
+  const nav = document.getElementById('main-nav');
+  function onScroll() {
+    if (window.scrollY > 30) {
+      nav.classList.remove('at-top');
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+      nav.classList.add('at-top');
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+
+/* ─────────────────────────────────────
+   3. MOBILE MENU
+───────────────────────────────────── */
+const hamburgerBtn = document.getElementById('hamburger-btn');
+const mobileMenu   = document.getElementById('mobile-menu');
+
+hamburgerBtn.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  hamburgerBtn.classList.toggle('open', open);
+});
+
+function closeMobileMenu() {
+  mobileMenu.classList.remove('open');
+  hamburgerBtn.classList.remove('open');
+}
+document.addEventListener('click', (e) => {
+  if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+    closeMobileMenu();
+  }
+});
+
+
+/* ─────────────────────────────────────
+   4. SCROLL-REVEAL INTERSECTION OBSERVER
+───────────────────────────────────── */
+(function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const io  = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+  /* Immediately reveal hero elements */
+  document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+})();
+
+
+/* ─────────────────────────────────────
+   5. RESPONSIVE BENTO GRID (md breakpoint)
+───────────────────────────────────── */
+(function initBento() {
+  const featured = document.getElementById('bento-featured-wrap');
+  const cards    = featured ? featured.parentElement.querySelectorAll('[style*="grid-column:span 12"]') : [];
+
+  function applyBento() {
+    if (window.innerWidth >= 768 && cards.length >= 3) {
+      cards[0].style.gridColumn = 'span 7';
+      cards[0].style.gridRow    = 'span 2';
+      cards[1].style.gridColumn = 'span 5';
+      cards[2].style.gridColumn = 'span 5';
+    } else if (cards.length >= 3) {
+      cards[0].style.gridColumn = 'span 12';
+      cards[0].style.gridRow    = '';
+      cards[1].style.gridColumn = 'span 12';
+      cards[2].style.gridColumn = 'span 12';
+    }
+  }
+  window.addEventListener('resize', applyBento);
+  applyBento();
+})();
+
+
+/* ─────────────────────────────────────
+   6. RESPONSIVE ABOUT GRID
+───────────────────────────────────── */
+(function initAboutGrid() {
+  const section = document.getElementById('about');
+  const inner   = section ? section.querySelector('[style*="display:grid"]') : null;
+  if (!inner) return;
+  function applyGrid() {
+    if (window.innerWidth >= 768) {
+      inner.style.gridTemplateColumns = '1fr 1fr';
+    } else {
+      inner.style.gridTemplateColumns = '1fr';
+    }
+  }
+  window.addEventListener('resize', applyGrid);
+  applyGrid();
+})();
+
+
+/* ─────────────────────────────────────
+   7. FOOTER RESPONSIVE GRID
+───────────────────────────────────── */
+(function initFooterGrid() {
+  const grid = document.querySelector('footer [style*="display:grid"]');
+  if (!grid) return;
+  function applyGrid() {
+    grid.style.gridTemplateColumns = window.innerWidth >= 768 ? '2fr 1fr 2fr' : '1fr';
+  }
+  window.addEventListener('resize', applyGrid);
+  applyGrid();
+})();
+
+
+/* ─────────────────────────────────────
+   8. DYNAMIC STATS + AUTH CHECK
+───────────────────────────────────── */
+(async () => {
+  try {
+    const [{ count: memberCount }, { count: deptCount }] = await Promise.all([
+      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('departments').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    ]);
+    if (memberCount !== null) {
+      document.getElementById('stat-members').textContent = memberCount + '+';
+    }
+    if (deptCount !== null) {
+      document.getElementById('stat-departments').textContent = deptCount;
+    }
+  } catch (_) { /* non-critical */ }
+
+  /* If already logged in, swap Login → Dashboard */
+  try {
     const session = await getSession();
     if (session) {
-      const loginBtn = document.getElementById('nav-login-btn');
-      loginBtn.textContent = 'Dashboard';
-      loginBtn.href = '#';
-      loginBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const profile = await getUserProfile();
-        if (profile) {
-          const rolePaths = {
-            'super_admin': '/super-admin/dashboard.html',
-            'admin': '/admin/dashboard.html',
-            'member': '/member/dashboard.html'
-          };
-          window.location.href = rolePaths[profile.role] || '/member/dashboard.html';
-        }
+      ['nav-login-btn', 'mobile-login-btn'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = 'Dashboard';
+        el.href = '#';
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const profile = await getUserProfile();
+          if (profile) {
+            const paths = {
+              super_admin: '/super-admin/dashboard.html',
+              admin:       '/admin/dashboard.html',
+              member:      '/member/dashboard.html',
+            };
+            window.location.href = paths[profile.role] || '/member/dashboard.html';
+          }
+        });
       });
     }
-  })();
+  } catch (_) { /* non-critical */ }
+})();
 </script>
+
 </body>
 </html>

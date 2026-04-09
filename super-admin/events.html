@@ -48,7 +48,12 @@
             "body":     ["Plus Jakarta Sans"],
             "label":    ["Plus Jakarta Sans"]
           },
-          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
         },
       },
     }
@@ -81,10 +86,18 @@
       animation: shimmer 1.4s infinite;
       border-radius: 12px;
     }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
 
-    .event-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .event-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+    .event-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,35,111,0.08);
+    }
   </style>
 </head>
 
@@ -160,7 +173,7 @@
     <div>
       <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
       <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">All Events</h2>
-      <p class="text-on-surface-variant">Every event across all departments and church-wide.</p>
+      <p class="text-on-surface-variant">Every event across all departments and church-wide activities.</p>
     </div>
     <div class="flex items-center gap-4">
       <button id="btn-create"
@@ -191,24 +204,35 @@
   <!-- Stats -->
   <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
     <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">event_upcoming</span></div>
+      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-primary">event_upcoming</span>
+      </div>
       <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Events</p>
       <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
+
     <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-green-700">event_available</span></div>
+      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-green-700">event_available</span>
+      </div>
       <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Upcoming</p>
       <h3 id="stat-upcoming" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
+
     <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-yellow-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-secondary">today</span></div>
+      <div class="p-3 bg-yellow-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-secondary">today</span>
+      </div>
       <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">This Month</p>
       <h3 id="stat-month" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
+
     <div class="bg-surface-container-lowest p-6 rounded-xl">
-      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-purple-700">apartment</span></div>
-      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Departments</p>
-      <h3 id="stat-depts" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4">
+        <span class="material-symbols-outlined text-purple-700">category</span>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Categories</p>
+      <h3 id="stat-cats" class="font-headline font-extrabold text-3xl text-primary">—</h3>
     </div>
   </section>
 
@@ -216,16 +240,14 @@
   <div class="flex flex-wrap gap-4 mb-8">
     <div class="relative flex-1 min-w-[240px]">
       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-      <input id="search-input" type="text" placeholder="Search title, location, category…"
+      <input id="search-input" type="text" placeholder="Search title, location, description..."
         class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
     </div>
+
     <select id="category-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
       <option value="">All Categories</option>
-      <option value="general">General</option>
-      <option value="department">Department</option>
-      <option value="special">Special</option>
-      <option value="conference">Conference</option>
     </select>
+
     <select id="time-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
       <option value="">All Time</option>
       <option value="upcoming">Upcoming</option>
@@ -269,38 +291,111 @@
   const profile = await initPageGuard();
   if (!profile) return;
 
+  document.querySelector('[data-user-name]').textContent = profile.full_name || 'Super Admin';
   document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  if (profile.avatar_url) {
+    const img = document.createElement('img');
+    img.src = profile.avatar_url;
+    img.className = 'w-full h-full object-cover';
+    img.alt = profile.full_name || 'Super Admin';
+    const avatarEl = document.getElementById('header-avatar');
+    avatarEl.innerHTML = '';
+    avatarEl.appendChild(img);
+  }
 
   const PAGE_SIZE = 12;
   let allEvents = [];
   let currentPage = 1;
 
   async function loadEvents() {
-    // Super admin: fetch ALL events church-wide — no department restriction
     const { data, error } = await supabase
       .from('events')
-      .select('id, title, description, start_date, end_date, location, category, created_by')
-      .order('start_date', { ascending: false });
+      .select('*')
+      .order('created_at', { ascending: false });
 
-    if (error) { Toast.error('Failed to load events.'); return; }
-    allEvents = data || [];
+    if (error) {
+      console.error('Events load error:', error);
+      Toast.error('Failed to load events.');
+      return;
+    }
+
+    allEvents = (data || []).map(normalizeEvent);
+    populateCategoryFilter();
     renderStats();
     renderCards();
   }
 
+  function normalizeEvent(row) {
+    const startDateRaw =
+      row.start_date ||
+      row.event_date ||
+      row.start_at ||
+      row.starts_at ||
+      row.date ||
+      row.created_at ||
+      null;
+
+    const endDateRaw =
+      row.end_date ||
+      row.end_at ||
+      row.ends_at ||
+      row.start_date ||
+      row.event_date ||
+      row.date ||
+      null;
+
+    return {
+      id: row.id,
+      title: row.title || row.name || row.event_title || 'Untitled Event',
+      description: row.description || row.details || row.notes || '',
+      location: row.location || row.venue || row.place || '',
+      category: row.category || row.type || 'general',
+      start_date: startDateRaw,
+      end_date: endDateRaw,
+      created_at: row.created_at || startDateRaw,
+      raw: row
+    };
+  }
+
+  function populateCategoryFilter() {
+    const cats = [...new Set(allEvents.map(e => e.category).filter(Boolean))].sort();
+    const sel = document.getElementById('category-filter');
+    sel.innerHTML = '<option value="">All Categories</option>';
+
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = capitalizeWords(c);
+      sel.appendChild(opt);
+    });
+  }
+
+  function parseDateSafe(value) {
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
   function renderStats() {
     const now = new Date();
-    const upcoming = allEvents.filter(e => new Date(e.start_date) > now).length;
-    const thisMonth = allEvents.filter(e => {
-      const d = new Date(e.start_date);
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+
+    const upcoming = allEvents.filter(e => {
+      const start = parseDateSafe(e.start_date);
+      return start && start > now;
     }).length;
+
+    const thisMonth = allEvents.filter(e => {
+      const d = parseDateSafe(e.start_date);
+      return d && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length;
+
     const cats = new Set(allEvents.map(e => e.category).filter(Boolean)).size;
 
-    document.getElementById('stat-total').textContent = allEvents.length;
-    document.getElementById('stat-upcoming').textContent = upcoming;
-    document.getElementById('stat-month').textContent = thisMonth;
-    document.getElementById('stat-depts').textContent = cats;
+    document.getElementById('stat-total').textContent = allEvents.length.toLocaleString();
+    document.getElementById('stat-upcoming').textContent = upcoming.toLocaleString();
+    document.getElementById('stat-month').textContent = thisMonth.toLocaleString();
+    document.getElementById('stat-cats').textContent = cats.toLocaleString();
 
     document.getElementById('stats-skeleton').classList.add('hidden');
     document.getElementById('stats-content').classList.remove('hidden');
@@ -311,32 +406,45 @@
     const q = document.getElementById('search-input').value.trim().toLowerCase();
     const cat = document.getElementById('category-filter').value;
     const time = document.getElementById('time-filter').value;
+
     return allEvents.filter(e => {
-      const searchOk = !q || [e.title, e.location, e.category, e.description].join(' ').toLowerCase().includes(q);
+      const joined = [e.title, e.location, e.category, e.description].join(' ').toLowerCase();
+      const searchOk = !q || joined.includes(q);
       const catOk = !cat || e.category === cat;
+
       let timeOk = true;
-      if (time === 'upcoming') timeOk = new Date(e.start_date) > now;
-      else if (time === 'past') timeOk = new Date(e.start_date) <= now;
-      else if (time === 'this_month') {
-        const d = new Date(e.start_date);
-        timeOk = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      const start = parseDateSafe(e.start_date);
+
+      if (time === 'upcoming') {
+        timeOk = start ? start > now : false;
+      } else if (time === 'past') {
+        timeOk = start ? start <= now : false;
+      } else if (time === 'this_month') {
+        timeOk = start
+          ? start.getFullYear() === now.getFullYear() && start.getMonth() === now.getMonth()
+          : false;
       }
+
       return searchOk && catOk && timeOk;
     });
   }
 
-  const CAT_COLORS = {
-    general:    'bg-blue-50 text-blue-700',
-    department: 'bg-purple-50 text-purple-700',
-    special:    'bg-amber-50 text-amber-700',
-    conference: 'bg-green-50 text-green-700',
-  };
+  function badgeClass(category) {
+    const c = String(category || '').toLowerCase();
+    if (c.includes('general')) return 'bg-blue-50 text-blue-700';
+    if (c.includes('department')) return 'bg-purple-50 text-purple-700';
+    if (c.includes('special')) return 'bg-amber-50 text-amber-700';
+    if (c.includes('conference')) return 'bg-green-50 text-green-700';
+    if (c.includes('youth')) return 'bg-cyan-50 text-cyan-700';
+    return 'bg-slate-100 text-slate-600';
+  }
 
   function renderCards() {
     const filtered = getFiltered();
     const now = new Date();
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = 1;
+
     const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     document.getElementById('cards-skeleton').classList.add('hidden');
@@ -349,23 +457,54 @@
     } else {
       empty.classList.add('hidden');
       grid.classList.remove('hidden');
+
       grid.innerHTML = slice.map(e => {
-        const isPast = new Date(e.end_date || e.start_date) < now;
+        const start = parseDateSafe(e.start_date);
+        const end = parseDateSafe(e.end_date) || start;
+        const isPast = end ? end < now : false;
+
         return `
-        <div class="event-card bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4">
-          <div class="flex items-start justify-between gap-2">
-            <span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${CAT_COLORS[e.category] || 'bg-slate-100 text-slate-600'}">${escapeHtml(e.category || 'general')}</span>
-            ${isPast ? '<span class="text-xs font-bold text-slate-400">Past</span>' : '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mt-1"></span>'}
+          <div class="event-card bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4">
+            <div class="flex items-start justify-between gap-2">
+              <span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${badgeClass(e.category)}">
+                ${escapeHtml(capitalizeWords(e.category || 'general'))}
+              </span>
+              ${isPast
+                ? '<span class="text-xs font-bold text-slate-400">Past</span>'
+                : '<span class="inline-block w-2.5 h-2.5 rounded-full bg-green-500 mt-1"></span>'}
+            </div>
+
+            <div>
+              <h3 class="font-headline font-bold text-lg text-primary leading-tight mb-1">
+                ${escapeHtml(e.title)}
+              </h3>
+              <p class="text-sm text-on-surface-variant line-clamp-2">
+                ${escapeHtml(e.description || 'No description provided.')}
+              </p>
+            </div>
+
+            <div class="flex flex-col gap-2 text-xs text-on-surface-variant mt-auto">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">calendar_today</span>
+                ${start ? formatDate(start) : 'No date'}
+              </span>
+              ${e.location ? `
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm">location_on</span>
+                  ${escapeHtml(e.location)}
+                </span>
+              ` : ''}
+            </div>
+
+            <div class="pt-3 border-t border-surface-container-low flex gap-2">
+              <button onclick="viewEvent('${e.id}')" class="flex-1 rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">
+                View
+              </button>
+              <button onclick="deleteEvent('${e.id}')" class="flex-1 rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-error hover:bg-red-100 transition-colors">
+                Delete
+              </button>
+            </div>
           </div>
-          <div>
-            <h3 class="font-headline font-bold text-lg text-primary leading-tight mb-1">${escapeHtml(e.title)}</h3>
-            <p class="text-sm text-on-surface-variant line-clamp-2">${escapeHtml(e.description || '')}</p>
-          </div>
-          <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-auto">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>${formatDate(e.start_date)}</span>
-            ${e.location ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span>${escapeHtml(e.location)}</span>` : ''}
-          </div>
-        </div>
         `;
       }).join('');
     }
@@ -378,27 +517,191 @@
     const container = document.getElementById('pagination-controls');
     container.innerHTML = '';
     if (totalPages <= 1) return;
+
     for (let i = 1; i <= totalPages; i++) {
       const btn = document.createElement('button');
       btn.textContent = i;
       btn.className = i === currentPage
         ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
         : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
-      btn.addEventListener('click', () => { currentPage = i; renderCards(); });
+
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderCards();
+      });
+
       container.appendChild(btn);
     }
   }
 
-  document.getElementById('btn-create').addEventListener('click', () => Toast.info('Event creation coming soon.'));
+  async function openCreateEventModal() {
+    const { close } = Modal.show({
+      title: 'Create Event',
+      size: 'md',
+      content: `
+        <form id="event-form" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Title *</label>
+            <input id="event-title" type="text" required maxlength="160"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+              placeholder="Enter event title"/>
+          </div>
 
-  const debouncedRender = debounce(() => { currentPage = 1; renderCards(); }, 300);
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Description</label>
+            <textarea id="event-description" rows="3"
+              class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary resize-none"
+              placeholder="Write event details..."></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Start Date *</label>
+              <input id="event-start-date" type="datetime-local" required
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">End Date</label>
+              <input id="event-end-date" type="datetime-local"
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Location</label>
+              <input id="event-location" type="text" maxlength="160"
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                placeholder="Main Hall, Church Ground..."/>
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Category</label>
+              <select id="event-category"
+                class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+                <option value="general">General</option>
+                <option value="department">Department</option>
+                <option value="special">Special</option>
+                <option value="conference">Conference</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-2">
+            <button type="button" id="event-cancel"
+              class="flex-1 py-3 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+              Cancel
+            </button>
+            <button type="submit"
+              class="flex-1 py-3 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+              Create Event
+            </button>
+          </div>
+        </form>
+      `
+    });
+
+    document.getElementById('event-cancel').addEventListener('click', close);
+
+    document.getElementById('event-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('event-title').value.trim();
+      const description = document.getElementById('event-description').value.trim();
+      const startDate = document.getElementById('event-start-date').value;
+      const endDate = document.getElementById('event-end-date').value;
+      const location = document.getElementById('event-location').value.trim();
+      const category = document.getElementById('event-category').value;
+
+      if (!title || !startDate) {
+        Toast.warning('Please fill all required fields.');
+        return;
+      }
+
+      Loader.show('Creating event...');
+
+      const payload = {
+        title,
+        description: description || null,
+        start_date: startDate || null,
+        end_date: endDate || null,
+        location: location || null,
+        category: category || 'general',
+        created_by: profile.id || null
+      };
+
+      const { error } = await supabase
+        .from('events')
+        .insert([payload]);
+
+      Loader.hide();
+
+      if (error) {
+        console.error('Create event error:', error);
+        Toast.error('Failed to create event.');
+        return;
+      }
+
+      close();
+      Toast.success('Event created successfully.');
+      await loadEvents();
+    });
+  }
+
+  window.viewEvent = (id) => {
+    Toast.info('Event detail view coming soon.');
+  };
+
+  window.deleteEvent = async (id) => {
+    Modal.confirm('Are you sure you want to delete this event? This cannot be undone.', async () => {
+      Loader.show('Deleting event...');
+
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', id);
+
+      Loader.hide();
+
+      if (error) {
+        console.error('Delete event error:', error);
+        Toast.error('Failed to delete event.');
+        return;
+      }
+
+      Toast.success('Event deleted.');
+      await loadEvents();
+    });
+  };
+
+  document.getElementById('btn-create').addEventListener('click', openCreateEventModal);
+
+  const debouncedRender = debounce(() => {
+    currentPage = 1;
+    renderCards();
+  }, 300);
+
   document.getElementById('search-input').addEventListener('input', debouncedRender);
-  ['category-filter', 'time-filter'].forEach(id =>
-    document.getElementById(id).addEventListener('change', () => { currentPage = 1; renderCards(); })
-  );
+  ['category-filter', 'time-filter'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      currentPage = 1;
+      renderCards();
+    });
+  });
 
   await loadEvents();
 })();
+
+function parseDateSafe(value) {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function capitalizeWords(value) {
+  return String(value || '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, ch => ch.toUpperCase());
+}
 </script>
 </body>
 </html>
