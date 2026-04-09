@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Member Profile - The Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&amp;family=Plus_Jakarta_Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed-variant": "#264191",
+              "secondary-fixed-dim": "#eec200",
+              "secondary-container": "#fed01b",
+              "tertiary": "#4b1c00",
+              "primary-fixed-dim": "#b6c4ff",
+              "on-secondary": "#ffffff",
+              "surface-tint": "#4059aa",
+              "secondary-fixed": "#ffe083",
+              "inverse-surface": "#2f3131",
+              "tertiary-fixed-dim": "#ffb691",
+              "on-surface-variant": "#444651",
+              "error": "#ba1a1a",
+              "on-tertiary-fixed-variant": "#773205",
+              "tertiary-fixed": "#ffdbcb",
+              "surface-container-lowest": "#ffffff",
+              "on-surface": "#1a1c1c",
+              "inverse-primary": "#b6c4ff",
+              "surface-dim": "#dadada",
+              "surface-container": "#eeeeee",
+              "on-tertiary-fixed": "#341100",
+              "primary-fixed": "#dce1ff",
+              "surface-container-low": "#f3f3f4",
+              "outline": "#757682",
+              "surface": "#f9f9f9",
+              "on-secondary-fixed-variant": "#574500",
+              "on-primary-container": "#90a8ff",
+              "on-secondary-container": "#6f5900",
+              "on-background": "#1a1c1c",
+              "primary-container": "#1e3a8a",
+              "inverse-on-surface": "#f0f1f1",
+              "outline-variant": "#c5c5d3",
+              "on-tertiary": "#ffffff",
+              "surface-bright": "#f9f9f9",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed": "#231b00",
+              "on-error-container": "#93000a",
+              "on-tertiary-container": "#f39461",
+              "secondary": "#735c00",
+              "surface-container-high": "#e8e8e8",
+              "background": "#f9f9f9",
+              "tertiary-container": "#6e2c00",
+              "surface-variant": "#e2e2e2",
+              "on-error": "#ffffff",
+              "surface-container-highest": "#e2e2e2",
+              "error-container": "#ffdad6",
+              "primary": "#00236f",
+              "on-primary-fixed": "#00164e"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r-0 bg-slate-100 flex flex-col py-8 z-40">
+<div class="px-6 mb-12">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">church</span>
+</div>
+<div>
+<h1 class="font-black text-blue-900 text-sm tracking-widest uppercase">Reverent Editorial</h1>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Admin Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-10 py-3 transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Members (Active) -->
+<a class="flex items-center gap-4 bg-white text-blue-900 font-bold rounded-l-full ml-4 pl-6 shadow-sm py-3 transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span>Members</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-10 py-3 transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">church</span>
+<span>Ministries</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-10 py-3 transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Giving</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-10 py-3 transition-all duration-300 ease-in-out font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span>Events</span>
+</a>
+</nav>
+<div class="mt-auto px-6 space-y-4">
+<button class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-sm tracking-widest uppercase shadow-sm active:scale-95 transition-all">
+                New Record
+            </button>
+<div class="pt-6 space-y-2">
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-4 py-2 text-xs uppercase font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-lg">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 hover:text-blue-900 px-4 py-2 text-xs uppercase font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="fixed top-0 right-0 left-64 z-30 bg-slate-50/80 backdrop-blur-xl shadow-sm px-8 py-3 flex justify-between items-center font-['Plus_Jakarta_Sans'] tracking-tight">
+<div class="flex items-center gap-6">
+<h2 class="text-xl font-bold tracking-tighter text-blue-900">The Sanctuary</h2>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-200/20 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-900/10 w-64" placeholder="Search congregation..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-blue-900 hover:bg-slate-200/50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-blue-900 hover:bg-slate-200/50 rounded-full transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3">
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full bg-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFHYmllpc61l4ZAJH3iC_aKVcoe0CBHTzJp-R-1OqPDjeO5Xl3xyNFdsO7XhlH33ovGS2wggpXUB1MufOUFwELparPWASl2n0D5N5i861nn2yorxOL0pkPHq7qkpsokrQtR5dxG1wUWuA_M6gHK3RbFU4i44LJnhaKGpiL3nTBHE9QHmc3r3vRJ0AGGD3w6bR8l2x3Vhwnhl-3ecDPJQ3c7Vyu8uLs8YJYd0CEUAO-TFqbpuOIHoJikUXldb5n17a1yEm9rYrUBWoO"/>
+<span class="text-sm font-bold text-blue-900">Admin</span>
+</div>
+</div>
+</header>
+<div class="mt-20 px-12 py-12 space-y-12 max-w-7xl mx-auto">
+<!-- Profile Header Section (Editorial Hero) -->
+<section class="relative">
+<div class="flex flex-col md:flex-row items-end gap-8 bg-gradient-to-br from-primary to-primary-container p-12 rounded-[2rem] shadow-xl overflow-hidden text-white">
+<!-- Decor Overlay -->
+<div class="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+<svg class="w-full h-full fill-current" viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M44.7,-76.4C58.1,-69.2,70,-58.5,78.2,-45.5C86.4,-32.5,90.9,-16.2,89.5,-0.8C88.1,14.6,80.8,29.1,71.1,41.9C61.4,54.7,49.2,65.8,35.4,72.4C21.6,79.1,6.2,81.4,-9.4,79.5C-25,77.6,-40.8,71.5,-53.8,61.8C-66.8,52.2,-77.1,38.9,-81.9,24C-86.7,9.1,-86, -7.5,-80.6,-22.4C-75.2,-37.2,-65.2,-50.2,-52.7,-57.8C-40.2,-65.5,-25.2,-67.7,-10.8,-74.4C3.7,-81.1,18.1,-92.3,32.7,-91.1C47.2,-89.9,61.8,-76.3,44.7,-76.4Z" transform="translate(100 100)"></path>
+</svg>
+</div>
+<div class="relative shrink-0">
+<div class="w-40 h-40 rounded-[2.5rem] border-4 border-secondary-fixed/30 overflow-hidden shadow-2xl">
+<img alt="Sarah Montgomery Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a woman with warm smile, golden lighting, natural studio background, professional and approachable" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfhchoPqxxQtwes3lDpgKWgSB0Q4lIU4YlOcvobntp6ozFB7yk8q52FvEiS-t9xnXefQkILiYAd0YjiVCJtkVyQrBW7WKO6wRVGi9nKQRAjXqfxwMOYJBDa1e3Lb3JKEvYWOrdnbvVxsSJpnhWKsFuG0i51KONtfUwCGLfIU8O6iZVsL_brdfGlE7NDCv_UHPxyT_Gsd_Z3JPLiw-1ZCw2-BliGPKuQyXfchXVyPlFp9gnH4Bnh9YMS3QXRwjf4cAtarnmMX7eqnG4"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                            Active
+                        </div>
+</div>
+<div class="flex-1 space-y-4">
+<div class="space-y-1">
+<p class="text-secondary-fixed font-label text-xs uppercase tracking-[0.2em] font-bold">Steward Since Jan 2018</p>
+<h1 class="text-5xl font-['Inter'] font-extrabold tracking-tighter leading-tight">Sarah Montgomery</h1>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="bg-secondary-fixed text-on-secondary-fixed px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-lg">
+<span class="material-symbols-outlined text-lg">edit</span>
+                                Edit Profile
+                            </button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-white/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg">mail</span>
+                                Contact
+                            </button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 hover:bg-white/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg">badge</span>
+                                Print ID
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Bento Grid -->
+<div class="grid grid-cols-12 gap-12">
+<!-- Left Column (Personal & Ministries) -->
+<div class="col-span-12 lg:col-span-7 space-y-12">
+<!-- Personal Information -->
+<div class="bg-surface-container-lowest p-10 rounded-[2.5rem] shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-['Inter'] font-bold text-blue-900 tracking-tight">Personal Details</h3>
+<span class="material-symbols-outlined text-slate-300">account_circle</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+<div class="space-y-1">
+<p class="text-[10px] font-label text-slate-400 uppercase tracking-widest font-bold">Email Address</p>
+<p class="font-semibold text-on-surface">sarah.m@sanctuary.org</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-label text-slate-400 uppercase tracking-widest font-bold">Phone Number</p>
+<p class="font-semibold text-on-surface">+1 (555) 012-3456</p>
+</div>
+<div class="space-y-1 md:col-span-2">
+<p class="text-[10px] font-label text-slate-400 uppercase tracking-widest font-bold">Residential Address</p>
+<p class="font-semibold text-on-surface leading-relaxed">742 Evergreen Terrace, Springfield, IL 62704</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-label text-slate-400 uppercase tracking-widest font-bold">Date of Birth</p>
+<p class="font-semibold text-on-surface">March 14, 1985</p>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] font-label text-slate-400 uppercase tracking-widest font-bold">Marital Status</p>
+<p class="font-semibold text-on-surface">Married</p>
+</div>
+</div>
+</div>
+<!-- Ministry Involvement -->
+<div class="bg-surface-container-low p-10 rounded-[2.5rem]">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-2xl font-['Inter'] font-bold text-blue-900 tracking-tight">Ministry Involvement</h3>
+<span class="material-symbols-outlined text-slate-400">volunteer_activism</span>
+</div>
+<div class="flex flex-wrap gap-4">
+<div class="bg-surface-container-lowest px-6 py-4 rounded-2xl flex items-center gap-4 shadow-sm group hover:bg-primary-container transition-colors duration-300">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-white/60">Department</p>
+<p class="font-bold text-blue-900 group-hover:text-white">Youth Fellowship</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-6 py-4 rounded-2xl flex items-center gap-4 shadow-sm group hover:bg-primary-container transition-colors duration-300">
+<div class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">music_note</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-white/60">Team</p>
+<p class="font-bold text-blue-900 group-hover:text-white">Worship Team</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest px-6 py-4 rounded-2xl flex items-center gap-4 shadow-sm group hover:bg-primary-container transition-colors duration-300">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-400 uppercase tracking-widest group-hover:text-white/60">Role</p>
+<p class="font-bold text-blue-900 group-hover:text-white">Sunday School Teacher</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Stewardship Detailed Table -->
+<div class="bg-surface-container-lowest rounded-[2.5rem] shadow-sm overflow-hidden">
+<div class="p-10 border-b border-outline-variant/10">
+<h3 class="text-2xl font-['Inter'] font-bold text-blue-900 tracking-tight">Recent Stewardship History</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-slate-500 uppercase text-[10px] font-black tracking-widest">
+<tr>
+<th class="px-10 py-5">Date</th>
+<th class="px-10 py-5">Purpose</th>
+<th class="px-10 py-5">Method</th>
+<th class="px-10 py-5 text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-10 py-6 text-sm font-semibold">Oct 24, 2023</td>
+<td class="px-10 py-6">
+<span class="px-3 py-1 bg-secondary-container/20 text-on-secondary-container rounded-full text-xs font-bold">Tithe</span>
+</td>
+<td class="px-10 py-6 text-sm text-slate-500">Digital Transfer</td>
+<td class="px-10 py-6 text-right font-bold text-blue-900">$1,200.00</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-10 py-6 text-sm font-semibold">Oct 17, 2023</td>
+<td class="px-10 py-6">
+<span class="px-3 py-1 bg-blue-100 text-blue-900 rounded-full text-xs font-bold">Offering</span>
+</td>
+<td class="px-10 py-6 text-sm text-slate-500">Card Payment</td>
+<td class="px-10 py-6 text-right font-bold text-blue-900">$150.00</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-10 py-6 text-sm font-semibold">Oct 10, 2023</td>
+<td class="px-10 py-6">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-xs font-bold">Building Fund</span>
+</td>
+<td class="px-10 py-6 text-sm text-slate-500">Digital Transfer</td>
+<td class="px-10 py-6 text-right font-bold text-blue-900">$500.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column (Stewardship Summary & Recent Activity) -->
+<div class="col-span-12 lg:col-span-5 space-y-12">
+<!-- Stewardship Summary Card -->
+<div class="bg-primary text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-secondary-fixed opacity-10 rounded-full blur-3xl"></div>
+<div class="relative z-10 space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary-fixed">account_balance_wallet</span>
+</div>
+<h3 class="text-xl font-bold tracking-tight">Total Contributions</h3>
+</div>
+<div class="space-y-1">
+<p class="text-4xl font-extrabold font-['Inter'] tracking-tighter">$42,850.20</p>
+<p class="text-white/60 text-xs font-medium uppercase tracking-widest">Lifetime Impact</p>
+</div>
+<div class="pt-4 flex gap-4">
+<div class="bg-white/5 p-4 rounded-2xl flex-1 border border-white/10">
+<p class="text-[10px] font-bold text-secondary-fixed uppercase mb-1">YTD 2023</p>
+<p class="text-lg font-bold">$8,400</p>
+</div>
+<div class="bg-white/5 p-4 rounded-2xl flex-1 border border-white/10">
+<p class="text-[10px] font-bold text-secondary-fixed uppercase mb-1">Frequency</p>
+<p class="text-lg font-bold">Weekly</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Timeline -->
+<div class="bg-surface-container-lowest p-10 rounded-[2.5rem] shadow-sm">
+<div class="flex items-center justify-between mb-10">
+<h3 class="text-2xl font-['Inter'] font-bold text-blue-900 tracking-tight">Recent Activity</h3>
+<button class="text-primary font-bold text-xs uppercase tracking-widest hover:underline">View All</button>
+</div>
+<div class="space-y-8 relative">
+<!-- Timeline line -->
+<div class="absolute left-6 top-2 bottom-2 w-px bg-slate-100"></div>
+<div class="relative flex gap-6">
+<div class="w-12 h-12 shrink-0 rounded-full bg-blue-50 flex items-center justify-center z-10 border-4 border-white">
+<span class="material-symbols-outlined text-blue-900 text-lg">event_available</span>
+</div>
+<div class="pt-1">
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Today, 10:45 AM</p>
+<h4 class="font-bold text-on-surface">Checked in for 'Morning Glory' Prayer</h4>
+<p class="text-sm text-slate-500 leading-relaxed mt-1">Sarah attended the midweek morning prayer session at the main sanctuary.</p>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="w-12 h-12 shrink-0 rounded-full bg-amber-50 flex items-center justify-center z-10 border-4 border-white">
+<span class="material-symbols-outlined text-amber-600 text-lg">edit_note</span>
+</div>
+<div class="pt-1">
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Oct 24, 2023</p>
+<h4 class="font-bold text-on-surface">Updated Profile Details</h4>
+<p class="text-sm text-slate-500 leading-relaxed mt-1">Residential address updated by Admin (System).</p>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="w-12 h-12 shrink-0 rounded-full bg-green-50 flex items-center justify-center z-10 border-4 border-white">
+<span class="material-symbols-outlined text-green-600 text-lg">celebration</span>
+</div>
+<div class="pt-1">
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Oct 20, 2023</p>
+<h4 class="font-bold text-on-surface">5 Year Membership Anniversary</h4>
+<p class="text-sm text-slate-500 leading-relaxed mt-1">System generated celebration for faithful membership milestone.</p>
+</div>
+</div>
+<div class="relative flex gap-6">
+<div class="w-12 h-12 shrink-0 rounded-full bg-slate-100 flex items-center justify-center z-10 border-4 border-white">
+<span class="material-symbols-outlined text-slate-600 text-lg">volunteer_activism</span>
+</div>
+<div class="pt-1">
+<p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Oct 15, 2023</p>
+<h4 class="font-bold text-on-surface">Joined Youth Fellowship</h4>
+<p class="text-sm text-slate-500 leading-relaxed mt-1">Confirmed as a mentor for the teen department.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sermon Glass Player (Church Specific Component) -->
+<div class="fixed bottom-8 right-8 left-72">
+<div class="bg-surface-container-lowest/70 backdrop-blur-3xl border border-white/20 p-6 rounded-[2rem] shadow-2xl flex items-center gap-8 ring-1 ring-black/[0.03]">
+<div class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary-fixed text-3xl">play_circle</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Recent Sermon Recap</p>
+<h5 class="text-sm font-bold text-blue-900">Faith in the Wilderness: Stewardship Series</h5>
+<div class="mt-2 w-full bg-slate-200 h-1 rounded-full overflow-hidden">
+<div class="bg-primary w-1/3 h-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4">
+<button class="material-symbols-outlined text-slate-400 hover:text-blue-900 transition-colors">skip_previous</button>
+<button class="material-symbols-outlined text-primary text-3xl">play_arrow</button>
+<button class="material-symbols-outlined text-slate-400 hover:text-blue-900 transition-colors">skip_next</button>
+</div>
+<button class="material-symbols-outlined text-slate-400 hover:text-error transition-colors px-4">close</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>

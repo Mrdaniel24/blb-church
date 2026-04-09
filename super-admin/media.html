@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>All Media | Super Admin — BLB Church</title>
+  <meta name="description" content="BLB Church Super Admin — Manage all media content across every department."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "secondary-fixed-dim":       "#eec200",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-bright":            "#f9f9f9",
+            "surface-dim":               "#dadada",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant":           "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b; font-weight: 600; font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex; align-items: center; gap: 1rem;
+      margin-left: 1rem; padding: 0.75rem 1.5rem;
+      background: #ffffff; color: #00236f; font-weight: 600; font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .media-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .media-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+
+    .table-row { transition: background 0.15s; }
+    .table-row:hover { background: rgba(243,243,244,0.6); }
+  </style>
+</head>
+
+<body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <div class="px-10 mb-10">
+    <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Super Admin</p>
+  </div>
+
+  <nav class="flex-1">
+    <p class="px-10 pt-2 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">System</p>
+    <a href="./dashboard.html" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>System Overview</span>
+    </a>
+    <a href="./admins.html" class="nav-item">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Manage Admins</span>
+    </a>
+    <a href="./roles.html" class="nav-item">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span>Roles &amp; Permissions</span>
+    </a>
+    <a href="./settings.html" class="nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+
+    <p class="px-10 pt-5 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Church Data</p>
+    <a href="./departments.html" class="nav-item">
+      <span class="material-symbols-outlined">apartment</span>
+      <span>All Departments</span>
+    </a>
+    <a href="./members.html" class="nav-item">
+      <span class="material-symbols-outlined">group</span>
+      <span>All Members</span>
+    </a>
+    <a href="./contributions.html" class="nav-item">
+      <span class="material-symbols-outlined">payments</span>
+      <span>All Contributions</span>
+    </a>
+    <a href="./events.html" class="nav-item">
+      <span class="material-symbols-outlined">event</span>
+      <span>All Events</span>
+    </a>
+    <a href="./media.html" class="nav-item-active">
+      <span class="material-symbols-outlined">subscriptions</span>
+      <span>All Media</span>
+    </a>
+    <a href="./reports.html" class="nav-item">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span>Full Reports</span>
+    </a>
+  </nav>
+
+  <div class="mt-auto px-6 space-y-1">
+    <button data-action="logout"
+      class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="ml-72 min-h-screen p-12">
+
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-12">
+    <div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
+      <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">All Media</h2>
+      <p class="text-on-surface-variant">All media content from every department — sermons, documents, images, and more.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="btn-upload"
+        class="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-container transition-colors">
+        <span class="material-symbols-outlined text-sm">upload</span>
+        Upload Media
+      </button>
+      <div class="text-right">
+        <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+        <p class="text-xs text-on-surface-variant">Super Admin</p>
+      </div>
+      <div class="h-14 w-14 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+        <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+          <span class="text-white font-bold text-lg" id="header-initials">?</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Skeleton -->
+  <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+  </div>
+
+  <!-- Stats -->
+  <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">perm_media</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Items</p>
+      <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-green-700">public</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Public</p>
+      <h3 id="stat-public" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-amber-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-amber-700">lock</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Private</p>
+      <h3 id="stat-private" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-purple-700">category</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Categories</p>
+      <h3 id="stat-cats" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-4 mb-8">
+    <div class="relative flex-1 min-w-[240px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+      <input id="search-input" type="text" placeholder="Search title, category…"
+        class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
+    </div>
+    <select id="category-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
+      <option value="">All Categories</option>
+    </select>
+    <select id="department-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
+  <option value="">All Departments</option>
+</select>
+    <select id="visibility-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
+      <option value="">All Visibility</option>
+      <option value="true">Public</option>
+      <option value="false">Private</option>
+    </select>
+  </div>
+
+  <!-- Table Skeleton -->
+  <div id="table-skeleton" class="space-y-3">
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+  </div>
+
+  <!-- Table -->
+  <div id="table-content" class="bg-surface-container-lowest rounded-xl overflow-hidden hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-surface-container-low">
+        <tr class="text-left text-xs uppercase tracking-widest text-on-surface-variant">
+          <th class="px-6 py-4">Title</th>
+          <th class="px-6 py-4">Category</th>
+          <th class="px-6 py-4">Visibility</th>
+          <th class="px-6 py-4">Department</th>
+          <th class="px-6 py-4">Uploaded</th>
+          <th class="px-6 py-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="media-tbody"></tbody>
+    </table>
+    <div id="empty-state" class="hidden py-16 text-center">
+      <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">subscriptions</span>
+      <p class="font-bold text-primary">No media found</p>
+      <p class="text-sm text-on-surface-variant mt-1">Try adjusting your filters or upload new content.</p>
+    </div>
+  </div>
+
+  <div class="mt-8 flex items-center justify-between">
+    <p class="text-sm text-on-surface-variant" id="pagination-info">Showing — items</p>
+    <div class="flex gap-2" id="pagination-controls"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+<script>
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  document.querySelector('[data-user-name]').textContent = profile.full_name || 'Super Admin';
+  document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  if (profile.avatar_url) {
+    const img = document.createElement('img');
+    img.src = profile.avatar_url;
+    img.className = 'w-full h-full object-cover';
+    img.alt = profile.full_name || 'Super Admin';
+    const avatarEl = document.getElementById('header-avatar');
+    avatarEl.innerHTML = '';
+    avatarEl.appendChild(img);
+  }
+
+  const PAGE_SIZE = 20;
+  let allMedia = [];
+  let currentPage = 1;
+  let departments = [];
+  let departmentMap = {};
+
+  async function loadDepartments() {
+    const { data, error } = await supabase
+      .from('departments')
+      .select('id, name')
+      .order('name');
+
+    if (error) {
+      console.error(error);
+      Toast.error('Failed to load departments.');
+      return;
+    }
+
+    departments = data || [];
+    departmentMap = Object.fromEntries(departments.map(d => [String(d.id), d.name]));
+
+    const sel = document.getElementById('department-filter');
+    if (sel) {
+      sel.innerHTML = '<option value="">All Departments</option>';
+      departments.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.name;
+        sel.appendChild(opt);
+      });
+    }
+  }
+
+  async function loadMedia() {
+    const { data, error } = await supabase
+      .from('media_items')
+      .select('id, title, file_url, file_path, category, is_public, department_id, uploaded_by, created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      Toast.error('Failed to load media.');
+      return;
+    }
+
+    allMedia = data || [];
+    populateCategoryFilter();
+    renderStats();
+    renderTable();
+  }
+
+  function populateCategoryFilter() {
+    const cats = [...new Set(allMedia.map(m => m.category).filter(Boolean))].sort();
+    const sel = document.getElementById('category-filter');
+    sel.innerHTML = '<option value="">All Categories</option>';
+
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+
+  function renderStats() {
+    const pub = allMedia.filter(m => m.is_public).length;
+    const priv = allMedia.filter(m => !m.is_public).length;
+    const cats = new Set(allMedia.map(m => m.category).filter(Boolean)).size;
+
+    document.getElementById('stat-total').textContent = allMedia.length.toLocaleString();
+    document.getElementById('stat-public').textContent = pub.toLocaleString();
+    document.getElementById('stat-private').textContent = priv.toLocaleString();
+    document.getElementById('stat-cats').textContent = cats.toLocaleString();
+
+    document.getElementById('stats-skeleton').classList.add('hidden');
+    document.getElementById('stats-content').classList.remove('hidden');
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('search-input').value.trim().toLowerCase();
+    const cat = document.getElementById('category-filter').value;
+    const vis = document.getElementById('visibility-filter').value;
+    const deptEl = document.getElementById('department-filter');
+    const dept = deptEl ? deptEl.value : '';
+
+    return allMedia.filter(m => {
+      const deptName = departmentMap[String(m.department_id)] || 'General / Unassigned';
+      const searchOk = !q || [m.title, m.category, deptName].join(' ').toLowerCase().includes(q);
+      const catOk = !cat || m.category === cat;
+      const visOk = vis === '' || String(m.is_public) === vis;
+      const deptOk = !dept || String(m.department_id) === dept;
+      return searchOk && catOk && visOk && deptOk;
+    });
+  }
+
+  function renderTable() {
+    const filtered = getFiltered();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = 1;
+
+    const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    document.getElementById('table-skeleton').classList.add('hidden');
+    document.getElementById('table-content').classList.remove('hidden');
+
+    const tbody = document.getElementById('media-tbody');
+    const empty = document.getElementById('empty-state');
+
+    if (!slice.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      tbody.innerHTML = slice.map(m => {
+        const deptName = departmentMap[String(m.department_id)] || 'General / Unassigned';
+        return `
+          <tr class="table-row border-t border-surface-container-low">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-on-surface-variant text-sm">insert_drive_file</span>
+                </div>
+                <div>
+                  <p class="font-bold text-on-surface">${escapeHtml(m.title || '—')}</p>
+                  <p class="text-xs text-on-surface-variant">${escapeHtml(deptName)}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-surface-container text-on-surface-variant">
+                ${escapeHtml(m.category || '—')}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              ${m.is_public
+                ? '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-green-50 text-green-700">Public</span>'
+                : '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-slate-100 text-slate-500">Private</span>'}
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(m.created_at)}</td>
+            <td class="px-6 py-4 flex gap-2">
+              ${m.file_url ? `<a href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</a>` : ''}
+              <button onclick="deleteMedia('${m.id}', ${m.file_path ? `'${m.file_path}'` : 'null'})" class="rounded-lg bg-red-50 px-3 py-2 text-xs font-bold text-error hover:bg-red-100 transition-colors">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('pagination-info').textContent = `Showing ${slice.length} of ${filtered.length} items`;
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    const container = document.getElementById('pagination-controls');
+    container.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === currentPage
+        ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
+        : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
+
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderTable();
+      });
+
+      container.appendChild(btn);
+    }
+  }
+
+  window.deleteMedia = async (id, filePath = null) => {
+    Modal.confirm('Are you sure you want to delete this media item? This cannot be undone.', async () => {
+      Loader.show('Deleting media...');
+
+      // Futa file storage kama path ipo
+      if (filePath) {
+        const { error: storageError } = await supabase.storage
+          .from('church-media')
+          .remove([filePath]);
+
+        if (storageError) {
+          Loader.hide();
+          Toast.error('Failed to delete media file from storage.');
+          return;
+        }
+      }
+
+      const { error } = await supabase
+        .from('media_items')
+        .delete()
+        .eq('id', id);
+
+      Loader.hide();
+
+      if (error) {
+        Toast.error('Failed to delete media item.');
+        return;
+      }
+
+      Toast.success('Media item deleted.');
+      await loadMedia();
+    });
+  };
+
+  document.getElementById('btn-upload').addEventListener('click', () => {
+    Toast.info('Upload modal not connected yet.');
+  });
+
+  const debouncedRender = debounce(() => {
+    currentPage = 1;
+    renderTable();
+  }, 300);
+
+  document.getElementById('search-input').addEventListener('input', debouncedRender);
+
+  ['category-filter', 'visibility-filter', 'department-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('change', () => {
+        currentPage = 1;
+        renderTable();
+      });
+    }
+  });
+
+  await loadDepartments();
+  await loadMedia();
+})();
+</script>
+</body>
+</html>

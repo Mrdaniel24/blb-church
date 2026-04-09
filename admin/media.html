@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Media | Admin — BLB Church</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#00236f',
+            secondary: '#fed01b',
+            'surface-container-lowest': '#ffffff',
+            'surface-container-low': '#f3f3f4',
+            'surface-container': '#eeeeee',
+            'on-surface': '#1a1c1c',
+            'on-surface-variant': '#444651',
+            error: '#ba1a1a',
+          },
+          fontFamily: { headline: ['Inter'], body: ['Plus Jakarta Sans'] }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .nav-item { display:flex; align-items:center; gap:1rem; padding:0.8rem 2rem; color:#64748b; font-weight:700; border-radius:9999px; margin:0 1rem; transition:.2s; }
+    .nav-item:hover { background:#fff; color:#00236f; transform:translateX(4px); }
+    .nav-item-active { background:#fff; color:#00236f; box-shadow:0 8px 30px rgba(2, 6, 23, .06); }
+    .skeleton { background:linear-gradient(90deg,#e8e8e8 25%,#f3f3f4 50%,#e8e8e8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:12px; }
+    @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+    .table-row { transition: background 0.15s; }
+    .table-row:hover { background: #f8fafc; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+  <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
+    <div class="px-6 mb-10">
+      <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
+      <p class="text-[10px] mt-1 font-bold uppercase tracking-[0.22em] text-slate-400">Admin Portal</p>
+    </div>
+    <div class="space-y-2">
+      <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
+      <a class="nav-item nav-item-active" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+    </div>
+  </aside>
+
+  <main class="ml-72 min-h-screen p-10">
+    <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+      <div>
+        <p id="scope-badge" class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest">Department Scope</p>
+        <h2 class="mt-4 text-4xl font-headline font-extrabold tracking-tight text-primary">Media</h2>
+        <p id="page-subtitle" class="mt-2 text-slate-500">Manage media content for your department.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button id="btn-upload" class="rounded-2xl bg-primary px-5 py-3 font-bold text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">upload</span>
+          Upload Media
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats skeleton -->
+    <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="skeleton h-32"></div>
+      <div class="skeleton h-32"></div>
+      <div class="skeleton h-32"></div>
+    </div>
+
+    <section id="stats-content" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 hidden">
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-blue-50 inline-block mb-4"><span class="material-symbols-outlined text-primary">perm_media</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Total Items</p>
+        <h3 id="stat-total" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-green-50 inline-block mb-4"><span class="material-symbols-outlined text-green-700">public</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Public</p>
+        <h3 id="stat-public" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-amber-50 inline-block mb-4"><span class="material-symbols-outlined text-amber-700">lock</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Private</p>
+        <h3 id="stat-private" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-4 mb-8">
+      <div class="relative flex-1 min-w-[240px]">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+        <input id="search-input" type="text" placeholder="Search title, category…"
+          class="w-full bg-white border border-slate-200 rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-yellow-400 outline-none"/>
+      </div>
+      <select id="visibility-filter" class="bg-white border border-slate-200 rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-yellow-400 font-semibold">
+        <option value="">All Visibility</option>
+        <option value="true">Public</option>
+        <option value="false">Private</option>
+      </select>
+    </div>
+
+    <!-- Table Skeleton -->
+    <div id="table-skeleton" class="space-y-3">
+      <div class="skeleton h-14"></div>
+      <div class="skeleton h-14"></div>
+      <div class="skeleton h-14"></div>
+    </div>
+
+    <!-- Table -->
+    <div id="table-content" class="rounded-3xl bg-white shadow-sm overflow-hidden hidden">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-widest text-slate-400">
+            <th class="px-6 py-4">Title</th>
+            <th class="px-6 py-4">Category</th>
+            <th class="px-6 py-4">Visibility</th>
+            <th class="px-6 py-4">Uploaded</th>
+            <th class="px-6 py-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="media-tbody"></tbody>
+      </table>
+      <div id="empty-state" class="hidden py-16 text-center">
+        <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">subscriptions</span>
+        <p class="font-bold text-primary">No media found</p>
+        <p class="text-sm text-slate-500 mt-1">Upload content for your department to get started.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/router.js"></script>
+  <script>
+  (async () => {
+    const profile = await initPageGuard();
+    if (!profile) return;
+
+    // Admin: media is scoped to items uploaded by members of this department
+    const deptName = profile.departments?.name || 'Your Department';
+    document.getElementById('scope-badge').textContent = `${escapeHtml(deptName)} Scope`;
+    document.getElementById('page-subtitle').textContent = `Manage media content for ${escapeHtml(deptName)}.`;
+
+    let allMedia = [];
+
+    async function loadMedia() {
+      // Fetch media uploaded by users in this admin's department
+      const { data: deptMembers } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('department_id', profile.department_id);
+
+      const memberIds = (deptMembers || []).map(m => m.id);
+      if (!memberIds.length) {
+        renderStats([]);
+        renderTable([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('media_items')
+        .select('id, title, file_url, category, is_public, uploaded_by, created_at')
+        .in('uploaded_by', memberIds)
+        .order('created_at', { ascending: false });
+
+      if (error) { Toast.error('Failed to load media.'); return; }
+      allMedia = data || [];
+      renderStats(allMedia);
+      renderTable(getFiltered());
+    }
+
+    function renderStats(data) {
+      document.getElementById('stat-total').textContent = data.length;
+      document.getElementById('stat-public').textContent = data.filter(m => m.is_public).length;
+      document.getElementById('stat-private').textContent = data.filter(m => !m.is_public).length;
+      document.getElementById('stats-skeleton').classList.add('hidden');
+      document.getElementById('stats-content').classList.remove('hidden');
+    }
+
+    function getFiltered() {
+      const q = document.getElementById('search-input').value.trim().toLowerCase();
+      const vis = document.getElementById('visibility-filter').value;
+      return allMedia.filter(m => {
+        const searchOk = !q || [m.title, m.category].join(' ').toLowerCase().includes(q);
+        const visOk = vis === '' || String(m.is_public) === vis;
+        return searchOk && visOk;
+      });
+    }
+
+    function renderTable(data) {
+      document.getElementById('table-skeleton').classList.add('hidden');
+      document.getElementById('table-content').classList.remove('hidden');
+      const tbody = document.getElementById('media-tbody');
+      const empty = document.getElementById('empty-state');
+
+      if (!data.length) {
+        tbody.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      tbody.innerHTML = data.map(m => `
+        <tr class="table-row border-b border-slate-100">
+          <td class="px-6 py-4 font-bold text-slate-800">${escapeHtml(m.title || '—')}</td>
+          <td class="px-6 py-4 text-slate-500">${escapeHtml(m.category || '—')}</td>
+          <td class="px-6 py-4">
+            ${m.is_public
+              ? '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-green-50 text-green-700">Public</span>'
+              : '<span class="inline-block rounded-full px-3 py-1 text-xs font-bold bg-slate-100 text-slate-500">Private</span>'}
+          </td>
+          <td class="px-6 py-4 text-slate-500 text-xs">${formatDate(m.created_at)}</td>
+          <td class="px-6 py-4 flex gap-2">
+            ${m.file_url ? `<a href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-200 transition-colors">View</a>` : ''}
+            <button onclick="deleteItem('${m.id}')" class="rounded-xl bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100 transition-colors">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.deleteItem = (id) => {
+      Modal.confirm('Delete this media item? This cannot be undone.', async () => {
+        const { error } = await supabase.from('media_items').delete().eq('id', id);
+        if (error) { Toast.error('Failed to delete item.'); return; }
+        Toast.success('Media item deleted.');
+        await loadMedia();
+      });
+    };
+
+    document.getElementById('btn-upload').addEventListener('click', () => Toast.info('Media upload coming soon.'));
+
+    const debouncedRender = debounce(() => renderTable(getFiltered()), 300);
+    document.getElementById('search-input').addEventListener('input', debouncedRender);
+    document.getElementById('visibility-filter').addEventListener('change', () => renderTable(getFiltered()));
+
+    await loadMedia();
+  })();
+  </script>
+</body>
+</html>

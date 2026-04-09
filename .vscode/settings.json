@@ -1,0 +1,10 @@
+{
+  "liveServer.settings.port": 5500,
+  "liveServer.settings.root": "/",
+  "liveServer.settings.file": "public/index.html",
+  "liveServer.settings.wait": 500,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.donotVerifyTags": true,
+  "liveServer.settings.browser": "null",
+  "liveServer.settings.multiRootWorkspaceName": "blb_church"
+}

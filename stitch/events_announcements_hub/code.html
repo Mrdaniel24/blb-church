@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary": "#ffffff",
+            "surface": "#f9f9f9",
+            "surface-variant": "#e2e2e2",
+            "primary": "#00236f",
+            "secondary-fixed": "#ffe083",
+            "inverse-surface": "#2f3131",
+            "primary-container": "#1e3a8a",
+            "on-secondary-fixed": "#231b00",
+            "on-primary-fixed-variant": "#264191",
+            "tertiary-container": "#6e2c00",
+            "surface-container-low": "#f3f3f4",
+            "inverse-primary": "#b6c4ff",
+            "outline-variant": "#c5c5d3",
+            "on-secondary-fixed-variant": "#574500",
+            "tertiary-fixed": "#ffdbcb",
+            "outline": "#757682",
+            "on-error": "#ffffff",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#773205",
+            "surface-container-highest": "#e2e2e2",
+            "on-surface-variant": "#444651",
+            "on-surface": "#1a1c1c",
+            "on-primary-container": "#90a8ff",
+            "on-background": "#1a1c1c",
+            "on-primary": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#e8e8e8",
+            "surface-bright": "#f9f9f9",
+            "on-primary-fixed": "#00164e",
+            "tertiary-fixed-dim": "#ffb691",
+            "background": "#f9f9f9",
+            "primary-fixed-dim": "#b6c4ff",
+            "secondary-container": "#fed01b",
+            "inverse-on-surface": "#f0f1f1",
+            "surface-tint": "#4059aa",
+            "surface-container": "#eeeeee",
+            "on-tertiary-container": "#f39461",
+            "on-secondary-container": "#6f5900",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed": "#dce1ff",
+            "on-secondary": "#ffffff",
+            "tertiary": "#4b1c00",
+            "secondary-fixed-dim": "#eec200",
+            "secondary": "#735c00",
+            "on-tertiary-fixed": "#341100",
+            "surface-dim": "#dadada",
+            "error-container": "#ffdad6"
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Plus Jakarta Sans"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3 { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-950 flex flex-col h-full py-8 gap-4 z-40">
+<div class="px-8 mb-8">
+<h1 class="text-2xl font-black text-blue-900 dark:text-blue-50 tracking-tighter">The Sanctuary</h1>
+<p class="text-[10px] font-medium tracking-widest uppercase text-slate-400 mt-1">Editorial Management</p>
+</div>
+<nav class="flex-1">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center px-8 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-amber-300 transition-all duration-300 ease-in-out font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+            Dashboard
+          </a>
+</li>
+<li>
+<a class="flex items-center px-8 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-amber-300 transition-all duration-300 ease-in-out font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+            Members
+          </a>
+</li>
+<li>
+<a class="flex items-center px-8 py-3 text-blue-900 dark:text-amber-400 border-r-4 border-amber-400 bg-blue-50/50 dark:bg-blue-900/20 font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="event">event</span>
+            Events
+          </a>
+</li>
+<li>
+<a class="flex items-center px-8 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-amber-300 transition-all duration-300 ease-in-out font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="auto_stories">auto_stories</span>
+            Sermons
+          </a>
+</li>
+<li>
+<a class="flex items-center px-8 py-3 text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-amber-300 transition-all duration-300 ease-in-out font-medium text-sm tracking-wide uppercase" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+            Settings
+          </a>
+</li>
+</ul>
+</nav>
+<div class="px-8 mt-auto">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
+<img alt="Church Admin Profile" class="w-10 h-10 rounded-full object-cover" data-alt="close-up portrait of a professional man with a kind expression in a bright modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRlRKWcn7ChhK2wsqdmO929opFH7iaAvQHvy1JVAaPRsi1ZnZ3uEPyt0qvBg5U8M-lLDMgXnIikXBYBXEWH2xoOscd-reW_MB37KzXeuLQWSLb2d9fSGVChXGQQzzw7yCAUwcF13B8kcV5RMSJn0hmmOYqPSTCqhSFqYMYEh543PokskKPkpDjAcGf3xyWFxsN-FhH16liKwQMjwQvB6wCOXnaXOYjpf4U8ufEpyFRpzLBF0f1pKNayW1_CCreKBWRZi4RVmSALLgp"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-primary truncate">Admin User</p>
+<p class="text-[10px] text-slate-500">Editorial Lead</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Stage -->
+<main class="ml-64 min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-white/80 backdrop-blur-md z-30 shadow-sm flex justify-between items-center px-12">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary" placeholder="Search events..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-slate-500 hover:bg-slate-50 p-2 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-24 px-12 pb-20">
+<!-- Editorial Header -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="text-label-md font-bold text-secondary-container bg-primary px-3 py-1 rounded-full uppercase tracking-widest text-[10px] mb-4 inline-block">The Digital Sanctuary</span>
+<h2 class="text-5xl font-extrabold text-primary tracking-tight">Events &amp; Announcements</h2>
+<p class="text-slate-500 mt-4 max-w-xl text-lg leading-relaxed">Gathering as a community to celebrate, learn, and grow together. Explore our upcoming fellowship opportunities and critical updates.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+            New Event
+          </button>
+</div>
+</div>
+<!-- Main Layout Grid -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Left: Filter & Events List -->
+<div class="col-span-12 lg:col-span-8">
+<!-- Filter System -->
+<div class="flex flex-wrap items-center gap-6 mb-10 pb-6 border-b border-outline-variant/15">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest mr-2">Status:</span>
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-sm font-bold">Upcoming</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-slate-500 text-sm font-medium hover:bg-surface-container-high transition-colors">Past Events</button>
+</div>
+<div class="h-6 w-[1px] bg-outline-variant/30 hidden md:block"></div>
+<div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest mr-2">Category:</span>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-xs font-bold text-primary hover:bg-primary hover:text-on-primary transition-all">All</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-xs font-bold text-slate-500 hover:bg-primary hover:text-on-primary transition-all">Youth</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-xs font-bold text-slate-500 hover:bg-primary hover:text-on-primary transition-all">Women</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-xs font-bold text-slate-500 hover:bg-primary hover:text-on-primary transition-all">Outreach</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-xs font-bold text-slate-500 hover:bg-primary hover:text-on-primary transition-all">Worship</button>
+</div>
+</div>
+<!-- Responsive Grid of Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Event Card 1 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="relative h-56 overflow-hidden">
+<img alt="Youth Fellowship Night" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="diverse group of young people laughing and talking around a bonfire at night with warm golden lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQaLPR7i1U98oEwnb2JujeyF7k9J_y27T7K70aY_dH_6fzhGGRLfl4i9DjrjSFcUN46cKCIjPETlx6iN3tFWlX2c49TkYz5Qldjq9v2EaSTlpYAm_2r-XRNKcEn_gGxFpsNiiO4eToWB6vKErVYEbrMWU34TaY2m3e0nA_ZX_2FfZr1E24AEqG87xon6UBijs2tuiJv3ZWajxJ-rzYrwu-DgVg32oqYvsllJhmbnkYDb_TMKkSoVI66IDkP-n5ivIs-5DVvogI0-na"/>
+<div class="absolute top-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest">Youth</div>
+</div>
+<div class="p-6">
+<p class="text-primary font-bold text-xs mb-2">OCT 28, 2023 | 6:00 PM</p>
+<h3 class="text-xl font-bold text-primary mb-3 leading-tight">Youth Fellowship Night</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">A night of worship, meaningful conversation, and community building for our next generation.</p>
+<div class="flex items-center gap-3">
+<button class="flex-1 py-2.5 rounded-lg bg-primary text-on-primary text-xs font-bold transition-transform active:scale-95">Join Event</button>
+<button class="flex-1 py-2.5 rounded-lg border border-outline-variant/30 text-primary text-xs font-bold hover:bg-slate-50 transition-colors">View Details</button>
+</div>
+</div>
+</div>
+<!-- Event Card 2 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="relative h-56 overflow-hidden">
+<img alt="Annual Sunday Picnic" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="sun-drenched public park with families picnicking on bright green grass under large oak trees" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxmaT795bB_WNclZA5PEzFFwf2jQiDnDiIN7E2zKwmP2Pxuq7EF8DlC3uCgdzbrwd4aTUhNdxWgKZBtIatIfFgLf2K01zONE1tyePmLeV8RO-jOdgr9uCMG8OUc37276wv5p5yXkjCUdQTgyYCW32T2qzsTlcpeNgkra8yze2fXbFJ5LQAH08mO-7R8WE9t1HwtI8zE1tpjqqrtlbTqCdx-DLVa1TWDvRPA0JzvMhb9ufI1-TTE4qK_6is5WqLFIdh0Fe8B_cKmR9j"/>
+<div class="absolute top-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest">General Church</div>
+</div>
+<div class="p-6">
+<p class="text-primary font-bold text-xs mb-2">NOV 12, 2023 | 12:30 PM</p>
+<h3 class="text-xl font-bold text-primary mb-3 leading-tight">Annual Sunday Picnic</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Gather the whole family for our yearly community feast at Central Park. Food and drinks provided.</p>
+<div class="flex items-center gap-3">
+<button class="flex-1 py-2.5 rounded-lg bg-primary text-on-primary text-xs font-bold transition-transform active:scale-95">Join Event</button>
+<button class="flex-1 py-2.5 rounded-lg border border-outline-variant/30 text-primary text-xs font-bold hover:bg-slate-50 transition-colors">View Details</button>
+</div>
+</div>
+</div>
+<!-- Event Card 3 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="relative h-56 overflow-hidden">
+<img alt="Women's Prayer Breakfast" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="elegant breakfast table setting with floral arrangements and morning sunlight streaming through a window" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXqgsAVMXPdG5qjXOir7FmqaMaDJq8wjpH9iKPvjyqFSkjTW7MweQfWRwMbofcpgcwmeyYH_5mb5Z1_SjboHGNAjQ1pjZBvjKeDfmJ4mAlF5ju6u5YY-hzovI6kvwKrp7_UeKyCtE3tg7qWsK0uUbUAV-Z2zG_hsAu2JvJ0TpF49mbdiF42Na4vM3h--tvJM2L4DwwuEcSRlkSbotiS4fqwEeBDCwkpgIp3sSAUS8yLvZUf3Q6MhrNSZnSV4u5x1fjXA9R8yIiCPWl"/>
+<div class="absolute top-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest">Women</div>
+</div>
+<div class="p-6">
+<p class="text-primary font-bold text-xs mb-2">NOV 05, 2023 | 8:00 AM</p>
+<h3 class="text-xl font-bold text-primary mb-3 leading-tight">Women's Prayer Breakfast</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Connecting through faith and morning nourishment. Guest speaker: Martha Jenkins.</p>
+<div class="flex items-center gap-3">
+<button class="flex-1 py-2.5 rounded-lg bg-primary text-on-primary text-xs font-bold transition-transform active:scale-95">Join Event</button>
+<button class="flex-1 py-2.5 rounded-lg border border-outline-variant/30 text-primary text-xs font-bold hover:bg-slate-50 transition-colors">View Details</button>
+</div>
+</div>
+</div>
+<!-- Event Card 4 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="relative h-56 overflow-hidden">
+<img alt="Worship Workshop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="close-up of an acoustic guitar and a microphone on a stage with soft purple and blue ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj-tZM8jbuwsrHt-mCMtUT6Mw-Bd0UVp_ClMeZK8UCJVPh-nCVczK5tIax31ZKJ64pupDAS9AiiZk99Wy12YOhRSBswAlCsgO-__QYWALHo_9Vn8FOa3lrZiBadBtU1c7qymrv0wxbj7EPhaJV-jx8jrSbPbekGmZJXbDECQo8Vmt3z1U3oM36ovRmwsXoOcYUzWolLZqiWrpmXSD2ipyUW9CFeGnfrf_0zqBa7gpaFuHkSSvdhH-6ahFakf4xkhwr0yKPY5MhqxVC"/>
+<div class="absolute top-4 left-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest">Worship</div>
+</div>
+<div class="p-6">
+<p class="text-primary font-bold text-xs mb-2">DEC 02, 2023 | 10:00 AM</p>
+<h3 class="text-xl font-bold text-primary mb-3 leading-tight">Worship &amp; Tech Workshop</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Enhancing our Sunday experience through musical excellence and technical precision.</p>
+<div class="flex items-center gap-3">
+<button class="flex-1 py-2.5 rounded-lg bg-primary text-on-primary text-xs font-bold transition-transform active:scale-95">Join Event</button>
+<button class="flex-1 py-2.5 rounded-lg border border-outline-variant/30 text-primary text-xs font-bold hover:bg-slate-50 transition-colors">View Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Announcements Sidebar -->
+<div class="col-span-12 lg:col-span-4">
+<div class="sticky top-24">
+<div class="bg-primary-container text-on-primary p-8 rounded-2xl shadow-lg mb-8 relative overflow-hidden">
+<!-- Decorative element -->
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-secondary/10 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary-fixed text-3xl" data-icon="campaign">campaign</span>
+<h3 class="text-2xl font-bold tracking-tight">Announcements</h3>
+</div>
+<div class="space-y-6 relative z-10">
+<!-- Announcement 1 -->
+<div class="pb-6 border-b border-white/10">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-error text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Urgent</span>
+<span class="text-[10px] text-white/50">2 HOURS AGO</span>
+</div>
+<h4 class="font-bold text-lg mb-1">Venue change for Sunday Service</h4>
+<p class="text-sm text-white/70 leading-relaxed">Due to maintenance, the 10AM service will be held in the Community Hall across the street.</p>
+</div>
+<!-- Announcement 2 -->
+<div class="pb-6 border-b border-white/10">
+<div class="flex justify-between items-start mb-2">
+<span class="bg-secondary text-on-secondary-fixed text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">New</span>
+<span class="text-[10px] text-white/50">YESTERDAY</span>
+</div>
+<h4 class="font-bold text-lg mb-1">New believers class starting</h4>
+<p class="text-sm text-white/70 leading-relaxed">Join us next Wednesday at 7PM for 'Foundations of Faith'. Registration now open in the lobby.</p>
+</div>
+<!-- Announcement 3 -->
+<div>
+<div class="flex justify-between items-start mb-2">
+<span class="bg-blue-400 text-on-primary text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">Update</span>
+<span class="text-[10px] text-white/50">2 DAYS AGO</span>
+</div>
+<h4 class="font-bold text-lg mb-1">Volunteers Needed: Food Drive</h4>
+<p class="text-sm text-white/70 leading-relaxed">We are still looking for 5 more drivers for this Saturday's city-wide food distribution.</p>
+</div>
+</div>
+<button class="w-full mt-8 py-3 rounded-xl bg-white text-primary font-bold text-sm hover:bg-secondary-fixed transition-colors">
+                View All Updates
+              </button>
+</div>
+<!-- Stewardship Highlight -->
+<div class="bg-surface-container-low p-8 rounded-2xl">
+<h4 class="text-primary font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="volunteer_activism">volunteer_activism</span>
+                Community Impact
+              </h4>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">"Stewardship is the act of caring for the gifts we've been given." Your participation strengthens our Digital Sanctuary.</p>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="close-up of a smiling young woman with curly hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXhOwCt0zEXjXx5Qx_JYiX_aIArYg4X9NXM-fAuz7MhYv06Hls7ny3y9rgnCSuBmO3KkmpZ1z4-ezdKyJ4RMvwYhdKQWQVhqL_IFqW9HXInlMghADnpFbBRW6kixN120eWIuUkXSuKRvEvW1HNx7WsPe2L1JCkPHkCmrENv0VUJPf5eBvByxfS1jsSDadZ7Q5e0WsR4R9xrVy3gNwzZV5HGF_qtPP99ewUwB65tJXN7Cxj45bqYMbO0qD4ykavbfIJiev4q-9cFyOu"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="portrait of a bearded man smiling outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgky0CuibsyFOtbwCL-2TDOe2vZUI0RQ9JMgOS2k5kydVDMStqxDEG68Pxb3bFW2Wc1y8rIj2tDiEwg4Wm-_3pUsPDbFY2GMON0_lzFLmeQkypiYqY57ZL98XcniSGnTsuYT6NCYv-hvhJBhnmzVRY6UTj0ke4Xv46K0SojA1-iP_20wRsmu_sk82ApGo26RhPCWcsByShepdf6zCFOpxUNRpqlRcXACj2BfbO-hv1paEBkrn2G1uwrkroC7N-EgsjdzaR6qMLTvM6"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="portrait of a young woman with a thoughtful expression in soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8PaM5ooaTzLmLfg00FG-LGlAnKtzTX2uz1zwzgVK049vhaD5x9lsjxyECVq6WFFSh01T87xdyljwi7nIAUcKy4c8b3HcDsdEK7TFaC3Xgh8kGZYahBvIJ7dWUP-1k0WxZ1NKT6E59kYcbfXOnFK_Wf4gWz0PvMp6Jfnw3tVYMRkZm6Uku0fUB1-wh9YpBH-JoGAXxCc0HUTppjJIwtKpjvgu6FTkiy3K25kErPhVbqeKq0eHrEy_zmLdNdWpFZSDGhKXBKmRhLsPS"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-primary flex items-center justify-center text-[10px] font-bold text-white">+12</div>
+</div>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Organizers</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Sermon Glass Player Floating Anchor (Contextual) -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-50">
+<div class="bg-white/70 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-4 flex items-center gap-4">
+<div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-white" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest leading-none mb-1">Live Now: Morning Devotion</p>
+<h5 class="text-sm font-bold text-primary truncate">Walking in Faith: A Journey through Hebrews</h5>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors" data-icon="skip_previous">skip_previous</span>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors" data-icon="skip_next">skip_next</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="volume_up">volume_up</span>
+</div>
+</div>
+</div>
+</body></html>

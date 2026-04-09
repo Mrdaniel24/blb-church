@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>My Dashboard | BLB Church — The Digital Sanctuary</title>
+  <meta name="description" content="Your personal BLB Church member dashboard.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                    "#00236f",
+            "primary-container":          "#1e3a8a",
+            "primary-fixed-dim":          "#b6c4ff",
+            "on-primary":                 "#ffffff",
+            "on-primary-container":       "#90a8ff",
+            "on-primary-fixed":           "#00164e",
+            "on-primary-fixed-variant":   "#264191",
+            "secondary":                  "#735c00",
+            "secondary-container":        "#fed01b",
+            "secondary-fixed":            "#ffe083",
+            "on-secondary":               "#ffffff",
+            "on-secondary-container":     "#6f5900",
+            "on-secondary-fixed":         "#231b00",
+            "surface":                    "#f9f9f9",
+            "surface-bright":             "#f9f9f9",
+            "surface-dim":                "#dadada",
+            "surface-container-lowest":   "#ffffff",
+            "surface-container-low":      "#f3f3f4",
+            "surface-container":          "#eeeeee",
+            "surface-container-high":     "#e8e8e8",
+            "surface-container-highest":  "#e2e2e2",
+            "surface-variant":            "#e2e2e2",
+            "on-surface":                 "#1a1c1c",
+            "on-surface-variant":         "#444651",
+            "outline":                    "#757682",
+            "outline-variant":            "#c5c5d3",
+            "inverse-surface":            "#2f3131",
+            "inverse-on-surface":         "#f0f1f1",
+            "error":                      "#ba1a1a",
+            "error-container":            "#ffdad6",
+            "on-error":                   "#ffffff",
+            "on-error-container":         "#93000a",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg":      "0.5rem",
+            "xl":      "0.75rem",
+            "full":    "9999px"
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Shared Styles -->
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-header {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    /* Active nav state */
+    .nav-link-active {
+      color: #00236f !important;
+      background-color: rgba(239,246,255,0.5);
+      border-right: 4px solid #fed01b;
+    }
+    /* Contribution row hover */
+    .contribution-row {
+      transition: transform 0.15s ease;
+    }
+    .contribution-row:hover {
+      transform: translateX(4px);
+    }
+    /* Announcement tab active */
+    .tab-active {
+      color: #00236f;
+      border-bottom: 2px solid #fed01b;
+    }
+    .tab-inactive {
+      color: #9ca3af;
+      border-bottom: 2px solid transparent;
+    }
+    /* Quick action button hover */
+    .quick-action-btn {
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .quick-action-btn:hover {
+      transform: translateY(-2px);
+    }
+    /* Skeleton loader */
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    /* Mobile sidebar overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,35,111,0.3);
+      backdrop-filter: blur(4px);
+      z-index: 40;
+    }
+    .sidebar-overlay.open {
+      display: block;
+    }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface" data-required-role="member" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ============================================================
+     SIDEBAR
+============================================================ -->
+<aside id="sidebar" class="h-screen w-72 fixed left-0 top-0 bg-surface-container-lowest flex flex-col py-8 z-50
+  -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-sm">
+
+  <!-- Brand -->
+  <div class="px-8 mb-10">
+    <a href="../public/index.html" class="block">
+      <h1 class="text-xl font-black text-primary tracking-tighter">BLB Church</h1>
+      <p class="text-[10px] uppercase tracking-[0.2em] text-outline font-bold mt-1">Member Portal</p>
+    </a>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-grow overflow-y-auto">
+    <p class="px-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Main Menu</p>
+    <ul class="space-y-0.5">
+      <li>
+        <a href="dashboard.html" class="nav-link nav-link-active flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">dashboard</span>
+          <span class="text-sm font-semibold tracking-wide">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="contributions.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">payments</span>
+          <span class="text-sm font-semibold tracking-wide">My Giving</span>
+        </a>
+      </li>
+      <li>
+        <a href="announcements.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">campaign</span>
+          <span class="text-sm font-semibold tracking-wide">Announcements</span>
+        </a>
+      </li>
+      <li>
+        <a href="events.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">calendar_today</span>
+          <span class="text-sm font-semibold tracking-wide">Events</span>
+        </a>
+      </li>
+      <li>
+        <a href="sermons.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">auto_stories</span>
+          <span class="text-sm font-semibold tracking-wide">Sermons</span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="px-8 mt-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Account</p>
+    <ul class="space-y-0.5">
+      <li>
+        <a href="profile.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">manage_accounts</span>
+          <span class="text-sm font-semibold tracking-wide">My Profile</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Bottom Actions -->
+  <div class="px-8 mt-auto pt-6 border-t border-outline-variant/20 space-y-1">
+    <a href="#" data-action="logout"
+      class="flex items-center px-4 py-3 text-slate-500 hover:text-error hover:bg-error-container/30 rounded-lg transition-all duration-200">
+      <span class="material-symbols-outlined mr-4 text-xl">logout</span>
+      <span class="text-sm font-semibold tracking-wide">Sign Out</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<main class="md:ml-72 min-h-screen pb-32">
+
+  <!-- Top Header Bar -->
+  <header class="w-full sticky top-0 z-30 bg-white/80 glass-header flex justify-between items-center px-6 md:px-8 h-18 shadow-sm border-b border-outline-variant/10">
+    <div class="flex items-center gap-4">
+      <!-- Mobile menu toggle -->
+      <button onclick="openSidebar()" class="md:hidden text-slate-600 hover:text-primary transition-colors p-2">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div>
+        <p class="text-[10px] text-outline uppercase tracking-widest font-bold hidden md:block">Welcome back</p>
+        <p class="text-primary font-bold text-base tracking-tight" id="header-greeting">Good day!</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <button class="text-slate-600 hover:text-primary transition-colors relative">
+        <span class="material-symbols-outlined">notifications</span>
+        <span id="notif-badge" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+      </button>
+      <a href="profile.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div id="header-avatar" class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container bg-primary flex items-center justify-center">
+          <span class="text-white text-sm font-bold" id="header-initials">?</span>
+        </div>
+        <div class="hidden sm:block text-right">
+          <p class="text-xs font-bold text-primary leading-tight" data-user-name>Loading…</p>
+          <p class="text-[10px] text-outline" data-user-department>—</p>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="p-6 md:p-10 lg:p-12 max-w-7xl mx-auto space-y-12">
+
+    <!-- ── Hero / Welcome ── -->
+    <section class="space-y-3">
+      <p class="text-[10px] uppercase tracking-[0.2em] text-secondary font-black font-label">Member Dashboard</p>
+      <h2 class="text-4xl md:text-5xl font-bold font-headline text-primary tracking-tighter leading-tight">
+        Welcome to your<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">
+          Digital Sanctuary.
+        </span>
+      </h2>
+      <p class="text-on-surface-variant max-w-xl font-body leading-relaxed text-sm md:text-base">
+        Stewardship is a sacred act of care. Here you can manage your contributions,
+        catch up on the Word, and stay connected with your community.
+      </p>
+    </section>
+
+    <!-- ── Bento: Contributions + Actions ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Contributions Card (7 cols) -->
+      <div class="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-8 shadow-sm border border-outline-variant/10">
+        <div class="flex justify-between items-start mb-8">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-widest text-secondary font-label">Stewardship</span>
+            <h3 class="text-2xl font-bold text-primary font-headline mt-1">Total Offerings</h3>
+          </div>
+          <div class="bg-secondary-container/20 p-3 rounded-xl">
+            <span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+          </div>
+        </div>
+
+        <!-- Total Amount -->
+        <div class="mb-8">
+          <div id="total-contributions-skeleton" class="skeleton h-14 w-64 mb-2"></div>
+          <p id="total-contributions" class="hidden text-4xl lg:text-5xl font-extrabold text-primary font-headline tracking-tighter">
+            TZS 0
+          </p>
+          <p id="contributions-trend" class="hidden mt-2 text-xs font-bold text-green-600 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">trending_up</span>
+            <span id="trend-text">—</span>
+          </p>
+        </div>
+
+        <!-- Recent Contributions -->
+        <div>
+          <h4 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-4">Recent Contributions</h4>
+          <div id="contributions-list" class="space-y-3">
+            <!-- Skeletons -->
+            <div class="skeleton h-16 rounded-xl"></div>
+            <div class="skeleton h-16 rounded-xl"></div>
+            <div class="skeleton h-16 rounded-xl"></div>
+          </div>
+          <a href="contributions.html"
+            class="mt-6 inline-flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest hover:gap-3 transition-all group">
+            View All <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- Quick Actions Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <a href="contributions.html"
+            class="quick-action-btn group p-6 bg-primary text-on-primary rounded-2xl shadow-md hover:shadow-primary/25 flex flex-col items-start gap-3">
+            <span class="material-symbols-outlined text-secondary-container text-2xl">add_circle</span>
+            <span class="font-bold text-sm tracking-tight">My Giving</span>
+          </a>
+          <a href="sermons.html"
+            class="quick-action-btn group p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl hover:bg-surface-container-high flex flex-col items-start gap-3">
+            <span class="material-symbols-outlined text-primary text-2xl">auto_stories</span>
+            <span class="font-bold text-sm tracking-tight text-primary">Sermons</span>
+          </a>
+          <a href="events.html"
+            class="quick-action-btn group p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl hover:bg-surface-container-high flex flex-col items-start gap-3">
+            <span class="material-symbols-outlined text-primary text-2xl">calendar_today</span>
+            <span class="font-bold text-sm tracking-tight text-primary">Events</span>
+          </a>
+          <a href="announcements.html"
+            class="quick-action-btn group p-6 bg-surface-container-lowest border border-outline-variant/10 rounded-2xl hover:bg-surface-container-high flex flex-col items-start gap-3">
+            <span class="material-symbols-outlined text-primary text-2xl">campaign</span>
+            <span class="font-bold text-sm tracking-tight text-primary">News</span>
+          </a>
+        </div>
+
+        <!-- Next Event Card -->
+        <div id="next-event-card" class="relative overflow-hidden rounded-2xl bg-primary-container h-60 flex flex-col justify-end p-7">
+          <!-- Gradient overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/20 z-0"></div>
+          <!-- Skeleton state -->
+          <div id="next-event-skeleton" class="relative z-10 space-y-2">
+            <div class="skeleton h-4 w-20 rounded-full mb-3" style="background:rgba(255,255,255,0.15);animation:shimmer 1.4s infinite;"></div>
+            <div class="skeleton h-7 w-48 rounded-lg" style="background:rgba(255,255,255,0.15);animation:shimmer 1.4s infinite;"></div>
+            <div class="skeleton h-4 w-36 rounded-lg mt-2" style="background:rgba(255,255,255,0.15);animation:shimmer 1.4s infinite;"></div>
+          </div>
+          <!-- Real event content (hidden until loaded) -->
+          <div id="next-event-content" class="hidden relative z-10 space-y-2">
+            <div class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest">
+              Next Event
+            </div>
+            <h4 id="event-title" class="text-xl font-bold font-headline text-white leading-tight">—</h4>
+            <div class="flex flex-wrap items-center gap-3 text-xs font-medium text-primary-fixed-dim">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">schedule</span>
+                <span id="event-date">—</span>
+              </span>
+              <span class="flex items-center gap-1" id="event-location-wrap">
+                <span class="material-symbols-outlined text-sm">location_on</span>
+                <span id="event-location">—</span>
+              </span>
+            </div>
+          </div>
+          <!-- No events state -->
+          <div id="next-event-empty" class="hidden relative z-10 text-center">
+            <span class="material-symbols-outlined text-primary-fixed-dim text-4xl mb-2 block">event_busy</span>
+            <p class="text-white/70 text-sm font-medium">No upcoming events</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Announcements Section ── -->
+    <section class="space-y-8">
+      <!-- Section Header with Tabs -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-outline-variant/20 pb-0">
+        <div class="flex gap-6" role="tablist">
+          <button id="tab-dept" role="tab" aria-selected="true"
+            onclick="switchAnnouncementTab('dept')"
+            class="pb-4 text-sm font-bold tab-active transition-all">
+            My Department
+          </button>
+          <button id="tab-general" role="tab" aria-selected="false"
+            onclick="switchAnnouncementTab('general')"
+            class="pb-4 text-sm font-bold tab-inactive transition-all">
+            General
+          </button>
+        </div>
+        <a href="announcements.html"
+          class="pb-4 text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-2 group hover:gap-3 transition-all">
+          View All <span class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+        </a>
+      </div>
+
+      <!-- Announcements Grid -->
+      <div id="announcements-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Skeletons -->
+        <div class="skeleton h-44 rounded-2xl"></div>
+        <div class="skeleton h-44 rounded-2xl"></div>
+        <div class="skeleton h-44 rounded-2xl"></div>
+      </div>
+    </section>
+
+  </div><!-- /page content -->
+</main>
+
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- App Scripts -->
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+
+<script>
+// ── Mobile Sidebar ──────────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.remove('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.add('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ── Greeting by time of day ──────────────────────────────────
+function getGreeting(name) {
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  return `${greet}, ${name.split(' ')[0]}!`;
+}
+
+// ── Announcement tab state ───────────────────────────────────
+let currentAnnouncementTab = 'dept';
+let deptAnnouncements = [];
+let generalAnnouncements = [];
+
+function switchAnnouncementTab(tab) {
+  currentAnnouncementTab = tab;
+
+  const tabDept    = document.getElementById('tab-dept');
+  const tabGeneral = document.getElementById('tab-general');
+
+  if (tab === 'dept') {
+    tabDept.classList.replace('tab-inactive', 'tab-active');
+    tabGeneral.classList.replace('tab-active', 'tab-inactive');
+    renderAnnouncements(deptAnnouncements);
+  } else {
+    tabGeneral.classList.replace('tab-inactive', 'tab-active');
+    tabDept.classList.replace('tab-active', 'tab-inactive');
+    renderAnnouncements(generalAnnouncements);
+  }
+}
+
+// ── Render announcements grid ────────────────────────────────
+const ANNOUNCEMENT_ICONS = {
+  event:   { icon: 'event',    color: 'text-primary',   border: 'border-primary' },
+  sermon:  { icon: 'podcasts', color: 'text-secondary',  border: 'border-secondary-container' },
+  prayer:  { icon: 'self_improvement', color: 'text-slate-500', border: 'border-slate-300' },
+  default: { icon: 'campaign', color: 'text-primary',   border: 'border-outline-variant' },
+};
+
+function renderAnnouncements(items) {
+  const grid = document.getElementById('announcements-grid');
+
+  if (!items || items.length === 0) {
+    grid.innerHTML = `
+      <div class="md:col-span-3 py-16 text-center">
+        <span class="material-symbols-outlined text-5xl text-outline mb-4 block">inbox</span>
+        <p class="text-on-surface-variant font-medium text-sm">No announcements right now. Check back later.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.slice(0, 3).map(a => {
+    const style = ANNOUNCEMENT_ICONS.default;
+    return `
+      <div class="bg-surface-container-low rounded-2xl p-6 transition-all hover:bg-surface-container-high border-t-4 ${style.border} fade-in">
+        <div class="flex items-center gap-2 mb-3 ${style.color}">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">${style.icon}</span>
+          <span class="text-[10px] font-black uppercase tracking-widest">Announcement</span>
+        </div>
+        <h5 class="text-base font-bold text-primary mb-2 line-clamp-2">${escapeHtml(a.title)}</h5>
+        <p class="text-sm text-on-surface-variant mb-5 line-clamp-3 leading-relaxed">${escapeHtml(a.content || '')}</p>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-slate-500">${timeAgo(a.created_at)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Load contributions ───────────────────────────────────────
+async function loadContributions(userId) {
+  const { data, error } = await supabase
+    .from('contributions')
+    .select('id, amount, type, notes, date, created_at')
+    .eq('member_id', userId)
+    .order('date', { ascending: false })
+    .limit(5);
+
+  // Hide skeleton, show total
+  document.getElementById('total-contributions-skeleton').classList.add('hidden');
+  document.getElementById('total-contributions').classList.remove('hidden');
+
+  if (error || !data) {
+    document.getElementById('total-contributions').textContent = 'TZS 0';
+    document.getElementById('contributions-list').innerHTML = `
+      <p class="text-sm text-on-surface-variant text-center py-6">No contributions recorded yet.</p>`;
+    return;
+  }
+
+  const total = data.reduce((sum, c) => sum + (c.amount || 0), 0);
+  document.getElementById('total-contributions').textContent = formatTZS(total);
+
+  if (data.length > 0) {
+    document.getElementById('contributions-trend').classList.remove('hidden');
+    document.getElementById('trend-text').textContent = `${data.length} contribution${data.length > 1 ? 's' : ''} recorded`;
+  }
+
+  const CONTRIBUTION_ICONS = {
+    'tithe':         { icon: 'volunteer_activism', label: 'Tithe' },
+    'offering':      { icon: 'church',             label: 'Offering' },
+    'building_fund': { icon: 'domain',             label: 'Building Fund' },
+    'thanksgiving':  { icon: 'favorite',           label: 'Thanksgiving' },
+    'special':       { icon: 'star',               label: 'Special' },
+  };
+
+  if (data.length === 0) {
+    document.getElementById('contributions-list').innerHTML = `
+      <p class="text-sm text-on-surface-variant text-center py-6">No contributions recorded yet.</p>`;
+    return;
+  }
+
+  document.getElementById('contributions-list').innerHTML = data.slice(0, 3).map(c => {
+    const meta = CONTRIBUTION_ICONS[c.type] || { icon: 'payments', label: c.type || 'Contribution' };
+    return `
+      <div class="contribution-row flex items-center justify-between p-4 bg-surface-container-low rounded-xl cursor-default">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
+            <span class="material-symbols-outlined text-sm">${meta.icon}</span>
+          </div>
+          <div>
+            <p class="font-bold text-sm text-primary">${escapeHtml(meta.label)}</p>
+            <p class="text-xs text-slate-500">${formatDate(c.date || c.created_at)}</p>
+          </div>
+        </div>
+        <span class="font-bold text-primary text-sm whitespace-nowrap">${formatTZS(c.amount)}</span>
+      </div>`;
+  }).join('');
+}
+
+// ── Load next event ──────────────────────────────────────────
+async function loadNextEvent() {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('events')
+    .select('id, title, start_date, location, category')
+    .gte('start_date', now)
+    .order('start_date', { ascending: true })
+    .limit(1);
+
+  document.getElementById('next-event-skeleton').classList.add('hidden');
+
+  if (error || !data || data.length === 0) {
+    document.getElementById('next-event-empty').classList.remove('hidden');
+    return;
+  }
+
+  const ev = data[0];
+  document.getElementById('event-title').textContent    = ev.title;
+  document.getElementById('event-date').textContent     = formatDateTime(ev.start_date);
+  document.getElementById('event-location').textContent = ev.location || 'Main Sanctuary';
+  if (!ev.location) document.getElementById('event-location-wrap').classList.add('hidden');
+
+  document.getElementById('next-event-content').classList.remove('hidden');
+}
+
+// ── Load announcements ───────────────────────────────────────
+async function loadAnnouncements(profile) {
+  const now = new Date().toISOString();
+
+  // General announcements
+  const { data: general } = await supabase
+    .from('announcements')
+    .select('id, title, content, created_at, target_type')
+    .eq('target_type', 'general')
+    .or(`expires_at.is.null,expires_at.gte.${now}`)
+    .order('created_at', { ascending: false })
+    .limit(6);
+
+  generalAnnouncements = general || [];
+
+  // Department-specific (if user has a department)
+  if (profile.department_id) {
+    const { data: dept } = await supabase
+      .from('announcements')
+      .select('id, title, content, created_at, target_type, department_id')
+      .eq('target_type', 'department')
+      .eq('department_id', profile.department_id)
+      .or(`expires_at.is.null,expires_at.gte.${now}`)
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    deptAnnouncements = dept || [];
+  } else {
+    deptAnnouncements = [];
+    // Rename tab when no department
+    document.getElementById('tab-dept').textContent = 'Ministry';
+  }
+
+  // Render the active tab
+  renderAnnouncements(currentAnnouncementTab === 'dept' ? deptAnnouncements : generalAnnouncements);
+
+  // If no dept announcements, auto-switch to general
+  if (deptAnnouncements.length === 0 && generalAnnouncements.length > 0) {
+    switchAnnouncementTab('general');
+  }
+}
+
+// ── Set header avatar ────────────────────────────────────────
+function setHeaderAvatar(profile) {
+  const greeting = document.getElementById('header-greeting');
+  greeting.textContent = getGreeting(profile.full_name || 'Friend');
+
+  if (profile.avatar_url) {
+    const avatar = document.getElementById('header-avatar');
+    avatar.innerHTML = `<img src="${profile.avatar_url}" alt="Profile" class="w-full h-full object-cover">`;
+  } else {
+    document.getElementById('header-initials').textContent = getInitials(profile.full_name || '?');
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+(async () => {
+  // Page guard — also populates data-user-name / data-user-department
+  const profile = await initPageGuard();
+  if (!profile) return; // redirected
+
+  setHeaderAvatar(profile);
+
+  // Load all data in parallel
+  await Promise.all([
+    loadContributions(profile.id),
+    loadNextEvent(),
+    loadAnnouncements(profile),
+  ]);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>All Events | Super Admin — BLB Church</title>
+  <meta name="description" content="BLB Church Super Admin — Manage all events across every department."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "secondary-fixed-dim":       "#eec200",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-bright":            "#f9f9f9",
+            "surface-dim":               "#dadada",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant":           "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b; font-weight: 600; font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex; align-items: center; gap: 1rem;
+      margin-left: 1rem; padding: 0.75rem 1.5rem;
+      background: #ffffff; color: #00236f; font-weight: 600; font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .event-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .event-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+  </style>
+</head>
+
+<body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <div class="px-10 mb-10">
+    <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Super Admin</p>
+  </div>
+
+  <nav class="flex-1">
+    <p class="px-10 pt-2 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">System</p>
+    <a href="./dashboard.html" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>System Overview</span>
+    </a>
+    <a href="./admins.html" class="nav-item">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Manage Admins</span>
+    </a>
+    <a href="./roles.html" class="nav-item">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span>Roles &amp; Permissions</span>
+    </a>
+    <a href="./settings.html" class="nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+
+    <p class="px-10 pt-5 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Church Data</p>
+    <a href="./departments.html" class="nav-item">
+      <span class="material-symbols-outlined">apartment</span>
+      <span>All Departments</span>
+    </a>
+    <a href="./members.html" class="nav-item">
+      <span class="material-symbols-outlined">group</span>
+      <span>All Members</span>
+    </a>
+    <a href="./contributions.html" class="nav-item">
+      <span class="material-symbols-outlined">payments</span>
+      <span>All Contributions</span>
+    </a>
+    <a href="./events.html" class="nav-item-active">
+      <span class="material-symbols-outlined">event</span>
+      <span>All Events</span>
+    </a>
+    <a href="./media.html" class="nav-item">
+      <span class="material-symbols-outlined">subscriptions</span>
+      <span>All Media</span>
+    </a>
+    <a href="./reports.html" class="nav-item">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span>Full Reports</span>
+    </a>
+  </nav>
+
+  <div class="mt-auto px-6 space-y-1">
+    <button data-action="logout"
+      class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="ml-72 min-h-screen p-12">
+
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-12">
+    <div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
+      <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">All Events</h2>
+      <p class="text-on-surface-variant">Every event across all departments and church-wide.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <button id="btn-create"
+        class="flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary-container transition-colors">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Create Event
+      </button>
+      <div class="text-right">
+        <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+        <p class="text-xs text-on-surface-variant">Super Admin</p>
+      </div>
+      <div class="h-14 w-14 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+        <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+          <span class="text-white font-bold text-lg" id="header-initials">?</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Skeleton -->
+  <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+  </div>
+
+  <!-- Stats -->
+  <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">event_upcoming</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Events</p>
+      <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-green-700">event_available</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Upcoming</p>
+      <h3 id="stat-upcoming" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-yellow-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-secondary">today</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">This Month</p>
+      <h3 id="stat-month" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-purple-700">apartment</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Departments</p>
+      <h3 id="stat-depts" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-4 mb-8">
+    <div class="relative flex-1 min-w-[240px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+      <input id="search-input" type="text" placeholder="Search title, location, category…"
+        class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
+    </div>
+    <select id="category-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
+      <option value="">All Categories</option>
+      <option value="general">General</option>
+      <option value="department">Department</option>
+      <option value="special">Special</option>
+      <option value="conference">Conference</option>
+    </select>
+    <select id="time-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold">
+      <option value="">All Time</option>
+      <option value="upcoming">Upcoming</option>
+      <option value="past">Past</option>
+      <option value="this_month">This Month</option>
+    </select>
+  </div>
+
+  <!-- Cards Skeleton -->
+  <div id="cards-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="skeleton h-52"></div>
+    <div class="skeleton h-52"></div>
+    <div class="skeleton h-52"></div>
+    <div class="skeleton h-52"></div>
+    <div class="skeleton h-52"></div>
+    <div class="skeleton h-52"></div>
+  </div>
+
+  <!-- Cards -->
+  <div id="cards-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+
+  <div id="empty-state" class="hidden bg-surface-container-lowest rounded-xl py-16 text-center">
+    <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">event_busy</span>
+    <p class="font-bold text-primary">No events found</p>
+    <p class="text-sm text-on-surface-variant mt-1">Try adjusting your filters or create a new event.</p>
+  </div>
+
+  <div class="mt-8 flex items-center justify-between">
+    <p class="text-sm text-on-surface-variant" id="pagination-info">Showing — events</p>
+    <div class="flex gap-2" id="pagination-controls"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+<script>
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  const PAGE_SIZE = 12;
+  let allEvents = [];
+  let currentPage = 1;
+
+  async function loadEvents() {
+    // Super admin: fetch ALL events church-wide — no department restriction
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, title, description, start_date, end_date, location, category, created_by')
+      .order('start_date', { ascending: false });
+
+    if (error) { Toast.error('Failed to load events.'); return; }
+    allEvents = data || [];
+    renderStats();
+    renderCards();
+  }
+
+  function renderStats() {
+    const now = new Date();
+    const upcoming = allEvents.filter(e => new Date(e.start_date) > now).length;
+    const thisMonth = allEvents.filter(e => {
+      const d = new Date(e.start_date);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length;
+    const cats = new Set(allEvents.map(e => e.category).filter(Boolean)).size;
+
+    document.getElementById('stat-total').textContent = allEvents.length;
+    document.getElementById('stat-upcoming').textContent = upcoming;
+    document.getElementById('stat-month').textContent = thisMonth;
+    document.getElementById('stat-depts').textContent = cats;
+
+    document.getElementById('stats-skeleton').classList.add('hidden');
+    document.getElementById('stats-content').classList.remove('hidden');
+  }
+
+  function getFiltered() {
+    const now = new Date();
+    const q = document.getElementById('search-input').value.trim().toLowerCase();
+    const cat = document.getElementById('category-filter').value;
+    const time = document.getElementById('time-filter').value;
+    return allEvents.filter(e => {
+      const searchOk = !q || [e.title, e.location, e.category, e.description].join(' ').toLowerCase().includes(q);
+      const catOk = !cat || e.category === cat;
+      let timeOk = true;
+      if (time === 'upcoming') timeOk = new Date(e.start_date) > now;
+      else if (time === 'past') timeOk = new Date(e.start_date) <= now;
+      else if (time === 'this_month') {
+        const d = new Date(e.start_date);
+        timeOk = d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      }
+      return searchOk && catOk && timeOk;
+    });
+  }
+
+  const CAT_COLORS = {
+    general:    'bg-blue-50 text-blue-700',
+    department: 'bg-purple-50 text-purple-700',
+    special:    'bg-amber-50 text-amber-700',
+    conference: 'bg-green-50 text-green-700',
+  };
+
+  function renderCards() {
+    const filtered = getFiltered();
+    const now = new Date();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = 1;
+    const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    document.getElementById('cards-skeleton').classList.add('hidden');
+    const grid = document.getElementById('cards-content');
+    const empty = document.getElementById('empty-state');
+
+    if (!slice.length) {
+      grid.classList.add('hidden');
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      grid.classList.remove('hidden');
+      grid.innerHTML = slice.map(e => {
+        const isPast = new Date(e.end_date || e.start_date) < now;
+        return `
+        <div class="event-card bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-4">
+          <div class="flex items-start justify-between gap-2">
+            <span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${CAT_COLORS[e.category] || 'bg-slate-100 text-slate-600'}">${escapeHtml(e.category || 'general')}</span>
+            ${isPast ? '<span class="text-xs font-bold text-slate-400">Past</span>' : '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mt-1"></span>'}
+          </div>
+          <div>
+            <h3 class="font-headline font-bold text-lg text-primary leading-tight mb-1">${escapeHtml(e.title)}</h3>
+            <p class="text-sm text-on-surface-variant line-clamp-2">${escapeHtml(e.description || '')}</p>
+          </div>
+          <div class="flex items-center gap-4 text-xs text-on-surface-variant mt-auto">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>${formatDate(e.start_date)}</span>
+            ${e.location ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span>${escapeHtml(e.location)}</span>` : ''}
+          </div>
+        </div>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('pagination-info').textContent = `Showing ${slice.length} of ${filtered.length} events`;
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    const container = document.getElementById('pagination-controls');
+    container.innerHTML = '';
+    if (totalPages <= 1) return;
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === currentPage
+        ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
+        : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
+      btn.addEventListener('click', () => { currentPage = i; renderCards(); });
+      container.appendChild(btn);
+    }
+  }
+
+  document.getElementById('btn-create').addEventListener('click', () => Toast.info('Event creation coming soon.'));
+
+  const debouncedRender = debounce(() => { currentPage = 1; renderCards(); }, 300);
+  document.getElementById('search-input').addEventListener('input', debouncedRender);
+  ['category-filter', 'time-filter'].forEach(id =>
+    document.getElementById(id).addEventListener('change', () => { currentPage = 1; renderCards(); })
+  );
+
+  await loadEvents();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "🌐 Open Homepage (Live Server)",
+            "url": "http://127.0.0.1:5500/public/index.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "🔐 Open Login (Live Server)",
+            "url": "http://127.0.0.1:5500/public/login.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "📋 Member Dashboard (Live Server)",
+            "url": "http://127.0.0.1:5500/member/dashboard.html",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "✏️ Register (Live Server)",
+            "url": "http://127.0.0.1:5500/public/register.html",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}

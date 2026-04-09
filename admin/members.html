@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Members Directory | BLB Church</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#00236f",
+            "primary-container": "#1e3a8a",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#90a8ff",
+            "secondary": "#735c00",
+            "secondary-container": "#fed01b",
+            "secondary-fixed": "#ffe083",
+            "secondary-fixed-dim": "#eec200",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#6f5900",
+            "on-secondary-fixed": "#231b00",
+            "surface": "#f9f9f9",
+            "surface-bright": "#f9f9f9",
+            "surface-dim": "#dadada",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f3f4",
+            "surface-container": "#eeeeee",
+            "surface-container-high": "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant": "#e2e2e2",
+            "on-surface": "#1a1c1c",
+            "on-surface-variant": "#444651",
+            "outline": "#757682",
+            "outline-variant": "#c5c5d3",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff"
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Plus Jakarta Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css" />
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9f9; color: #1a1c1c; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-left: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: #ffffff;
+      color: #00236f;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .glass-header {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .chip {
+      border-radius: 9999px;
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .chip-active {
+      background: #00236f;
+      color: white;
+    }
+
+    .chip-inactive {
+      background: #ffffff;
+      color: #1a1c1c;
+    }
+
+    .chip-inactive:hover {
+      background: #e8e8e8;
+    }
+
+    .member-card {
+      transition: all 0.25s ease;
+    }
+
+    .member-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 35px rgba(0, 35, 111, 0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+
+<body data-required-role="admin" style="opacity:0; transition:opacity 0.3s ease;">
+
+  <!-- SIDEBAR -->
+  <aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+    <div class="px-10 mb-10">
+      <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Admin Portal</p>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a href="./dashboard.html" class="nav-item">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="./members.html" class="nav-item-active">
+        <span class="material-symbols-outlined">group</span>
+        <span>Members</span>
+      </a>
+      <a href="./contributions.html" class="nav-item">
+        <span class="material-symbols-outlined">payments</span>
+        <span>Contributions</span>
+      </a>
+      <a href="./events.html" class="nav-item">
+        <span class="material-symbols-outlined">campaign</span>
+        <span>Events &amp; Notices</span>
+      </a>
+      <a href="./media.html" class="nav-item">
+        <span class="material-symbols-outlined">subscriptions</span>
+        <span>Media</span>
+      </a>
+      <a href="./reports.html" class="nav-item">
+        <span class="material-symbols-outlined">bar_chart</span>
+        <span>Reports</span>
+      </a>
+    </nav>
+
+    <div class="mt-auto px-6 space-y-1">
+      <button data-action="logout"
+        class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+        <span class="material-symbols-outlined text-sm">logout</span>
+        Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-30 ml-72 bg-white/80 backdrop-blur-xl shadow-sm flex justify-between items-center h-20 px-8 border-b border-slate-200/40">
+    <div class="flex items-center gap-8">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight font-headline text-blue-900">Member Directory</h2>
+        <p class="text-xs uppercase tracking-[0.05em] text-slate-500 font-semibold mt-1">Stewardship Portal</p>
+      </div>
+
+      <nav class="hidden xl:flex space-x-6" id="top-tab-nav">
+        <button class="text-blue-900 font-bold border-b-2 border-yellow-500 pb-1 font-label text-xs uppercase tracking-[0.05em]" data-top-tab="all">All Members</button>
+        <button class="text-slate-500 hover:text-blue-700 transition-colors font-label text-xs uppercase tracking-[0.05em]" data-top-tab="leadership">Leadership</button>
+        <button class="text-slate-500 hover:text-blue-700 transition-colors font-label text-xs uppercase tracking-[0.05em]" data-top-tab="new">New Members</button>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <div class="relative hidden lg:block">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input id="search-input"
+          class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 w-72 focus:ring-2 focus:ring-secondary text-sm"
+          placeholder="Search members..."
+          type="text" />
+      </div>
+
+      <button id="btn-refresh" class="text-slate-500 hover:text-blue-700 transition-colors">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+          <p class="text-xs text-on-surface-variant" data-user-role></p>
+        </div>
+        <div class="h-10 w-10 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+          <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+            <span class="text-white font-bold text-sm" id="header-initials">?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="ml-72 p-12 bg-background min-h-screen">
+    <!-- HERO -->
+    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+      <div class="max-w-3xl">
+        <span class="font-label text-xs uppercase tracking-[0.05em] text-secondary font-bold mb-2 block">Stewardship Dashboard</span>
+        <h3 class="font-headline font-bold text-5xl text-blue-900 tracking-tighter mb-4">Members Directory</h3>
+        <p class="text-on-surface-variant font-body text-lg leading-relaxed">
+          Managing <span class="font-bold text-blue-900" id="hero-member-count">—</span> faithful hearts in our congregation.
+          Use the tools below to search, filter, and support our community.
+        </p>
+      </div>
+
+      <button id="btn-add-member"
+        class="bg-secondary-fixed text-on-secondary-fixed px-8 py-4 rounded-xl font-bold flex items-center shadow-[0_2px_0_rgba(0,0,0,0.05)] hover:bg-yellow-300 transition-all active:scale-95">
+        <span class="material-symbols-outlined mr-2">person_add</span>
+        Add New Member
+      </button>
+    </div>
+
+    <!-- FILTER CHIPS -->
+    <div id="department-chips" class="flex flex-wrap items-center gap-4 mb-8">
+      <button class="chip chip-active" data-dept="">All Categories</button>
+    </div>
+
+    <!-- MOBILE SEARCH -->
+    <div class="mb-8 lg:hidden">
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input id="search-input-mobile"
+          class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 focus:ring-2 focus:ring-secondary text-sm"
+          placeholder="Search members..."
+          type="text" />
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div id="members-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="skeleton h-[260px]"></div>
+      <div class="skeleton h-[260px]"></div>
+      <div class="skeleton h-[260px]"></div>
+      <div class="skeleton h-[260px]"></div>
+      <div class="skeleton h-[260px] lg:col-span-2"></div>
+      <div class="skeleton h-[260px]"></div>
+    </div>
+
+    <div id="members-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
+
+    <!-- EMPTY -->
+    <div id="empty-state" class="hidden bg-white rounded-2xl border border-slate-200 p-12 text-center mt-2">
+      <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-slate-500 text-3xl">group_off</span>
+      </div>
+      <h4 class="text-xl font-bold text-primary mb-2">No members found</h4>
+      <p class="text-on-surface-variant max-w-md mx-auto">
+        Try changing your search or department filter, or add a new member to get started.
+      </p>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="mt-16 flex flex-col md:flex-row md:items-center justify-between border-t border-slate-200 pt-8 gap-4">
+      <p class="text-sm text-slate-500" id="pagination-summary">
+        Showing <span class="font-bold text-blue-900">0 - 0</span> of 0 members
+      </p>
+
+      <div class="flex items-center space-x-2" id="pagination-controls"></div>
+    </div>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/router.js"></script>
+
+  <script>
+    const state = {
+      allMembers: [],
+      filteredMembers: [],
+      departments: [],
+      selectedDepartment: '',
+      search: '',
+      page: 1,
+      perPage: 8,
+      topTab: 'all'
+    };
+
+    (async () => {
+      const profile = await initPageGuard();
+      if (!profile) return;
+
+      hydrateHeaderAvatar(profile);
+      bindStaticEvents();
+      await loadMembersPage();
+    })();
+
+    function hydrateHeaderAvatar(profile) {
+      document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'A');
+      if (profile.avatar_url) {
+        const img = document.createElement('img');
+        img.src = profile.avatar_url;
+        img.alt = profile.full_name || 'Admin';
+        img.className = 'w-full h-full object-cover';
+        const avatarEl = document.getElementById('header-avatar');
+        avatarEl.innerHTML = '';
+        avatarEl.appendChild(img);
+      }
+    }
+
+    function bindStaticEvents() {
+      const searchInput = document.getElementById('search-input');
+      const searchInputMobile = document.getElementById('search-input-mobile');
+
+      searchInput.addEventListener('input', e => {
+        state.search = e.target.value.trim().toLowerCase();
+        searchInputMobile.value = e.target.value;
+        state.page = 1;
+        applyFilters();
+      });
+
+      searchInputMobile.addEventListener('input', e => {
+        state.search = e.target.value.trim().toLowerCase();
+        searchInput.value = e.target.value;
+        state.page = 1;
+        applyFilters();
+      });
+
+      document.getElementById('btn-refresh').addEventListener('click', async () => {
+        await loadMembersPage(true);
+      });
+
+      document.getElementById('btn-add-member').addEventListener('click', openAddMemberModal);
+
+      document.querySelectorAll('[data-top-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.topTab = btn.dataset.topTab;
+          state.page = 1;
+          updateTopTabs();
+          applyFilters();
+        });
+      });
+    }
+
+    async function loadMembersPage(showToast = false) {
+      try {
+        Loader.show('Loading members...');
+
+        const [{ data: departments, error: deptErr }, { data: profiles, error: membersErr }] = await Promise.all([
+          supabase.from('departments').select('id, name').order('name'),
+          supabase
+            .from('profiles')
+            .select('id, full_name, email, phone, avatar_url, department_id, role, status, created_at')
+            .order('created_at', { ascending: false })
+        ]);
+
+        if (deptErr) throw deptErr;
+        if (membersErr) throw membersErr;
+
+        state.departments = departments || [];
+        state.allMembers = profiles || [];
+
+        renderDepartmentChips();
+        applyFilters();
+
+        document.getElementById('members-skeleton').classList.add('hidden');
+        document.getElementById('members-grid').classList.remove('hidden');
+
+        if (showToast) Toast.success('Members refreshed');
+      } catch (error) {
+        console.error('loadMembersPage error:', error);
+        Toast.error(error.message || 'Failed to load members.');
+      } finally {
+        Loader.hide();
+      }
+    }
+
+    function updateTopTabs() {
+      document.querySelectorAll('[data-top-tab]').forEach(btn => {
+        const active = btn.dataset.topTab === state.topTab;
+        btn.className = active
+          ? 'text-blue-900 font-bold border-b-2 border-yellow-500 pb-1 font-label text-xs uppercase tracking-[0.05em]'
+          : 'text-slate-500 hover:text-blue-700 transition-colors font-label text-xs uppercase tracking-[0.05em]';
+      });
+    }
+
+    function renderDepartmentChips() {
+      const wrap = document.getElementById('department-chips');
+      const chips = [
+        `<button class="chip ${state.selectedDepartment === '' ? 'chip-active' : 'chip-inactive'}" data-dept="">All Categories</button>`,
+        ...state.departments.map(dept => `
+          <button class="chip ${state.selectedDepartment === String(dept.id) ? 'chip-active' : 'chip-inactive'}" data-dept="${escapeHtml(String(dept.id))}">
+            ${escapeHtml(dept.name)}
+          </button>
+        `)
+      ];
+
+      wrap.innerHTML = chips.join('');
+
+      wrap.querySelectorAll('[data-dept]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.selectedDepartment = btn.dataset.dept;
+          state.page = 1;
+          renderDepartmentChips();
+          applyFilters();
+        });
+      });
+    }
+
+    function applyFilters() {
+      let rows = [...state.allMembers];
+
+      if (state.topTab === 'leadership') {
+        rows = rows.filter(m => (m.role || '').toLowerCase() === 'admin' || (m.role || '').toLowerCase() === 'leader');
+      } else if (state.topTab === 'new') {
+        const threshold = new Date();
+        threshold.setDate(threshold.getDate() - 30);
+        rows = rows.filter(m => m.created_at && new Date(m.created_at) >= threshold);
+      } else {
+        rows = rows.filter(m => (m.role || '').toLowerCase() === 'member' || !m.role || ['leader', 'admin'].includes((m.role || '').toLowerCase()));
+      }
+
+      if (state.selectedDepartment) {
+        rows = rows.filter(m => String(m.department_id || '') === state.selectedDepartment);
+      }
+
+      if (state.search) {
+        rows = rows.filter(m => {
+          const hay = [
+            m.full_name || '',
+            m.email || '',
+            m.phone || '',
+            getDepartmentName(m.department_id),
+            m.role || '',
+            m.status || ''
+          ].join(' ').toLowerCase();
+          return hay.includes(state.search);
+        });
+      }
+
+      state.filteredMembers = rows;
+      renderMembers();
+      renderPagination();
+      renderHeroCount();
+    }
+
+    function renderHeroCount() {
+      document.getElementById('hero-member-count').textContent = state.filteredMembers.length.toLocaleString();
+    }
+
+    function renderMembers() {
+      const grid = document.getElementById('members-grid');
+      const empty = document.getElementById('empty-state');
+
+      if (!state.filteredMembers.length) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      const totalPages = Math.max(1, Math.ceil(state.filteredMembers.length / state.perPage));
+      if (state.page > totalPages) state.page = totalPages;
+
+      const start = (state.page - 1) * state.perPage;
+      const pageRows = state.filteredMembers.slice(start, start + state.perPage);
+
+      const volunteerCount = state.allMembers.filter(m => (m.status || '').toLowerCase() === 'active').length;
+      const newThisMonth = countNewThisMonth(state.allMembers);
+      const growth = calculateGrowthPct(state.allMembers);
+
+      const cards = [];
+
+      pageRows.forEach((member, index) => {
+        if (index === 4) {
+          cards.push(`
+            <div class="bg-primary-container p-8 rounded-xl lg:col-span-2 relative overflow-hidden flex flex-col justify-center min-h-[240px]">
+              <div class="absolute inset-0 bg-gradient-to-br from-primary to-primary-container opacity-95"></div>
+              <div class="absolute right-[-50px] top-[-50px] w-64 h-64 border-[32px] border-white/5 rounded-full"></div>
+              <div class="relative z-10">
+                <span class="font-label text-xs uppercase tracking-[0.05em] text-on-primary-container mb-2 block">Monthly Insight</span>
+                <h4 class="font-headline font-bold text-3xl text-white mb-4">Congregation Growth</h4>
+                <div class="flex items-center gap-12 flex-wrap">
+                  <div>
+                    <p class="text-4xl font-headline font-extrabold text-secondary-container">${growth > 0 ? '+' : ''}${growth}%</p>
+                    <p class="text-sm text-blue-200 mt-1">New Members this month</p>
+                  </div>
+                  <div>
+                    <p class="text-4xl font-headline font-extrabold text-blue-100">${volunteerCount.toLocaleString()}</p>
+                    <p class="text-sm text-blue-200 mt-1">Active Members</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `);
+        }
+
+        cards.push(renderMemberCard(member));
+      });
+
+      grid.innerHTML = cards.join('');
+      grid.querySelectorAll('[data-view-member]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const memberId = btn.dataset.viewMember;
+          const member = state.allMembers.find(m => String(m.id) === String(memberId));
+          if (member) openViewProfileModal(member);
+        });
+      });
+    }
+
+    function renderMemberCard(member) {
+      const department = getDepartmentName(member.department_id);
+      const isActive = (member.status || '').toLowerCase() === 'active';
+      const avatarHtml = member.avatar_url
+        ? `<img src="${escapeHtml(member.avatar_url)}" alt="${escapeHtml(member.full_name || 'Member')}" class="w-16 h-16 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" />`
+        : `
+          <div class="w-16 h-16 rounded-full bg-primary flex items-center justify-center grayscale-0">
+            <span class="text-white font-bold text-lg">${escapeHtml(getInitials(member.full_name || 'M'))}</span>
+          </div>`;
+
+      return `
+        <div class="member-card bg-surface-container-lowest p-8 rounded-xl group flex flex-col">
+          <div class="flex items-start justify-between mb-6 gap-3">
+            ${avatarHtml}
+            <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider max-w-[120px] truncate">
+              ${escapeHtml(department)}
+            </span>
+          </div>
+
+          <h4 class="font-headline font-bold text-xl text-blue-900 mb-1">${escapeHtml(member.full_name || 'Unnamed Member')}</h4>
+          <p class="text-sm text-slate-500 mb-2 font-body">Joined ${formatLongDate(member.created_at)}</p>
+          <p class="text-sm text-slate-500 mb-6 font-body truncate">${escapeHtml(member.email || member.phone || 'No contact provided')}</p>
+
+          <div class="flex items-center justify-between mt-auto gap-4">
+            <div class="flex items-center">
+              <div class="w-2 h-2 rounded-full ${isActive ? 'bg-[#22c55e]' : 'bg-slate-300'} mr-2"></div>
+              <span class="text-xs font-semibold text-on-surface">${isActive ? 'Active' : 'Inactive'}</span>
+            </div>
+
+            <button data-view-member="${escapeHtml(String(member.id))}"
+              class="text-primary font-bold text-xs uppercase tracking-wider flex items-center hover:translate-x-1 transition-transform">
+              View Profile
+              <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPagination() {
+      const total = state.filteredMembers.length;
+      const controls = document.getElementById('pagination-controls');
+      const summary = document.getElementById('pagination-summary');
+
+      if (!total) {
+        summary.innerHTML = `Showing <span class="font-bold text-blue-900">0 - 0</span> of 0 members`;
+        controls.innerHTML = '';
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(total / state.perPage));
+      const start = (state.page - 1) * state.perPage + 1;
+      const end = Math.min(state.page * state.perPage, total);
+
+      summary.innerHTML = `Showing <span class="font-bold text-blue-900">${start} - ${end}</span> of ${total.toLocaleString()} members`;
+
+      const pageButtons = buildPaginationPages(state.page, totalPages);
+
+      controls.innerHTML = `
+        <button ${state.page === 1 ? 'disabled' : ''} data-page="${state.page - 1}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg ${state.page === 1 ? 'bg-surface-container-low text-slate-400 cursor-not-allowed' : 'bg-white text-slate-600 hover:bg-surface-container-low'}">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+
+        ${pageButtons.map(p => {
+          if (p === '...') return `<span class="text-slate-400 px-2">...</span>`;
+          const active = p === state.page;
+          return `
+            <button data-page="${p}"
+              class="w-10 h-10 flex items-center justify-center rounded-lg font-bold ${active ? 'bg-primary text-white' : 'bg-white text-slate-600 hover:bg-surface-container-low'}">
+              ${p}
+            </button>
+          `;
+        }).join('')}
+
+        <button ${state.page === totalPages ? 'disabled' : ''} data-page="${state.page + 1}"
+          class="w-10 h-10 flex items-center justify-center rounded-lg ${state.page === totalPages ? 'bg-surface-container-low text-slate-400 cursor-not-allowed' : 'bg-white text-slate-600 hover:bg-surface-container-low'}">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      `;
+
+      controls.querySelectorAll('[data-page]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const page = Number(btn.dataset.page);
+          if (!page || page < 1 || page > totalPages) return;
+          state.page = page;
+          renderMembers();
+          renderPagination();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+    }
+
+    function buildPaginationPages(current, total) {
+      if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+
+      const pages = [1];
+      if (current > 3) pages.push('...');
+
+      for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+        pages.push(i);
+      }
+
+      if (current < total - 2) pages.push('...');
+      pages.push(total);
+
+      return [...new Set(pages)];
+    }
+
+    function getDepartmentName(departmentId) {
+      const dept = state.departments.find(d => String(d.id) === String(departmentId));
+      return dept?.name || 'Unassigned';
+    }
+
+    function countNewThisMonth(rows) {
+      const now = new Date();
+      return rows.filter(r => {
+        if (!r.created_at) return false;
+        const d = new Date(r.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).length;
+    }
+
+    function calculateGrowthPct(rows) {
+      const now = new Date();
+      const currentMonth = rows.filter(r => {
+        if (!r.created_at) return false;
+        const d = new Date(r.created_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).length;
+
+      const prevRef = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const previousMonth = rows.filter(r => {
+        if (!r.created_at) return false;
+        const d = new Date(r.created_at);
+        return d.getMonth() === prevRef.getMonth() && d.getFullYear() === prevRef.getFullYear();
+      }).length;
+
+      if (previousMonth <= 0) return currentMonth > 0 ? 100 : 0;
+      return Math.round(((currentMonth - previousMonth) / previousMonth) * 100);
+    }
+
+    function formatLongDate(value) {
+      if (!value) return 'Unknown date';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return 'Unknown date';
+      return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+
+    async function openAddMemberModal() {
+      const deptOptions = state.departments
+        .map(d => `<option value="${escapeHtml(String(d.id))}">${escapeHtml(d.name)}</option>`)
+        .join('');
+
+      const { body, close } = Modal.show({
+        title: 'Add New Member',
+        size: 'md',
+        content: `
+          <form id="member-form" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Full Name *</label>
+                <input id="member-name" type="text" required
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                  placeholder="Member full name" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Phone</label>
+                <input id="member-phone" type="text"
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                  placeholder="Phone number" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Email</label>
+                <input id="member-email" type="email"
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"
+                  placeholder="Email address" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Department</label>
+                <select id="member-department"
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+                  <option value="">— Select department —</option>
+                  ${deptOptions}
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Role</label>
+                <select id="member-role"
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+                  <option value="member">Member</option>
+                  <option value="leader">Leader</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">Status</label>
+                <select id="member-status"
+                  class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit"
+              class="w-full py-3 bg-primary text-on-primary font-bold rounded-xl hover:opacity-90 transition-opacity">
+              Save Member
+            </button>
+          </form>
+        `
+      });
+
+      body.querySelector('#member-form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const payload = {
+          full_name: body.querySelector('#member-name').value.trim(),
+          email: body.querySelector('#member-email').value.trim() || null,
+          phone: body.querySelector('#member-phone').value.trim() || null,
+          department_id: body.querySelector('#member-department').value || null,
+          role: body.querySelector('#member-role').value,
+          status: body.querySelector('#member-status').value
+        };
+
+        if (!payload.full_name) {
+          Toast.warning('Full name is required.');
+          return;
+        }
+
+        Loader.show('Saving member...');
+        const { error } = await supabase.from('profiles').insert(payload);
+        Loader.hide();
+
+        if (error) {
+          Toast.error('Failed: ' + error.message);
+          return;
+        }
+
+        Toast.success('Member added successfully.');
+        close();
+        await loadMembersPage();
+      });
+    }
+
+    function openViewProfileModal(member) {
+      const department = getDepartmentName(member.department_id);
+      const isActive = (member.status || '').toLowerCase() === 'active';
+      const avatarHtml = member.avatar_url
+        ? `<img src="${escapeHtml(member.avatar_url)}" alt="${escapeHtml(member.full_name || 'Member')}" class="w-24 h-24 rounded-full object-cover" />`
+        : `<div class="w-24 h-24 rounded-full bg-primary flex items-center justify-center"><span class="text-white font-bold text-2xl">${escapeHtml(getInitials(member.full_name || 'M'))}</span></div>`;
+
+      Modal.show({
+        title: 'Member Profile',
+        size: 'md',
+        content: `
+          <div class="space-y-6">
+            <div class="flex items-center gap-4">
+              ${avatarHtml}
+              <div>
+                <h4 class="text-2xl font-headline font-bold text-primary">${escapeHtml(member.full_name || 'Unnamed Member')}</h4>
+                <p class="text-sm text-on-surface-variant">${escapeHtml(member.email || 'No email')}</p>
+                <div class="mt-2 inline-flex items-center gap-2">
+                  <div class="w-2 h-2 rounded-full ${isActive ? 'bg-[#22c55e]' : 'bg-slate-300'}"></div>
+                  <span class="text-xs font-semibold">${isActive ? 'Active' : 'Inactive'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-surface-container-low rounded-xl p-4">
+                <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Department</p>
+                <p class="font-semibold text-primary">${escapeHtml(department)}</p>
+              </div>
+              <div class="bg-surface-container-low rounded-xl p-4">
+                <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Role</p>
+                <p class="font-semibold text-primary">${escapeHtml(capitalize(member.role || 'member'))}</p>
+              </div>
+              <div class="bg-surface-container-low rounded-xl p-4">
+                <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Phone</p>
+                <p class="font-semibold text-primary">${escapeHtml(member.phone || 'Not provided')}</p>
+              </div>
+              <div class="bg-surface-container-low rounded-xl p-4">
+                <p class="text-xs uppercase tracking-widest text-on-surface-variant font-bold mb-2">Joined</p>
+                <p class="font-semibold text-primary">${formatLongDate(member.created_at)}</p>
+              </div>
+            </div>
+          </div>
+        `
+      });
+    }
+
+    function capitalize(str) {
+      return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+    }
+  </script>
+</body>
+</html>

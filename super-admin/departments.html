@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Departments | Super Admin — BLB Church</title>
+  <meta name="description" content="BLB Church Super Admin — Create and manage church departments."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "secondary-fixed-dim":       "#eec200",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-bright":            "#f9f9f9",
+            "surface-dim":               "#dadada",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant":           "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b; font-weight: 600; font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex; align-items: center; gap: 1rem;
+      margin-left: 1rem; padding: 0.75rem 1.5rem;
+      background: #ffffff; color: #00236f; font-weight: 600; font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+
+    .dept-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .dept-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,35,111,0.08); }
+  </style>
+</head>
+
+<body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <div class="px-10 mb-10">
+    <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Super Admin</p>
+  </div>
+
+  <nav class="flex-1">
+    <p class="px-10 pt-2 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">System</p>
+    <a href="./dashboard.html" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>System Overview</span>
+    </a>
+    <a href="./admins.html" class="nav-item">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Manage Admins</span>
+    </a>
+    <a href="./roles.html" class="nav-item">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span>Roles &amp; Permissions</span>
+    </a>
+    <a href="./settings.html" class="nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+
+    <p class="px-10 pt-5 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Church Data</p>
+    <a href="./departments.html" class="nav-item-active">
+      <span class="material-symbols-outlined">apartment</span>
+      <span>All Departments</span>
+    </a>
+    <a href="./members.html" class="nav-item">
+      <span class="material-symbols-outlined">group</span>
+      <span>All Members</span>
+    </a>
+    <a href="./contributions.html" class="nav-item">
+      <span class="material-symbols-outlined">payments</span>
+      <span>All Contributions</span>
+    </a>
+    <a href="./events.html" class="nav-item">
+      <span class="material-symbols-outlined">event</span>
+      <span>All Events</span>
+    </a>
+    <a href="./media.html" class="nav-item">
+      <span class="material-symbols-outlined">subscriptions</span>
+      <span>All Media</span>
+    </a>
+    <a href="./reports.html" class="nav-item">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span>Full Reports</span>
+    </a>
+  </nav>
+
+  <div class="mt-auto px-6 space-y-1">
+    <button data-action="logout"
+      class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="ml-72 min-h-screen p-12">
+
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-16">
+    <div>
+      <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">Departments</h2>
+      <p class="text-on-surface-variant">Manage church ministry departments and their assignments.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+        <p class="text-xs text-on-surface-variant" data-user-role></p>
+      </div>
+      <div class="h-14 w-14 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+        <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+          <span class="text-white font-bold text-lg" id="header-initials">?</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stat Cards Skeleton -->
+  <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div class="skeleton h-40"></div>
+    <div class="skeleton h-40"></div>
+    <div class="skeleton h-40"></div>
+  </div>
+
+  <!-- Stat Cards -->
+  <section id="stats-content" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 hidden">
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-blue-50 rounded-lg">
+          <span class="material-symbols-outlined text-primary text-2xl">apartment</span>
+        </div>
+        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">Total</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Departments</p>
+        <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-amber-50 rounded-lg">
+          <span class="material-symbols-outlined text-amber-600 text-2xl">group</span>
+        </div>
+        <span class="text-xs font-bold bg-amber-50 text-amber-700 px-2 py-1 rounded">Members</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Members</p>
+        <h3 id="stat-members" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-slate-100 rounded-lg">
+          <span class="material-symbols-outlined text-slate-500 text-2xl">person_off</span>
+        </div>
+        <span class="text-xs font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded">Unassigned</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Without Dept.</p>
+        <h3 id="stat-unassigned" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls Bar -->
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+      <input id="search-input" type="text" class="w-full bg-white border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary" placeholder="Search departments…"/>
+    </div>
+    <button id="btn-add-dept" class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">add</span>
+      Add Department
+    </button>
+  </div>
+
+  <!-- Cards Skeleton -->
+  <div id="cards-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="skeleton h-48"></div>
+    <div class="skeleton h-48"></div>
+    <div class="skeleton h-48"></div>
+    <div class="skeleton h-48"></div>
+    <div class="skeleton h-48"></div>
+    <div class="skeleton h-48"></div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+
+  <!-- Empty State -->
+  <div id="empty-state" class="hidden flex flex-col items-center justify-center py-24 text-center">
+    <div class="p-6 bg-surface-container-low rounded-full mb-6">
+      <span class="material-symbols-outlined text-slate-400 text-5xl">apartment</span>
+    </div>
+    <h3 class="font-headline font-bold text-xl text-primary mb-2">No Departments Found</h3>
+    <p class="text-on-surface-variant text-sm max-w-sm">No departments match your search, or none have been created yet.</p>
+    <button id="btn-empty-add" class="mt-6 px-6 py-3 rounded-xl bg-primary text-on-primary font-bold hover:opacity-90 transition-opacity">
+      Create First Department
+    </button>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+const PAGE = { departments: [], memberCounts: {} };
+
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  const initialsEl = document.getElementById('header-initials');
+  const avatarEl   = document.getElementById('header-avatar');
+  if (profile.avatar_url) {
+    avatarEl.innerHTML = `<img src="${escapeHtml(profile.avatar_url)}" class="w-full h-full object-cover" alt="${escapeHtml(profile.full_name || '')}"/>`;
+  } else if (initialsEl) {
+    initialsEl.textContent = getInitials(profile.full_name || 'S A');
+  }
+
+  await loadPage();
+  bindSearch();
+  bindButtons();
+})();
+
+async function loadPage() {
+  const [{ data: depts }, { data: members }] = await Promise.all([
+    supabase.from('departments').select('id,name,description').order('name'),
+    supabase.from('profiles').select('id,department_id').in('role', ['member', 'admin'])
+  ]);
+
+  PAGE.departments = depts || [];
+
+  // Build member count map
+  PAGE.memberCounts = {};
+  (members || []).forEach(m => {
+    if (m.department_id) {
+      PAGE.memberCounts[m.department_id] = (PAGE.memberCounts[m.department_id] || 0) + 1;
+    }
+  });
+
+  const totalMembers  = (members || []).length;
+  const unassigned    = (members || []).filter(m => !m.department_id).length;
+
+  document.getElementById('stat-total').textContent      = PAGE.departments.length;
+  document.getElementById('stat-members').textContent    = totalMembers;
+  document.getElementById('stat-unassigned').textContent = unassigned;
+  document.getElementById('stats-skeleton').classList.add('hidden');
+  document.getElementById('stats-content').classList.remove('hidden');
+
+  renderCards(PAGE.departments);
+}
+
+function renderCards(depts) {
+  const grid   = document.getElementById('cards-grid');
+  const empty  = document.getElementById('empty-state');
+  document.getElementById('cards-skeleton').classList.add('hidden');
+
+  if (!depts.length) {
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  grid.classList.remove('hidden');
+
+  const colors = [
+    { bg: 'bg-blue-50',   icon: 'text-primary',    badge: 'bg-blue-50 text-blue-700' },
+    { bg: 'bg-amber-50',  icon: 'text-amber-600',   badge: 'bg-amber-50 text-amber-700' },
+    { bg: 'bg-green-50',  icon: 'text-green-700',   badge: 'bg-green-50 text-green-700' },
+    { bg: 'bg-purple-50', icon: 'text-purple-600',  badge: 'bg-purple-50 text-purple-700' },
+    { bg: 'bg-red-50',    icon: 'text-red-600',     badge: 'bg-red-50 text-red-700' },
+    { bg: 'bg-cyan-50',   icon: 'text-cyan-600',    badge: 'bg-cyan-50 text-cyan-700' },
+  ];
+
+  grid.innerHTML = depts.map((d, i) => {
+    const c     = colors[i % colors.length];
+    const count = PAGE.memberCounts[d.id] || 0;
+    const desc  = d.description || 'No description provided.';
+    return `
+      <div class="dept-card bg-surface-container-lowest rounded-xl p-8 flex flex-col gap-4">
+        <div class="flex items-start justify-between">
+          <div class="p-3 ${c.bg} rounded-lg">
+            <span class="material-symbols-outlined ${c.icon} text-2xl">apartment</span>
+          </div>
+          <span class="text-xs font-bold ${c.badge} px-2 py-1 rounded-full">${count} member${count !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-headline font-bold text-lg text-primary mb-1">${escapeHtml(d.name)}</h3>
+          <p class="text-sm text-on-surface-variant line-clamp-2">${escapeHtml(desc)}</p>
+        </div>
+        <div class="flex gap-2 pt-2 border-t border-surface-container-low">
+          <button onclick="openEditModal('${escapeHtml(d.id)}')"
+            class="flex-1 py-2 text-xs font-bold text-primary border border-primary/20 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">edit</span>
+            Edit
+          </button>
+          <button onclick="confirmDelete('${escapeHtml(d.id)}', '${escapeHtml(d.name)}')"
+            class="flex-1 py-2 text-xs font-bold text-error border border-error/20 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">delete</span>
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function bindSearch() {
+  document.getElementById('search-input').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = q
+      ? PAGE.departments.filter(d =>
+          (d.name || '').toLowerCase().includes(q) ||
+          (d.description || '').toLowerCase().includes(q))
+      : PAGE.departments;
+    renderCards(filtered);
+  });
+}
+
+function bindButtons() {
+  document.getElementById('btn-add-dept').addEventListener('click', () => openAddModal());
+  document.getElementById('btn-empty-add').addEventListener('click', () => openAddModal());
+}
+
+function openAddModal() {
+  const { close, body } = Modal.show({
+    title: 'Add Department',
+    size: 'sm',
+    content: `
+      <form id="dept-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Department Name *</label>
+          <input id="dept-name" type="text" required maxlength="80"
+            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
+            placeholder="e.g. Women's Ministry"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Description</label>
+          <textarea id="dept-desc" rows="3" maxlength="500"
+            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none resize-none"
+            placeholder="Brief description of this department…"></textarea>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="modal-cancel"
+            class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            Cancel
+          </button>
+          <button type="submit"
+            class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+            Create Department
+          </button>
+        </div>
+      </form>
+    `
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', close);
+  document.getElementById('dept-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('dept-name').value.trim();
+    const desc = document.getElementById('dept-desc').value.trim();
+    if (!name) return;
+
+    Loader.show('Creating department…');
+    const { error } = await supabase.from('departments').insert({ name, description: desc || null });
+    Loader.hide();
+
+    if (error) {
+      Toast.error('Failed to create department.');
+      return;
+    }
+    close();
+    Toast.success('Department created.');
+    await reloadDepartments();
+  });
+}
+
+function openEditModal(id) {
+  const dept = PAGE.departments.find(d => d.id === id);
+  if (!dept) return;
+
+  const { close, body } = Modal.show({
+    title: 'Edit Department',
+    size: 'sm',
+    content: `
+      <form id="dept-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Department Name *</label>
+          <input id="dept-name" type="text" required maxlength="80" value="${escapeHtml(dept.name)}"
+            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Description</label>
+          <textarea id="dept-desc" rows="3" maxlength="500"
+            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none resize-none">${escapeHtml(dept.description || '')}</textarea>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="modal-cancel"
+            class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            Cancel
+          </button>
+          <button type="submit"
+            class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    `
+  });
+
+  document.getElementById('modal-cancel').addEventListener('click', close);
+  document.getElementById('dept-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('dept-name').value.trim();
+    const desc = document.getElementById('dept-desc').value.trim();
+    if (!name) return;
+
+    Loader.show('Saving…');
+    const { error } = await supabase.from('departments').update({ name, description: desc || null }).eq('id', id);
+    Loader.hide();
+
+    if (error) {
+      Toast.error('Failed to update department.');
+      return;
+    }
+    close();
+    Toast.success('Department updated.');
+    await reloadDepartments();
+  });
+}
+
+function confirmDelete(id, name) {
+  Modal.confirm(
+    `Delete department "<strong>${escapeHtml(name)}</strong>"? Members assigned to this department will become unassigned.`,
+    async () => {
+      Loader.show('Deleting…');
+      const { error } = await supabase.from('departments').delete().eq('id', id);
+      Loader.hide();
+      if (error) {
+        Toast.error('Failed to delete department.');
+        return;
+      }
+      Toast.success('Department deleted.');
+      await reloadDepartments();
+    }
+  );
+}
+
+async function reloadDepartments() {
+  const [{ data: depts }, { data: members }] = await Promise.all([
+    supabase.from('departments').select('id,name,description').order('name'),
+    supabase.from('profiles').select('id,department_id').in('role', ['member', 'admin'])
+  ]);
+
+  PAGE.departments = depts || [];
+  PAGE.memberCounts = {};
+  (members || []).forEach(m => {
+    if (m.department_id) {
+      PAGE.memberCounts[m.department_id] = (PAGE.memberCounts[m.department_id] || 0) + 1;
+    }
+  });
+
+  const totalMembers  = (members || []).length;
+  const unassigned    = (members || []).filter(m => !m.department_id).length;
+
+  document.getElementById('stat-total').textContent      = PAGE.departments.length;
+  document.getElementById('stat-members').textContent    = totalMembers;
+  document.getElementById('stat-unassigned').textContent = unassigned;
+
+  // Reset search
+  document.getElementById('search-input').value = '';
+  renderCards(PAGE.departments);
+}
+</script>
+
+</body>
+</html>

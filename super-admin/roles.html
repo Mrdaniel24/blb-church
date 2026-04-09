@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Roles & Permissions | Super Admin — BLB Church</title>
+  <meta name="description" content="BLB Church Super Admin — Manage admin roles and module permissions."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "secondary-fixed-dim":       "#eec200",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-bright":            "#f9f9f9",
+            "surface-dim":               "#dadada",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant":           "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b; font-weight: 600; font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex; align-items: center; gap: 1rem;
+      margin-left: 1rem; padding: 0.75rem 1.5rem;
+      background: #ffffff; color: #00236f; font-weight: 600; font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+
+    .perm-card { transition: box-shadow 0.2s, border-color 0.2s; }
+    .perm-card.unsaved { border: 2px solid #fed01b; box-shadow: 0 0 0 3px rgba(254,208,27,0.15); }
+    .perm-card:not(.unsaved) { border: 2px solid transparent; }
+    .toggle-track { transition: background 0.2s; }
+    .module-toggle:checked ~ .toggle-track { background: #00236f; }
+  </style>
+</head>
+
+<body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <div class="px-10 mb-10">
+    <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Super Admin</p>
+  </div>
+
+  <nav class="flex-1">
+    <p class="px-10 pt-2 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">System</p>
+    <a href="./dashboard.html" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>System Overview</span>
+    </a>
+    <a href="./admins.html" class="nav-item">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Manage Admins</span>
+    </a>
+    <a href="./roles.html" class="nav-item-active">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span>Roles &amp; Permissions</span>
+    </a>
+    <a href="./settings.html" class="nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+
+    <p class="px-10 pt-5 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Church Data</p>
+    <a href="./departments.html" class="nav-item">
+      <span class="material-symbols-outlined">apartment</span>
+      <span>All Departments</span>
+    </a>
+    <a href="./members.html" class="nav-item">
+      <span class="material-symbols-outlined">group</span>
+      <span>All Members</span>
+    </a>
+    <a href="./contributions.html" class="nav-item">
+      <span class="material-symbols-outlined">payments</span>
+      <span>All Contributions</span>
+    </a>
+    <a href="./events.html" class="nav-item">
+      <span class="material-symbols-outlined">event</span>
+      <span>All Events</span>
+    </a>
+    <a href="./media.html" class="nav-item">
+      <span class="material-symbols-outlined">subscriptions</span>
+      <span>All Media</span>
+    </a>
+    <a href="./reports.html" class="nav-item">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span>Full Reports</span>
+    </a>
+  </nav>
+
+  <div class="mt-auto px-6 space-y-1">
+    <button data-action="logout"
+      class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="ml-72 min-h-screen p-12">
+
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-16">
+    <div>
+      <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">Roles &amp; Permissions</h2>
+      <p class="text-on-surface-variant">Set what each admin can access within their department.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+        <p class="text-xs text-on-surface-variant" data-user-role></p>
+      </div>
+      <div class="h-14 w-14 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+        <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+          <span class="text-white font-bold text-lg" id="header-initials">?</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stat Cards Skeleton -->
+  <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <div class="skeleton h-40"></div>
+    <div class="skeleton h-40"></div>
+    <div class="skeleton h-40"></div>
+    <div class="skeleton h-40"></div>
+  </div>
+
+  <!-- Stat Cards Content -->
+  <section id="stats-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 hidden">
+    <!-- Total Admins -->
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-blue-50 rounded-lg">
+          <span class="material-symbols-outlined text-primary text-2xl">shield_person</span>
+        </div>
+        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">Admins</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Admins</p>
+        <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+
+    <!-- With Permissions -->
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-green-50 rounded-lg">
+          <span class="material-symbols-outlined text-green-700 text-2xl">verified_user</span>
+        </div>
+        <span class="text-xs font-bold bg-green-50 text-green-700 px-2 py-1 rounded">Active</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">With Permissions</p>
+        <h3 id="stat-with-perms" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+
+    <!-- Without Permissions -->
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-slate-100 rounded-lg">
+          <span class="material-symbols-outlined text-slate-500 text-2xl">person_off</span>
+        </div>
+        <span class="text-xs font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded">None</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Without Permissions</p>
+        <h3 id="stat-no-perms" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+
+    <!-- Departments -->
+    <div class="stat-card bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-40">
+      <div class="flex justify-between items-start">
+        <div class="p-3 bg-blue-50 rounded-lg">
+          <span class="material-symbols-outlined text-primary text-2xl">apartment</span>
+        </div>
+        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded">Scoped</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Departments</p>
+        <h3 id="stat-depts" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls Bar -->
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+      <input id="search-input" type="text" class="w-full bg-white border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary" placeholder="Search admins by name or email…"/>
+    </div>
+    <button id="btn-save-all" class="px-6 py-3 rounded-xl bg-secondary-container text-on-secondary-container font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">save</span>
+      Save All Changes
+    </button>
+  </div>
+
+  <!-- Admin Cards Skeleton -->
+  <div id="cards-skeleton">
+    <div class="skeleton h-48 mb-4"></div>
+    <div class="skeleton h-48 mb-4"></div>
+    <div class="skeleton h-48 mb-4"></div>
+  </div>
+
+  <!-- Admin Cards Container -->
+  <div id="cards-container" class="hidden"></div>
+
+  <!-- Empty State -->
+  <div id="empty-state" class="hidden flex flex-col items-center justify-center py-24 text-center">
+    <div class="p-6 bg-surface-container-low rounded-full mb-6">
+      <span class="material-symbols-outlined text-slate-400 text-5xl">manage_accounts</span>
+    </div>
+    <h3 class="font-headline font-bold text-xl text-primary mb-2">No Admins Found</h3>
+    <p class="text-on-surface-variant text-sm max-w-sm">No admin accounts match your search. Try a different name or email.</p>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script>
+const MODULES = [
+  { key: 'can_manage_members',       label: 'Members',       icon: 'group' },
+  { key: 'can_manage_contributions', label: 'Contributions', icon: 'payments' },
+  { key: 'can_manage_events',        label: 'Events',        icon: 'event' },
+  { key: 'can_manage_announcements', label: 'Announcements', icon: 'campaign' },
+  { key: 'can_manage_media',         label: 'Media',         icon: 'subscriptions' },
+  { key: 'can_manage_sermons',       label: 'Sermons',       icon: 'mic' }
+];
+
+const PAGE = { admins: [], departments: [], permMap: {} };
+
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  // Set header initials and avatar
+  const initialsEl = document.getElementById('header-initials');
+  const avatarEl   = document.getElementById('header-avatar');
+  if (profile.avatar_url) {
+    avatarEl.innerHTML = `<img src="${escapeHtml(profile.avatar_url)}" class="w-full h-full object-cover" alt="${escapeHtml(profile.full_name || '')}"/>`;
+  } else if (initialsEl) {
+    initialsEl.textContent = getInitials(profile.full_name || 'S A');
+  }
+
+  await loadPage();
+  bindSearch();
+  bindSaveAll();
+})();
+
+async function loadPage() {
+  // 1. Load departments
+  const { data: depts } = await supabase.from('departments').select('id,name').order('name');
+  PAGE.departments = depts || [];
+
+  // 2. Load admins (role='admin')
+  const { data: admins } = await supabase.from('profiles')
+    .select('id,full_name,email,avatar_url,role,status')
+    .eq('role', 'admin').order('full_name');
+  PAGE.admins = admins || [];
+
+  // 3. Load permissions for all those admins
+  const ids = PAGE.admins.map(a => a.id);
+  if (ids.length) {
+    const { data: perms } = await supabase.from('admin_permissions').select('*').in('admin_id', ids);
+    PAGE.permMap = Object.fromEntries((perms || []).map(p => [p.admin_id, p]));
+  }
+
+  updateStats();
+  renderCards(PAGE.admins);
+}
+
+function updateStats() {
+  const withPerms = PAGE.admins.filter(a => {
+    const p = PAGE.permMap[a.id];
+    return p && MODULES.some(m => p[m.key]);
+  });
+  document.getElementById('stat-total').textContent      = PAGE.admins.length;
+  document.getElementById('stat-with-perms').textContent = withPerms.length;
+  document.getElementById('stat-no-perms').textContent   = PAGE.admins.length - withPerms.length;
+  document.getElementById('stat-depts').textContent      = PAGE.departments.length;
+  document.getElementById('stats-skeleton').classList.add('hidden');
+  document.getElementById('stats-content').classList.remove('hidden');
+}
+
+function renderCards(admins) {
+  const container = document.getElementById('cards-container');
+  const empty     = document.getElementById('empty-state');
+  document.getElementById('cards-skeleton').classList.add('hidden');
+
+  if (!admins.length) {
+    container.classList.add('hidden');
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  container.classList.remove('hidden');
+  container.innerHTML = admins.map(a => renderAdminCard(a)).join('');
+
+  // Bind events for each card
+  container.querySelectorAll('.perm-card').forEach(card => {
+    const adminId = card.dataset.adminId;
+
+    card.querySelectorAll('.module-toggle, .dept-select').forEach(el => {
+      el.addEventListener('change', () => markUnsaved(card));
+    });
+
+    card.querySelector('.btn-save-card').addEventListener('click', () => saveCard(card, adminId));
+    card.querySelector('.btn-reset-card').addEventListener('click', () => resetCard(card, adminId));
+  });
+}
+
+function renderAdminCard(admin) {
+  const perm = PAGE.permMap[admin.id] || {};
+
+  const avatarHtml = admin.avatar_url
+    ? `<img src="${escapeHtml(admin.avatar_url)}" class="w-full h-full object-cover" alt="${escapeHtml(admin.full_name || '')}"/>`
+    : `<span class="text-white font-bold text-sm">${escapeHtml(getInitials(admin.full_name || 'A'))}</span>`;
+
+  const deptOptions = PAGE.departments.map(d =>
+    `<option value="${escapeHtml(String(d.id))}" ${String(perm.department_id || '') === String(d.id) ? 'selected' : ''}>${escapeHtml(d.name)}</option>`
+  ).join('');
+
+  const togglesHtml = MODULES.map(m => `
+    <label class="flex items-center gap-3 bg-surface-container-low rounded-xl px-4 py-3 cursor-pointer select-none">
+      <div class="relative flex-shrink-0">
+        <input type="checkbox" class="module-toggle sr-only peer" data-perm="${m.key}" ${perm[m.key] ? 'checked' : ''}/>
+        <div class="toggle-track w-10 h-5 bg-slate-200 rounded-full peer-checked:bg-primary transition-colors"></div>
+        <div class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5 pointer-events-none"></div>
+      </div>
+      <span class="material-symbols-outlined text-primary text-[18px]">${m.icon}</span>
+      <span class="text-sm font-semibold">${escapeHtml(m.label)}</span>
+    </label>
+  `).join('');
+
+  const statusColor = (admin.status || '').toLowerCase() === 'active'
+    ? 'bg-green-50 text-green-700'
+    : 'bg-slate-100 text-slate-500';
+
+  return `
+    <div class="perm-card bg-surface-container-lowest rounded-xl p-6 mb-4" data-admin-id="${escapeHtml(String(admin.id))}">
+      <div class="flex flex-col xl:flex-row xl:items-start gap-6">
+
+        <div class="flex items-start gap-4 min-w-[260px]">
+          <div class="h-12 w-12 rounded-full bg-primary flex items-center justify-center overflow-hidden flex-shrink-0">
+            ${avatarHtml}
+          </div>
+          <div>
+            <p class="font-bold text-primary text-base">${escapeHtml(admin.full_name || 'Unnamed')}</p>
+            <p class="text-sm text-on-surface-variant">${escapeHtml(admin.email || '')}</p>
+            <span class="inline-block mt-1 text-[11px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${statusColor}">${escapeHtml(admin.status || 'unknown')}</span>
+            <div class="flex items-center gap-2 mt-3">
+              <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Scope:</span>
+              <select class="dept-select bg-surface-container-low border-none rounded-full py-1 px-3 text-xs font-bold focus:ring-2 focus:ring-secondary">
+                <option value="">All departments</option>
+                ${deptOptions}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3">
+          ${togglesHtml}
+        </div>
+
+        <div class="flex flex-col gap-2 min-w-[130px]">
+          <button class="btn-save-card px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:opacity-90 transition-opacity opacity-40 cursor-not-allowed" disabled>
+            Save Changes
+          </button>
+          <button class="btn-reset-card text-xs text-slate-400 hover:text-primary transition-colors font-semibold text-center py-1">
+            Reset
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+function markUnsaved(card) {
+  card.classList.add('unsaved');
+  const btn = card.querySelector('.btn-save-card');
+  btn.disabled = false;
+  btn.classList.remove('opacity-40', 'cursor-not-allowed');
+}
+
+function resetCard(card, adminId) {
+  const perm = PAGE.permMap[adminId] || {};
+
+  card.querySelectorAll('.module-toggle').forEach(toggle => {
+    toggle.checked = !!perm[toggle.dataset.perm];
+  });
+  card.querySelector('.dept-select').value = String(perm.department_id || '');
+
+  card.classList.remove('unsaved');
+  const btn = card.querySelector('.btn-save-card');
+  btn.disabled = true;
+  btn.classList.add('opacity-40', 'cursor-not-allowed');
+}
+
+async function saveCard(card, adminId) {
+  const payload = { department_id: card.querySelector('.dept-select').value || null };
+  card.querySelectorAll('.module-toggle').forEach(t => { payload[t.dataset.perm] = t.checked; });
+
+  try {
+    Loader.show('Saving permissions\u2026');
+    const existing = PAGE.permMap[adminId];
+    let error;
+    if (existing) {
+      ({ error } = await supabase.from('admin_permissions').update(payload).eq('admin_id', adminId));
+    } else {
+      ({ error } = await supabase.from('admin_permissions').insert({ admin_id: adminId, ...payload }));
+    }
+    if (error) throw error;
+
+    PAGE.permMap[adminId] = { ...(existing || {}), admin_id: adminId, ...payload };
+
+    card.classList.remove('unsaved');
+    const btn = card.querySelector('.btn-save-card');
+    btn.disabled = true;
+    btn.classList.add('opacity-40', 'cursor-not-allowed');
+
+    updateStats();
+    Toast.success('Permissions saved.');
+  } catch (e) {
+    Toast.error(e.message || 'Failed to save.');
+  } finally {
+    Loader.hide();
+  }
+}
+
+async function saveAllUnsaved() {
+  const unsaved = document.querySelectorAll('.perm-card.unsaved');
+  if (!unsaved.length) { Toast.info('No unsaved changes.'); return; }
+  for (const card of unsaved) {
+    await saveCard(card, card.dataset.adminId);
+  }
+}
+
+function bindSearch() {
+  document.getElementById('search-input').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    const filtered = q
+      ? PAGE.admins.filter(a =>
+          (a.full_name || '').toLowerCase().includes(q) ||
+          (a.email || '').toLowerCase().includes(q))
+      : PAGE.admins;
+    renderCards(filtered);
+  });
+}
+
+function bindSaveAll() {
+  document.getElementById('btn-save-all').addEventListener('click', saveAllUnsaved);
+}
+</script>
+
+</body>
+</html>

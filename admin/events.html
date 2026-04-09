@@ -1,0 +1,299 @@
+
+<!-- =========================================================
+  admin/events.html
+  Role-aware: super_admin sees all events, admin sees own department events + general church events
+========================================================= -->
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events | BLB Church</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#00236f',
+            secondary: '#fed01b'
+          },
+          fontFamily: {
+            headline: ['Inter'],
+            body: ['Plus Jakarta Sans']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+    .nav-item { display:flex; align-items:center; gap:1rem; padding:0.8rem 2rem; color:#64748b; font-weight:700; border-radius:9999px; margin:0 1rem; transition:.2s; }
+    .nav-item:hover { background:#fff; color:#00236f; transform:translateX(4px); }
+    .nav-item-active { background:#fff; color:#00236f; box-shadow:0 8px 30px rgba(2, 6, 23, .06); }
+    .card-hover { transition: .2s ease; }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(2, 6, 23, .06); }
+    .calendar-chip { border-radius:9999px; padding:.35rem .75rem; font-size:.72rem; font-weight:800; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+  <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
+    <div class="px-6 mb-10">
+      <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
+      <p id="sidebar-role-label-2" class="text-[10px] mt-1 font-bold uppercase tracking-[0.22em] text-slate-400">Admin</p>
+    </div>
+
+    <div class="space-y-2">
+      <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item nav-item-active" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
+      <a class="nav-item" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+    </div>
+  </aside>
+
+  <main class="ml-72 min-h-screen p-10">
+    <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+      <div>
+        <p id="scope-badge-2" class="inline-flex items-center gap-2 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-extrabold uppercase tracking-widest">Department + General</p>
+        <h2 class="mt-4 text-4xl font-headline font-extrabold tracking-tight text-primary">Events</h2>
+        <p id="page-subtitle-2" class="mt-2 text-slate-500">Create, manage, and track department events and church-wide visibility.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <button class="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-primary">Calendar View</button>
+        <button id="btn-create-event" class="rounded-2xl bg-primary px-5 py-3 font-bold text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">add</span>
+          Create Event
+        </button>
+      </div>
+    </header>
+
+    <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+      <div class="card-hover rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div class="p-3 rounded-2xl bg-blue-50"><span class="material-symbols-outlined text-primary">event_upcoming</span></div>
+          <span class="calendar-chip bg-green-50 text-green-700">Upcoming</span>
+        </div>
+        <p class="mt-8 text-xs font-extrabold uppercase tracking-widest text-slate-400">Upcoming Events</p>
+        <h3 id="stat-upcoming-events" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+
+      <div class="card-hover rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div class="p-3 rounded-2xl bg-violet-50"><span class="material-symbols-outlined text-violet-700">today</span></div>
+          <span class="calendar-chip bg-blue-50 text-blue-700">This Month</span>
+        </div>
+        <p class="mt-8 text-xs font-extrabold uppercase tracking-widest text-slate-400">Monthly Events</p>
+        <h3 id="stat-month-events" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+
+      <div class="card-hover rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div class="p-3 rounded-2xl bg-amber-50"><span class="material-symbols-outlined text-amber-700">public</span></div>
+          <span class="calendar-chip bg-amber-50 text-amber-700">General</span>
+        </div>
+        <p class="mt-8 text-xs font-extrabold uppercase tracking-widest text-slate-400">Church-Wide Events</p>
+        <h3 id="stat-general-events" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+
+      <div class="card-hover rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div class="p-3 rounded-2xl bg-rose-50"><span class="material-symbols-outlined text-rose-700">groups</span></div>
+          <span class="calendar-chip bg-slate-100 text-slate-700">Scope</span>
+        </div>
+        <p class="mt-8 text-xs font-extrabold uppercase tracking-widest text-slate-400">Department Events</p>
+        <h3 id="stat-department-events" class="mt-2 text-3xl font-black text-primary">0</h3>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 xl:col-span-8 rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+          <div>
+            <h3 class="text-xl font-extrabold text-primary">Event List</h3>
+            <p class="text-sm text-slate-500 mt-1">Admins see department events plus general church events. Super admin sees everything.</p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <input id="event-search" type="text" placeholder="Search title or location" class="rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary" />
+            <select id="event-scope-filter" class="rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary">
+              <option value="">All scopes</option>
+              <option value="general">General church</option>
+              <option value="department">Department</option>
+            </select>
+            <select id="event-status-filter" class="rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary">
+              <option value="">All statuses</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="events-list" class="space-y-4"></div>
+      </div>
+
+      <div class="col-span-12 xl:col-span-4 flex flex-col gap-6">
+        <div class="rounded-3xl bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-extrabold text-primary">Quick Actions</h3>
+            <span class="material-symbols-outlined text-primary">bolt</span>
+          </div>
+          <div class="grid gap-3">
+            <button class="rounded-2xl bg-slate-50 px-4 py-4 text-left font-bold text-slate-700">Create Event</button>
+            <button class="rounded-2xl bg-slate-50 px-4 py-4 text-left font-bold text-slate-700">View Calendar</button>
+            <button class="rounded-2xl bg-slate-50 px-4 py-4 text-left font-bold text-slate-700">Export Event List</button>
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-extrabold text-primary">Upcoming Highlights</h3>
+            <span class="calendar-chip bg-blue-50 text-blue-700">Soon</span>
+          </div>
+          <div id="upcoming-highlights" class="space-y-4"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/router.js"></script>
+  <script>
+  (async () => {
+    const profile = await initPageGuard();
+    if (!profile) return;
+
+    // Admin is always department-scoped.
+    // They can see their own department events AND general/church-wide events.
+    const deptName = profile.departments?.name || 'Your Department';
+    document.getElementById('sidebar-role-label-2').textContent = 'Admin Portal';
+    document.getElementById('scope-badge-2').textContent = `${escapeHtml(deptName)} + General`;
+    document.getElementById('page-subtitle-2').textContent =
+      `Manage ${escapeHtml(deptName)} events and view general church events.`;
+
+    let allEvents = [];
+
+    async function loadEvents() {
+      // Admin sees: their own department's events + general/church-wide events (department_id IS NULL)
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, title, description, start_date, end_date, location, category, created_by')
+        .or(`created_by.eq.${profile.id},category.eq.general`)
+        .order('start_date', { ascending: false });
+
+      if (error) { Toast.error('Failed to load events.'); return; }
+
+      // Also fetch events created by members in this department
+      const { data: deptEvents } = await supabase
+        .from('events')
+        .select('id, title, description, start_date, end_date, location, category, created_by, creator:profiles!events_created_by_fkey(department_id)')
+        .neq('category', 'general')
+        .order('start_date', { ascending: false });
+
+      const deptFiltered = (deptEvents || []).filter(e => e.creator?.department_id === profile.department_id);
+      const merged = [...(data || []), ...deptFiltered];
+      // Deduplicate by id
+      const seen = new Set();
+      allEvents = merged.filter(e => { if (seen.has(e.id)) return false; seen.add(e.id); return true; });
+
+      renderEventsPage();
+    }
+
+    function applyEventFilters() {
+      const now = new Date();
+      const q = document.getElementById('event-search').value.trim().toLowerCase();
+      const scope = document.getElementById('event-scope-filter').value;
+      const status = document.getElementById('event-status-filter').value;
+      return allEvents.filter(item => {
+        const isUpcoming = new Date(item.start_date) > now;
+        const itemStatus = isUpcoming ? 'upcoming' : 'completed';
+        const isGeneral = item.category === 'general';
+        const searchOk = !q || [item.title, item.location, item.category, item.description].join(' ').toLowerCase().includes(q);
+        const scopeOk = !scope || (scope === 'general' ? isGeneral : !isGeneral);
+        const statusOk = !status || itemStatus === status;
+        return searchOk && scopeOk && statusOk;
+      });
+    }
+
+    function renderEventStats(data) {
+      const now = new Date();
+      document.getElementById('stat-upcoming-events').textContent = data.filter(x => new Date(x.start_date) > now).length;
+      document.getElementById('stat-month-events').textContent = data.filter(x => {
+        const d = new Date(x.start_date);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      }).length;
+      document.getElementById('stat-general-events').textContent = data.filter(x => x.category === 'general').length;
+      document.getElementById('stat-department-events').textContent = data.filter(x => x.category !== 'general').length;
+    }
+
+    function renderEventsList(data) {
+      const now = new Date();
+      const list = document.getElementById('events-list');
+      if (!data.length) {
+        list.innerHTML = `<div class="rounded-3xl border border-dashed border-slate-200 p-10 text-center text-slate-400 font-semibold">No events found.</div>`;
+        return;
+      }
+      list.innerHTML = data.map(item => {
+        const isGeneral = item.category === 'general';
+        const isUpcoming = new Date(item.start_date) > now;
+        return `
+        <div class="card-hover rounded-3xl border border-slate-100 bg-slate-50 p-5">
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="calendar-chip ${isGeneral ? 'bg-amber-50 text-amber-700' : 'bg-blue-50 text-blue-700'}">${isGeneral ? 'General Church' : escapeHtml(deptName)}</span>
+                <span class="calendar-chip ${isUpcoming ? 'bg-green-50 text-green-700' : 'bg-slate-200 text-slate-700'}">${isUpcoming ? 'Upcoming' : 'Past'}</span>
+              </div>
+              <h4 class="text-lg font-extrabold text-slate-900">${escapeHtml(item.title)}</h4>
+              <p class="mt-2 text-sm text-slate-500">${escapeHtml(item.location || '')} · ${formatDate(item.start_date)}</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="rounded-xl bg-white px-4 py-2 text-xs font-bold text-slate-700">View</button>
+              <button class="rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-primary">Edit</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderHighlights(data) {
+      const now = new Date();
+      const box = document.getElementById('upcoming-highlights');
+      const upcoming = data.filter(x => new Date(x.start_date) > now).slice(0, 3);
+      box.innerHTML = upcoming.length ? upcoming.map(item => `
+        <div class="rounded-2xl bg-slate-50 p-4">
+          <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">${formatDate(item.start_date)}</p>
+          <h4 class="mt-1 font-bold text-slate-800">${escapeHtml(item.title)}</h4>
+          <p class="mt-1 text-sm text-slate-500">${escapeHtml(item.location || '')}</p>
+        </div>
+      `).join('') : `<p class="text-sm text-slate-400">No upcoming events.</p>`;
+    }
+
+    function renderEventsPage() {
+      const filtered = applyEventFilters();
+      renderEventStats(filtered);
+      renderEventsList(filtered);
+      renderHighlights(filtered);
+    }
+
+    ['event-search', 'event-scope-filter', 'event-status-filter'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', renderEventsPage);
+        el.addEventListener('change', renderEventsPage);
+      }
+    });
+
+    await loadEvents();
+  })();
+  </script>
+</body>
+</html>

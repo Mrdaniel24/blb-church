@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Events | BLB Church — The Digital Sanctuary</title>
+  <meta name="description" content="Browse upcoming church events and fellowship opportunities.">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "primary-fixed-dim":         "#b6c4ff",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "error-container":           "#ffdad6",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"], "body": ["Plus Jakarta Sans"], "label": ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .glass-header { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .nav-link-active { color: #00236f !important; background-color: rgba(239,246,255,0.5); border-right: 4px solid #fed01b; }
+    .skeleton { background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,35,111,0.3); backdrop-filter: blur(4px); z-index: 40; }
+    .sidebar-overlay.open { display: block; }
+    .event-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .event-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,35,111,0.1); }
+    .filter-pill-active   { background: #00236f; color: #ffffff; }
+    .filter-pill-inactive { background: transparent; color: #757682; border: 1px solid #c5c5d3; }
+    .filter-pill-inactive:hover { background: #f3f3f4; color: #00236f; border-color: #00236f; }
+    /* View toggle */
+    .view-btn-active   { background: #ffffff; color: #00236f; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .view-btn-inactive { color: #757682; }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface" data-required-role="member" style="opacity:0; transition: opacity 0.3s ease;">
+
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="h-screen w-72 fixed left-0 top-0 bg-surface-container-lowest flex flex-col py-8 z-50 -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-sm">
+  <div class="px-8 mb-10">
+    <a href="../public/index.html">
+      <h1 class="text-xl font-black text-primary tracking-tighter">BLB Church</h1>
+      <p class="text-[10px] uppercase tracking-[0.2em] text-outline font-bold mt-1">Member Portal</p>
+    </a>
+  </div>
+  <nav class="flex-grow overflow-y-auto">
+    <p class="px-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Main Menu</p>
+    <ul class="space-y-0.5">
+      <li><a href="dashboard.html"     class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">dashboard</span><span class="text-sm font-semibold tracking-wide">Dashboard</span></a></li>
+      <li><a href="contributions.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">payments</span><span class="text-sm font-semibold tracking-wide">My Giving</span></a></li>
+      <li><a href="announcements.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">campaign</span><span class="text-sm font-semibold tracking-wide">Announcements</span></a></li>
+      <li><a href="events.html"        class="nav-link nav-link-active flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">calendar_today</span><span class="text-sm font-semibold tracking-wide">Events</span></a></li>
+      <li><a href="sermons.html"       class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">auto_stories</span><span class="text-sm font-semibold tracking-wide">Sermons</span></a></li>
+    </ul>
+    <p class="px-8 mt-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Account</p>
+    <ul class="space-y-0.5">
+      <li><a href="profile.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">manage_accounts</span><span class="text-sm font-semibold tracking-wide">My Profile</span></a></li>
+    </ul>
+  </nav>
+  <div class="px-8 mt-auto pt-6 border-t border-outline-variant/20">
+    <a href="#" data-action="logout" class="flex items-center px-4 py-3 text-slate-500 hover:text-error hover:bg-error-container/30 rounded-lg transition-all">
+      <span class="material-symbols-outlined mr-4 text-xl">logout</span>
+      <span class="text-sm font-semibold tracking-wide">Sign Out</span>
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="md:ml-72 min-h-screen pb-16">
+
+  <!-- Header -->
+  <header class="w-full sticky top-0 z-30 bg-white/80 glass-header flex justify-between items-center px-6 md:px-8 h-16 shadow-sm border-b border-outline-variant/10">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" class="md:hidden text-slate-600 hover:text-primary p-2">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div>
+        <p class="text-[10px] text-outline uppercase tracking-widest font-bold hidden md:block">Member Portal</p>
+        <p class="text-primary font-bold text-base tracking-tight">Events</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="profile.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div id="header-avatar" class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container bg-primary flex items-center justify-center">
+          <span class="text-white text-sm font-bold" id="header-initials">?</span>
+        </div>
+        <div class="hidden sm:block">
+          <p class="text-xs font-bold text-primary leading-tight" data-user-name>Loading…</p>
+          <p class="text-[10px] text-outline" data-user-department>—</p>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <div class="p-6 md:p-10 lg:p-12 max-w-7xl mx-auto space-y-10">
+
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <span class="text-[10px] font-black text-on-secondary-container bg-secondary-container px-3 py-1 rounded-full uppercase tracking-widest mb-3 inline-block">The Digital Sanctuary</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline text-primary tracking-tight mt-2">Events &amp; Fellowship</h2>
+        <p class="text-on-surface-variant mt-3 max-w-xl text-sm md:text-base leading-relaxed">
+          Gather as a community to celebrate, learn, and grow together. Explore upcoming fellowship opportunities.
+        </p>
+      </div>
+      <!-- View toggle + Search -->
+      <div class="flex items-center gap-3 shrink-0">
+        <!-- Grid / List toggle -->
+        <div class="flex bg-surface-container-low rounded-xl p-1 gap-1">
+          <button id="view-grid" onclick="setView('grid')" class="view-btn view-btn-active p-2 rounded-lg transition-all" title="Grid view">
+            <span class="material-symbols-outlined text-xl">grid_view</span>
+          </button>
+          <button id="view-list" onclick="setView('list')" class="view-btn view-btn-inactive p-2 rounded-lg transition-all" title="List view">
+            <span class="material-symbols-outlined text-xl">view_list</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-column: filters + content -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT: filters + event grid -->
+      <div class="lg:col-span-8 space-y-7">
+
+        <!-- Filter row -->
+        <div class="flex flex-col gap-5">
+          <!-- Status pills -->
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-xs font-bold text-outline uppercase tracking-widest">Status:</span>
+            <button onclick="setStatus('upcoming')" data-status="upcoming" class="filter-pill filter-pill-active px-5 py-2 rounded-full text-sm font-bold transition-all">Upcoming</button>
+            <button onclick="setStatus('past')"     data-status="past"     class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">Past Events</button>
+            <button onclick="setStatus('all')"      data-status="all"      class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">All</button>
+          </div>
+          <!-- Category pills -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold text-outline uppercase tracking-widest mr-1">Category:</span>
+            <button onclick="setCategory('all')"      data-cat="all"      class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary text-on-primary transition-all">All</button>
+            <button onclick="setCategory('worship')"  data-cat="worship"  class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Worship</button>
+            <button onclick="setCategory('youth')"    data-cat="youth"    class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Youth</button>
+            <button onclick="setCategory('outreach')" data-cat="outreach" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Outreach</button>
+            <button onclick="setCategory('women')"    data-cat="women"    class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Women</button>
+            <button onclick="setCategory('men')"      data-cat="men"      class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Men</button>
+            <button onclick="setCategory('general')"  data-cat="general"  class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">General</button>
+          </div>
+        </div>
+
+        <!-- Results label -->
+        <p id="results-label" class="text-xs text-outline font-medium">Loading…</p>
+
+        <!-- Event cards -->
+        <div id="events-container">
+          <!-- Skeleton grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="skeleton h-72 rounded-2xl"></div>
+            <div class="skeleton h-72 rounded-2xl"></div>
+            <div class="skeleton h-72 rounded-2xl"></div>
+            <div class="skeleton h-72 rounded-2xl"></div>
+          </div>
+        </div>
+
+        <!-- Load more -->
+        <div id="load-more-wrap" class="hidden text-center pt-2">
+          <button id="load-more-btn" onclick="loadMore()"
+            class="px-8 py-3 rounded-xl border-2 border-primary/10 text-primary font-bold text-sm hover:bg-primary hover:text-on-primary transition-all duration-300">
+            Load More
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: next event + quick calendar -->
+      <div class="lg:col-span-4">
+        <div class="sticky top-24 space-y-6">
+
+          <!-- Featured / next event -->
+          <div id="featured-card" class="relative overflow-hidden rounded-2xl bg-primary-container h-72 flex flex-col justify-end p-7">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-primary/10 z-0"></div>
+            <!-- Skeleton -->
+            <div id="featured-skeleton" class="relative z-10 space-y-3">
+              <div class="skeleton h-5 w-20 rounded-full" style="background:rgba(255,255,255,0.15);"></div>
+              <div class="skeleton h-7 w-48 rounded-lg" style="background:rgba(255,255,255,0.15);"></div>
+              <div class="skeleton h-4 w-36 rounded-lg" style="background:rgba(255,255,255,0.15);"></div>
+            </div>
+            <!-- Real content -->
+            <div id="featured-content" class="hidden relative z-10 space-y-2">
+              <div class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest">
+                Next Up
+              </div>
+              <h4 id="feat-title" class="text-xl font-bold font-headline text-white leading-tight">—</h4>
+              <div class="flex flex-wrap gap-3 text-xs font-medium text-primary-fixed-dim">
+                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span><span id="feat-date">—</span></span>
+                <span class="flex items-center gap-1" id="feat-loc-wrap"><span class="material-symbols-outlined text-sm">location_on</span><span id="feat-loc">—</span></span>
+              </div>
+              <p id="feat-desc" class="text-white/70 text-xs leading-relaxed line-clamp-2 mt-1"></p>
+            </div>
+            <div id="featured-empty" class="hidden relative z-10 text-center">
+              <span class="material-symbols-outlined text-4xl text-primary-fixed-dim mb-2 block">event_busy</span>
+              <p class="text-white/70 text-sm">No upcoming events</p>
+            </div>
+          </div>
+
+          <!-- Upcoming count summary -->
+          <div class="bg-surface-container-low rounded-2xl p-6 space-y-4">
+            <h4 class="text-primary font-bold text-sm flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary">event_note</span>
+              Coming Up
+            </h4>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-surface-container-lowest rounded-xl p-4 text-center">
+                <p id="stat-upcoming" class="text-2xl font-headline font-bold text-primary">—</p>
+                <p class="text-[10px] uppercase tracking-widest text-outline font-bold mt-1">Upcoming</p>
+              </div>
+              <div class="bg-surface-container-lowest rounded-xl p-4 text-center">
+                <p id="stat-this-month" class="text-2xl font-headline font-bold text-secondary">—</p>
+                <p class="text-[10px] uppercase tracking-widest text-outline font-bold mt-1">This Month</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- EVENT DETAIL MODAL -->
+<div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
+  style="background: rgba(0,35,111,0.15); backdrop-filter: blur(4px);">
+  <div id="detail-modal-box" class="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+    style="box-shadow: 0 32px 64px rgba(0,35,111,0.12);">
+    <div class="p-8 space-y-5">
+      <div class="flex items-start justify-between gap-4">
+        <div class="space-y-2">
+          <span id="modal-category-badge" class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-secondary-container/30 text-on-secondary-container"></span>
+          <h3 id="modal-title" class="text-2xl font-bold font-headline text-primary leading-tight"></h3>
+        </div>
+        <button onclick="closeModal()" class="p-2 text-outline hover:text-primary rounded-xl hover:bg-surface-container-low transition-colors shrink-0">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-3 text-on-surface-variant">
+          <span class="material-symbols-outlined text-primary">schedule</span>
+          <span id="modal-date"></span>
+        </div>
+        <div class="flex items-center gap-3 text-on-surface-variant" id="modal-location-row">
+          <span class="material-symbols-outlined text-primary">location_on</span>
+          <span id="modal-location"></span>
+        </div>
+      </div>
+      <p id="modal-description" class="text-sm text-on-surface-variant leading-relaxed whitespace-pre-wrap"></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+
+<script>
+// ── Sidebar ───────────────────────────────────────────────
+function openSidebar()  { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full');    document.getElementById('sidebar-overlay').classList.remove('open'); }
+
+// ── State ─────────────────────────────────────────────────
+const PAGE_SIZE  = 8;
+let allEvents    = [];
+let filtered     = [];
+let currentStatus   = 'upcoming';
+let currentCategory = 'all';
+let currentView     = 'grid';
+let visibleCount    = PAGE_SIZE;
+
+// ── Category colours ─────────────────────────────────────
+const CAT_COLORS = {
+  worship:  'bg-primary/5 text-primary',
+  youth:    'bg-secondary-container/30 text-on-secondary-container',
+  outreach: 'bg-emerald-50 text-emerald-700',
+  women:    'bg-pink-50 text-pink-700',
+  men:      'bg-blue-50 text-blue-700',
+  general:  'bg-surface-container text-on-surface-variant',
+};
+function catColor(c) { return CAT_COLORS[c?.toLowerCase()] || 'bg-surface-container text-on-surface-variant'; }
+function catLabel(c) { return c ? c.charAt(0).toUpperCase() + c.slice(1) : 'General'; }
+
+// ── Filter: status ────────────────────────────────────────
+function setStatus(s) {
+  currentStatus = s;
+  visibleCount  = PAGE_SIZE;
+  document.querySelectorAll('[data-status]').forEach(btn => {
+    const active = btn.dataset.status === s;
+    btn.className = `filter-pill ${active ? 'filter-pill-active' : 'filter-pill-inactive'} px-5 py-2 rounded-full text-sm font-bold transition-all`;
+  });
+  applyFilters();
+}
+
+// ── Filter: category ─────────────────────────────────────
+function setCategory(c) {
+  currentCategory = c;
+  visibleCount    = PAGE_SIZE;
+  document.querySelectorAll('[data-cat]').forEach(btn => {
+    const active = btn.dataset.cat === c;
+    btn.className = `cat-pill px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${
+      active ? 'border-primary bg-primary text-on-primary'
+             : 'border-outline-variant text-slate-500 hover:border-primary hover:text-primary'
+    }`;
+  });
+  applyFilters();
+}
+
+// ── View toggle ───────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  document.getElementById('view-grid').className = `view-btn ${v==='grid' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
+  document.getElementById('view-list').className = `view-btn ${v==='list' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
+  renderEvents();
+}
+
+// ── Apply all filters ────────────────────────────────────
+function applyFilters() {
+  const now = new Date();
+  filtered = allEvents.filter(ev => {
+    const start = new Date(ev.start_date);
+    if (currentStatus === 'upcoming' && start < now) return false;
+    if (currentStatus === 'past'     && start >= now) return false;
+    if (currentCategory !== 'all' && (ev.category || '').toLowerCase() !== currentCategory) return false;
+    return true;
+  });
+  renderEvents();
+}
+
+// ── Render event list/grid ────────────────────────────────
+function renderEvents() {
+  const container = document.getElementById('events-container');
+  const label     = document.getElementById('results-label');
+  const slice     = filtered.slice(0, visibleCount);
+
+  label.textContent = filtered.length === 0
+    ? 'No events found'
+    : `Showing ${Math.min(visibleCount, filtered.length)} of ${filtered.length} event${filtered.length !== 1 ? 's' : ''}`;
+
+  if (slice.length === 0) {
+    container.innerHTML = `
+      <div class="py-20 text-center">
+        <span class="material-symbols-outlined text-5xl text-outline mb-4 block">event_busy</span>
+        <p class="text-on-surface-variant font-medium">No events found for this filter.</p>
+        <p class="text-xs text-outline mt-1">Try a different status or category.</p>
+      </div>`;
+    document.getElementById('load-more-wrap').classList.add('hidden');
+    return;
+  }
+
+  if (currentView === 'grid') {
+    container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${slice.map(buildGridCard).join('')}</div>`;
+  } else {
+    container.innerHTML = `<div class="space-y-4">${slice.map(buildListRow).join('')}</div>`;
+  }
+
+  if (filtered.length > visibleCount) {
+    document.getElementById('load-more-wrap').classList.remove('hidden');
+    document.getElementById('load-more-btn').textContent = `Load More (${filtered.length - visibleCount} remaining)`;
+  } else {
+    document.getElementById('load-more-wrap').classList.add('hidden');
+  }
+}
+
+// ── Grid card ─────────────────────────────────────────────
+function buildGridCard(ev) {
+  const isPast    = new Date(ev.start_date) < new Date();
+  const badge     = catColor(ev.category);
+  const data      = JSON.stringify(ev).replace(/"/g, '&quot;');
+  return `
+    <div class="event-card bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm cursor-pointer"
+      onclick="openModal(${data})">
+      <!-- Colour band header -->
+      <div class="relative h-48 bg-gradient-to-br from-primary to-primary-container flex items-end p-5">
+        <div class="absolute inset-0 opacity-10 flex items-center justify-center">
+          <span class="material-symbols-outlined" style="font-size:120px; color:white;">event</span>
+        </div>
+        <div class="relative z-10 flex flex-col gap-2">
+          <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest w-fit">
+            ${escapeHtml(catLabel(ev.category))}
+          </span>
+          ${isPast ? '<span class="inline-block px-2 py-0.5 bg-black/30 text-white text-[10px] font-bold rounded-full w-fit">Past Event</span>' : ''}
+        </div>
+      </div>
+      <div class="p-6 space-y-3">
+        <p class="text-primary font-bold text-xs uppercase tracking-wide">${formatDateTime(ev.start_date)}</p>
+        <h3 class="text-lg font-bold text-primary leading-tight">${escapeHtml(ev.title)}</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-2">${escapeHtml(ev.description || '')}</p>
+        ${ev.location ? `<p class="text-xs text-outline flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span>${escapeHtml(ev.location)}</p>` : ''}
+        <div class="pt-2">
+          <span class="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+            View details <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </span>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── List row ──────────────────────────────────────────────
+function buildListRow(ev) {
+  const isPast = new Date(ev.start_date) < new Date();
+  const data   = JSON.stringify(ev).replace(/"/g, '&quot;');
+  return `
+    <div class="event-card bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-5 cursor-pointer border border-outline-variant/10"
+      onclick="openModal(${data})">
+      <!-- Date block -->
+      <div class="w-16 h-16 rounded-xl bg-primary flex flex-col items-center justify-center text-on-primary shrink-0">
+        <span class="text-xs font-bold uppercase">${new Date(ev.start_date).toLocaleString('en-US',{month:'short'})}</span>
+        <span class="text-2xl font-headline font-black leading-none">${new Date(ev.start_date).getDate()}</span>
+      </div>
+      <div class="flex-grow min-w-0">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${catColor(ev.category)}">${escapeHtml(catLabel(ev.category))}</span>
+          ${isPast ? '<span class="text-[10px] font-bold text-outline">(Past)</span>' : ''}
+        </div>
+        <h4 class="font-bold text-primary truncate">${escapeHtml(ev.title)}</h4>
+        <p class="text-xs text-outline mt-0.5">${formatDateTime(ev.start_date)}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</p>
+      </div>
+      <span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+    </div>`;
+}
+
+// ── Load more ─────────────────────────────────────────────
+function loadMore() {
+  visibleCount += PAGE_SIZE;
+  renderEvents();
+}
+
+// ── Modal ─────────────────────────────────────────────────
+function openModal(ev) {
+  document.getElementById('modal-category-badge').textContent = catLabel(ev.category);
+  document.getElementById('modal-title').textContent          = ev.title;
+  document.getElementById('modal-date').textContent           = formatDateTime(ev.start_date) + (ev.end_date ? ' – ' + formatDateTime(ev.end_date) : '');
+  document.getElementById('modal-description').textContent    = ev.description || 'No description provided.';
+
+  const locRow = document.getElementById('modal-location-row');
+  if (ev.location) {
+    document.getElementById('modal-location').textContent = ev.location;
+    locRow.classList.remove('hidden');
+  } else {
+    locRow.classList.add('hidden');
+  }
+
+  document.getElementById('detail-modal').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('detail-modal').classList.add('hidden'); }
+document.getElementById('detail-modal').addEventListener('click', e => { if (e.target === document.getElementById('detail-modal')) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── Featured / next event panel ───────────────────────────
+function renderFeatured() {
+  document.getElementById('featured-skeleton').classList.add('hidden');
+  const now     = new Date();
+  const next    = allEvents.filter(ev => new Date(ev.start_date) >= now)
+                          .sort((a,b) => new Date(a.start_date) - new Date(b.start_date))[0];
+
+  if (!next) { document.getElementById('featured-empty').classList.remove('hidden'); return; }
+
+  document.getElementById('feat-title').textContent = next.title;
+  document.getElementById('feat-date').textContent  = formatDateTime(next.start_date);
+  if (next.location) {
+    document.getElementById('feat-loc').textContent = next.location;
+  } else {
+    document.getElementById('feat-loc-wrap').classList.add('hidden');
+  }
+  document.getElementById('feat-desc').textContent = next.description || '';
+  document.getElementById('featured-content').classList.remove('hidden');
+}
+
+// ── Stats ──────────────────────────────────────────────────
+function renderStats() {
+  const now       = new Date();
+  const upcoming  = allEvents.filter(ev => new Date(ev.start_date) >= now);
+  const thisMonth = upcoming.filter(ev => {
+    const d = new Date(ev.start_date);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  document.getElementById('stat-upcoming').textContent   = upcoming.length;
+  document.getElementById('stat-this-month').textContent = thisMonth.length;
+}
+
+// ── Load from Supabase ────────────────────────────────────
+async function loadEvents() {
+  const { data, error } = await supabase
+    .from('events')
+    .select('id, title, description, start_date, end_date, location, category')
+    .order('start_date', { ascending: false });
+
+  if (error || !data) {
+    Toast.error('Failed to load events.');
+    allEvents = [];
+  } else {
+    allEvents = data;
+  }
+
+  renderFeatured();
+  renderStats();
+  applyFilters();
+}
+
+// ── Header avatar ─────────────────────────────────────────
+function setHeaderAvatar(profile) {
+  if (profile.avatar_url) {
+    document.getElementById('header-avatar').innerHTML = `<img src="${profile.avatar_url}" alt="Profile" class="w-full h-full object-cover">`;
+  } else {
+    document.getElementById('header-initials').textContent = getInitials(profile.full_name || '?');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+  setHeaderAvatar(profile);
+  await loadEvents();
+})();
+</script>
+</body>
+</html>

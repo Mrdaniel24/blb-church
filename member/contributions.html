@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>My Giving | BLB Church — The Digital Sanctuary</title>
+  <meta name="description" content="View your full giving history and contribution records.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "primary-fixed-dim":         "#b6c4ff",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "error-container":           "#ffdad6",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-header { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .nav-link-active {
+      color: #00236f !important;
+      background-color: rgba(239,246,255,0.5);
+      border-right: 4px solid #fed01b;
+    }
+    .filter-btn-active {
+      background: #ffffff;
+      color: #00236f;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,35,111,0.3);
+      backdrop-filter: blur(4px);
+      z-index: 40;
+    }
+    .sidebar-overlay.open { display: block; }
+    tr.contribution-row { transition: background 0.15s ease; }
+    tr.contribution-row:hover { background: #f3f3f4; }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface" data-required-role="member" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- Mobile overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ============================================================
+     SIDEBAR (same as dashboard)
+============================================================ -->
+<aside id="sidebar" class="h-screen w-72 fixed left-0 top-0 bg-surface-container-lowest flex flex-col py-8 z-50
+  -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-sm">
+
+  <div class="px-8 mb-10">
+    <a href="../public/index.html" class="block">
+      <h1 class="text-xl font-black text-primary tracking-tighter">BLB Church</h1>
+      <p class="text-[10px] uppercase tracking-[0.2em] text-outline font-bold mt-1">Member Portal</p>
+    </a>
+  </div>
+
+  <nav class="flex-grow overflow-y-auto">
+    <p class="px-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Main Menu</p>
+    <ul class="space-y-0.5">
+      <li>
+        <a href="dashboard.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">dashboard</span>
+          <span class="text-sm font-semibold tracking-wide">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="contributions.html" class="nav-link nav-link-active flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">payments</span>
+          <span class="text-sm font-semibold tracking-wide">My Giving</span>
+        </a>
+      </li>
+      <li>
+        <a href="announcements.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">campaign</span>
+          <span class="text-sm font-semibold tracking-wide">Announcements</span>
+        </a>
+      </li>
+      <li>
+        <a href="events.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">calendar_today</span>
+          <span class="text-sm font-semibold tracking-wide">Events</span>
+        </a>
+      </li>
+      <li>
+        <a href="sermons.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">auto_stories</span>
+          <span class="text-sm font-semibold tracking-wide">Sermons</span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="px-8 mt-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Account</p>
+    <ul class="space-y-0.5">
+      <li>
+        <a href="profile.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all duration-200">
+          <span class="material-symbols-outlined mr-4 text-xl">manage_accounts</span>
+          <span class="text-sm font-semibold tracking-wide">My Profile</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="px-8 mt-auto pt-6 border-t border-outline-variant/20 space-y-1">
+    <a href="#" data-action="logout"
+      class="flex items-center px-4 py-3 text-slate-500 hover:text-error hover:bg-error-container/30 rounded-lg transition-all duration-200">
+      <span class="material-symbols-outlined mr-4 text-xl">logout</span>
+      <span class="text-sm font-semibold tracking-wide">Sign Out</span>
+    </a>
+  </div>
+</aside>
+
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<main class="md:ml-72 min-h-screen pb-16">
+
+  <!-- Top Header -->
+  <header class="w-full sticky top-0 z-30 bg-white/80 glass-header flex justify-between items-center px-6 md:px-8 h-16 shadow-sm border-b border-outline-variant/10">
+    <div class="flex items-center gap-4">
+      <button onclick="openSidebar()" class="md:hidden text-slate-600 hover:text-primary transition-colors p-2">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div>
+        <p class="text-[10px] text-outline uppercase tracking-widest font-bold hidden md:block">Member Portal</p>
+        <p class="text-primary font-bold text-base tracking-tight">My Giving</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="profile.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div id="header-avatar" class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container bg-primary flex items-center justify-center">
+          <span class="text-white text-sm font-bold" id="header-initials">?</span>
+        </div>
+        <div class="hidden sm:block text-right">
+          <p class="text-xs font-bold text-primary leading-tight" data-user-name>Loading…</p>
+          <p class="text-[10px] text-outline" data-user-department>—</p>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <div class="p-6 md:p-10 lg:p-12 max-w-7xl mx-auto space-y-10">
+
+    <!-- ── Hero Banner ── -->
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-container p-10 md:p-12 text-white shadow-xl">
+      <div class="relative z-10 max-w-xl">
+        <p class="text-[10px] uppercase tracking-[0.25em] text-primary-fixed-dim font-black mb-3">Stewardship</p>
+        <h2 class="text-4xl md:text-5xl font-extrabold font-headline tracking-tight leading-tight mb-3">My Giving History</h2>
+        <p class="text-on-primary-container text-sm leading-relaxed">
+          Every contribution is a seed sown in faith. Track your giving journey and
+          see how your offerings are supporting the ministry.
+        </p>
+      </div>
+      <div class="absolute right-4 bottom-0 opacity-10 pointer-events-none select-none">
+        <span class="material-symbols-outlined" style="font-size: 220px;">account_balance_wallet</span>
+      </div>
+    </section>
+
+    <!-- ── Summary Stat Cards ── -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10 flex flex-col justify-between h-36">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] uppercase tracking-widest font-bold text-slate-500">Total Given</span>
+          <span class="material-symbols-outlined text-primary text-lg">payments</span>
+        </div>
+        <div>
+          <div id="stat-total-skeleton" class="skeleton h-8 w-32 mb-1"></div>
+          <p id="stat-total" class="hidden text-2xl font-headline font-bold text-primary">TZS 0</p>
+          <p class="text-xs text-slate-400 mt-0.5">All time</p>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10 flex flex-col justify-between h-36">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] uppercase tracking-widest font-bold text-slate-500">This Month</span>
+          <span class="material-symbols-outlined text-secondary text-lg">calendar_month</span>
+        </div>
+        <div>
+          <div id="stat-month-skeleton" class="skeleton h-8 w-24 mb-1"></div>
+          <p id="stat-month" class="hidden text-2xl font-headline font-bold text-on-surface">TZS 0</p>
+          <p class="text-xs text-slate-400 mt-0.5" id="stat-month-label">—</p>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10 flex flex-col justify-between h-36">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] uppercase tracking-widest font-bold text-slate-500">Transactions</span>
+          <span class="material-symbols-outlined text-primary-container text-lg">receipt_long</span>
+        </div>
+        <div>
+          <div id="stat-count-skeleton" class="skeleton h-8 w-16 mb-1"></div>
+          <p id="stat-count" class="hidden text-2xl font-headline font-bold text-on-surface">0</p>
+          <p class="text-xs text-slate-400 mt-0.5">Total contributions</p>
+        </div>
+      </div>
+
+      <div class="bg-secondary-fixed rounded-2xl p-6 flex flex-col justify-between h-36">
+        <div class="flex justify-between items-start">
+          <span class="text-[10px] uppercase tracking-widest font-bold text-on-secondary-fixed">Largest Gift</span>
+          <span class="material-symbols-outlined text-secondary text-lg">star</span>
+        </div>
+        <div>
+          <div id="stat-largest-skeleton" class="skeleton h-8 w-24 mb-1" style="background: rgba(0,0,0,0.08);"></div>
+          <p id="stat-largest" class="hidden text-2xl font-headline font-bold text-on-secondary-fixed">TZS 0</p>
+          <p class="text-xs text-on-secondary-fixed-variant mt-0.5" id="stat-largest-type">—</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Contributions Table ── -->
+    <div class="bg-surface-container-lowest rounded-3xl border border-outline-variant/10 overflow-hidden">
+
+      <!-- Table Header / Filters -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center p-6 md:p-8 gap-4 border-b border-surface-container-low">
+        <div>
+          <h3 class="text-xl font-headline font-bold text-primary">Contribution Records</h3>
+          <p class="text-sm text-slate-400 mt-0.5" id="showing-label">Loading…</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <!-- Type filter pills -->
+          <div class="flex bg-surface-container-low rounded-xl p-1 gap-1 flex-wrap" id="type-filters">
+            <button onclick="setTypeFilter('all')" data-type="all"
+              class="filter-btn filter-btn-active px-4 py-2 text-xs font-bold rounded-lg transition-all">All</button>
+            <button onclick="setTypeFilter('tithe')" data-type="tithe"
+              class="filter-btn px-4 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-primary transition-all">Tithe</button>
+            <button onclick="setTypeFilter('offering')" data-type="offering"
+              class="filter-btn px-4 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-primary transition-all">Offering</button>
+            <button onclick="setTypeFilter('building_fund')" data-type="building_fund"
+              class="filter-btn px-4 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-primary transition-all">Building</button>
+            <button onclick="setTypeFilter('thanksgiving')" data-type="thanksgiving"
+              class="filter-btn px-4 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-primary transition-all">Thanksgiving</button>
+            <button onclick="setTypeFilter('special')" data-type="special"
+              class="filter-btn px-4 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-primary transition-all">Special</button>
+          </div>
+
+          <!-- Date range filter -->
+          <select id="date-filter" onchange="setDateFilter(this.value)"
+            class="bg-surface-container-low border-none rounded-xl py-2.5 px-4 text-xs font-bold text-slate-600 focus:ring-2 focus:ring-primary/20 cursor-pointer">
+            <option value="all">All Time</option>
+            <option value="this_month">This Month</option>
+            <option value="last_3">Last 3 Months</option>
+            <option value="this_year">This Year</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[600px]">
+          <thead>
+            <tr class="text-[10px] uppercase tracking-[0.1em] text-slate-400 border-b border-surface-container-low bg-surface-container-low/50">
+              <th class="py-4 px-6 font-black">Type</th>
+              <th class="py-4 px-6 font-black">Amount</th>
+              <th class="py-4 px-6 font-black">Date</th>
+              <th class="py-4 px-6 font-black">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="contributions-tbody">
+            <!-- Skeleton rows -->
+            <tr><td colspan="4" class="px-6 py-4"><div class="skeleton h-12 rounded-xl"></div></td></tr>
+            <tr><td colspan="4" class="px-6 py-4"><div class="skeleton h-12 rounded-xl"></div></td></tr>
+            <tr><td colspan="4" class="px-6 py-4"><div class="skeleton h-12 rounded-xl"></div></td></tr>
+            <tr><td colspan="4" class="px-6 py-4"><div class="skeleton h-12 rounded-xl"></div></td></tr>
+            <tr><td colspan="4" class="px-6 py-4"><div class="skeleton h-12 rounded-xl"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Footer -->
+      <div id="pagination-footer" class="hidden flex justify-between items-center text-xs font-semibold text-slate-500 border-t border-surface-container-low px-6 md:px-8 py-5">
+        <p id="pagination-label">Showing 0 of 0</p>
+        <div class="flex gap-2">
+          <button id="prev-btn" onclick="changePage(-1)"
+            class="px-4 py-2 bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            Previous
+          </button>
+          <button id="next-btn" onclick="changePage(1)"
+            class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-container transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            Next
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+
+<script>
+// ── Mobile sidebar ───────────────────────────────────────────
+function openSidebar()  { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.remove('open'); }
+
+// ── State ────────────────────────────────────────────────────
+const PAGE_SIZE = 10;
+let allContributions = [];   // all records matching current filters
+let currentPage      = 1;
+let currentType      = 'all';
+let currentDateRange = 'all';
+let userId           = null;
+
+// ── Contribution type meta ───────────────────────────────────
+const TYPE_META = {
+  tithe:         { icon: 'volunteer_activism', label: 'Tithe',        color: 'bg-primary/5 text-primary' },
+  offering:      { icon: 'church',             label: 'Offering',     color: 'bg-primary/5 text-primary' },
+  building_fund: { icon: 'domain',             label: 'Building Fund',color: 'bg-secondary/10 text-secondary' },
+  thanksgiving:  { icon: 'favorite',           label: 'Thanksgiving', color: 'bg-emerald-50 text-emerald-700' },
+  special:       { icon: 'star',               label: 'Special',      color: 'bg-amber-50 text-amber-700' },
+};
+function getMeta(type) {
+  return TYPE_META[type] || { icon: 'payments', label: type || 'Contribution', color: 'bg-slate-100 text-slate-600' };
+}
+
+// ── Date range helpers ───────────────────────────────────────
+function getDateFrom(range) {
+  const now = new Date();
+  if (range === 'this_month') {
+    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  }
+  if (range === 'last_3') {
+    const d = new Date(now);
+    d.setMonth(d.getMonth() - 3);
+    return d.toISOString();
+  }
+  if (range === 'this_year') {
+    return new Date(now.getFullYear(), 0, 1).toISOString();
+  }
+  return null;
+}
+
+// ── Load summary stats from all contributions (ignoring filters) ──
+async function loadSummaryStats(uid) {
+  const { data, error } = await supabase
+    .from('contributions')
+    .select('amount, type, date, created_at')
+    .eq('member_id', uid);
+
+  // Hide skeletons
+  ['stat-total','stat-month','stat-count','stat-largest'].forEach(id => {
+    document.getElementById(id + '-skeleton')?.classList.add('hidden');
+    document.getElementById(id)?.classList.remove('hidden');
+  });
+
+  if (error || !data || data.length === 0) {
+    document.getElementById('stat-total').textContent   = formatTZS(0);
+    document.getElementById('stat-month').textContent   = formatTZS(0);
+    document.getElementById('stat-count').textContent   = '0';
+    document.getElementById('stat-largest').textContent = formatTZS(0);
+    return;
+  }
+
+  const now      = new Date();
+  const monthStr = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  const total     = data.reduce((s, c) => s + (c.amount || 0), 0);
+  const thisMonth = data
+    .filter(c => {
+      const d = new Date(c.date || c.created_at);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    })
+    .reduce((s, c) => s + (c.amount || 0), 0);
+
+  const largest   = data.reduce((max, c) => c.amount > max.amount ? c : max, data[0]);
+
+  document.getElementById('stat-total').textContent        = formatTZS(total);
+  document.getElementById('stat-month').textContent        = formatTZS(thisMonth);
+  document.getElementById('stat-month-label').textContent  = monthStr;
+  document.getElementById('stat-count').textContent        = data.length;
+  document.getElementById('stat-largest').textContent      = formatTZS(largest.amount);
+  document.getElementById('stat-largest-type').textContent = getMeta(largest.type).label;
+}
+
+// ── Fetch contributions with current filters ─────────────────
+async function fetchContributions() {
+  let query = supabase
+    .from('contributions')
+    .select('id, amount, type, notes, date, created_at', { count: 'exact' })
+    .eq('member_id', userId)
+    .order('date', { ascending: false });
+
+  if (currentType !== 'all') {
+    query = query.eq('type', currentType);
+  }
+
+  const dateFrom = getDateFrom(currentDateRange);
+  if (dateFrom) {
+    query = query.gte('date', dateFrom);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    Toast.error('Failed to load contributions. Please try again.');
+    allContributions = [];
+  } else {
+    allContributions = data || [];
+  }
+
+  currentPage = 1;
+  renderTable();
+}
+
+// ── Render current page of the table ────────────────────────
+function renderTable() {
+  const tbody      = document.getElementById('contributions-tbody');
+  const total      = allContributions.length;
+  const startIdx   = (currentPage - 1) * PAGE_SIZE;
+  const endIdx     = Math.min(startIdx + PAGE_SIZE, total);
+  const pageItems  = allContributions.slice(startIdx, endIdx);
+
+  // Showing label
+  document.getElementById('showing-label').textContent =
+    total === 0 ? 'No contributions found' : `Showing ${startIdx + 1}–${endIdx} of ${total} contribution${total !== 1 ? 's' : ''}`;
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="py-20 text-center">
+          <span class="material-symbols-outlined text-5xl text-outline mb-4 block">inbox</span>
+          <p class="text-on-surface-variant font-medium text-sm">No contributions found for this filter.</p>
+          <p class="text-xs text-outline mt-1">Try changing the type or date range.</p>
+        </td>
+      </tr>`;
+    document.getElementById('pagination-footer').classList.add('hidden');
+    return;
+  }
+
+  tbody.innerHTML = pageItems.map(c => {
+    const meta = getMeta(c.type);
+    return `
+      <tr class="contribution-row border-b border-surface-container-low">
+        <td class="py-5 px-6">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary shrink-0">
+              <span class="material-symbols-outlined text-sm">${meta.icon}</span>
+            </div>
+            <span class="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide ${meta.color}">
+              ${escapeHtml(meta.label)}
+            </span>
+          </div>
+        </td>
+        <td class="py-5 px-6">
+          <span class="font-headline font-bold text-primary">${formatTZS(c.amount)}</span>
+        </td>
+        <td class="py-5 px-6 text-xs text-slate-500 font-medium whitespace-nowrap">
+          ${formatDate(c.date || c.created_at)}
+        </td>
+        <td class="py-5 px-6 text-sm text-on-surface-variant max-w-xs">
+          ${c.notes ? `<span class="line-clamp-1">${escapeHtml(c.notes)}</span>` : '<span class="text-outline italic text-xs">—</span>'}
+        </td>
+      </tr>`;
+  }).join('');
+
+  // Pagination footer
+  const footer   = document.getElementById('pagination-footer');
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (total > PAGE_SIZE) {
+    footer.classList.remove('hidden');
+    document.getElementById('pagination-label').textContent =
+      `Page ${currentPage} of ${totalPages}`;
+    document.getElementById('prev-btn').disabled = currentPage === 1;
+    document.getElementById('next-btn').disabled = currentPage === totalPages;
+  } else {
+    footer.classList.add('hidden');
+  }
+}
+
+// ── Filter handlers ──────────────────────────────────────────
+function setTypeFilter(type) {
+  currentType = type;
+  document.querySelectorAll('#type-filters .filter-btn').forEach(btn => {
+    if (btn.dataset.type === type) {
+      btn.classList.add('filter-btn-active');
+      btn.classList.remove('text-slate-500');
+    } else {
+      btn.classList.remove('filter-btn-active');
+      btn.classList.add('text-slate-500');
+    }
+  });
+  fetchContributions();
+}
+
+function setDateFilter(value) {
+  currentDateRange = value;
+  fetchContributions();
+}
+
+function changePage(delta) {
+  const totalPages = Math.ceil(allContributions.length / PAGE_SIZE);
+  const newPage    = currentPage + delta;
+  if (newPage < 1 || newPage > totalPages) return;
+  currentPage = newPage;
+  renderTable();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Header avatar ────────────────────────────────────────────
+function setHeaderAvatar(profile) {
+  if (profile.avatar_url) {
+    document.getElementById('header-avatar').innerHTML =
+      `<img src="${profile.avatar_url}" alt="Profile" class="w-full h-full object-cover">`;
+  } else {
+    document.getElementById('header-initials').textContent = getInitials(profile.full_name || '?');
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  userId = profile.id;
+  setHeaderAvatar(profile);
+
+  await Promise.all([
+    loadSummaryStats(userId),
+    fetchContributions(),
+  ]);
+})();
+</script>
+</body>
+</html>

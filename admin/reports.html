@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Reports | Admin — BLB Church</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#00236f',
+            secondary: '#fed01b',
+            'surface-container-lowest': '#ffffff',
+            'surface-container-low': '#f3f3f4',
+            'surface-container': '#eeeeee',
+            'on-surface': '#1a1c1c',
+            'on-surface-variant': '#444651',
+            error: '#ba1a1a',
+          },
+          fontFamily: { headline: ['Inter'], body: ['Plus Jakarta Sans'] }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .nav-item { display:flex; align-items:center; gap:1rem; padding:0.8rem 2rem; color:#64748b; font-weight:700; border-radius:9999px; margin:0 1rem; transition:.2s; }
+    .nav-item:hover { background:#fff; color:#00236f; transform:translateX(4px); }
+    .nav-item-active { background:#fff; color:#00236f; box-shadow:0 8px 30px rgba(2, 6, 23, .06); }
+    .skeleton { background:linear-gradient(90deg,#e8e8e8 25%,#f3f3f4 50%,#e8e8e8 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:12px; }
+    @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+    .stat-card { transition: transform 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); }
+    .bar { transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+  <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
+    <div class="px-6 mb-10">
+      <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
+      <p class="text-[10px] mt-1 font-bold uppercase tracking-[0.22em] text-slate-400">Admin Portal</p>
+    </div>
+    <div class="space-y-2">
+      <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
+      <a class="nav-item" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item nav-item-active" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+    </div>
+  </aside>
+
+  <main class="ml-72 min-h-screen p-10">
+    <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+      <div>
+        <p id="scope-badge" class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest">Department Scope</p>
+        <h2 class="mt-4 text-4xl font-headline font-extrabold tracking-tight text-primary">Reports</h2>
+        <p id="page-subtitle" class="mt-2 text-slate-500">Department performance summary — members, giving, and activity.</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="btn-export" class="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Export Report
+        </button>
+      </div>
+    </header>
+
+    <!-- Skeleton -->
+    <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+      <div class="skeleton h-36"></div>
+      <div class="skeleton h-36"></div>
+      <div class="skeleton h-36"></div>
+      <div class="skeleton h-36"></div>
+    </div>
+
+    <!-- KPI Cards -->
+    <section id="stats-content" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10 hidden">
+      <div class="stat-card rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-blue-50 inline-block mb-4"><span class="material-symbols-outlined text-primary">diversity_3</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Total Members</p>
+        <h3 id="kpi-members" class="mt-2 text-3xl font-black text-primary">—</h3>
+      </div>
+      <div class="stat-card rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-green-50 inline-block mb-4"><span class="material-symbols-outlined text-green-700">verified_user</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Active Members</p>
+        <h3 id="kpi-active" class="mt-2 text-3xl font-black text-primary">—</h3>
+      </div>
+      <div class="stat-card rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-amber-50 inline-block mb-4"><span class="material-symbols-outlined text-amber-700">account_balance_wallet</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">Total Giving</p>
+        <h3 id="kpi-giving" class="mt-2 text-3xl font-black text-primary">—</h3>
+      </div>
+      <div class="stat-card rounded-3xl bg-white p-6 shadow-sm">
+        <div class="p-3 rounded-2xl bg-violet-50 inline-block mb-4"><span class="material-symbols-outlined text-violet-700">calendar_month</span></div>
+        <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">This Month Giving</p>
+        <h3 id="kpi-month-giving" class="mt-2 text-3xl font-black text-primary">—</h3>
+      </div>
+    </section>
+
+    <!-- Two-column layout -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-10">
+      <!-- Giving by Type -->
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-extrabold text-primary mb-6">Giving by Type</h3>
+        <div id="giving-by-type-skeleton" class="space-y-3">
+          <div class="skeleton h-8"></div>
+          <div class="skeleton h-8"></div>
+          <div class="skeleton h-8"></div>
+        </div>
+        <div id="giving-by-type" class="space-y-4 hidden"></div>
+      </div>
+
+      <!-- Member Growth -->
+      <div class="rounded-3xl bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-extrabold text-primary mb-6">Recent Member Registrations</h3>
+        <div id="recent-members-skeleton" class="space-y-3">
+          <div class="skeleton h-14"></div>
+          <div class="skeleton h-14"></div>
+          <div class="skeleton h-14"></div>
+        </div>
+        <div id="recent-members" class="space-y-3 hidden"></div>
+      </div>
+    </div>
+
+    <!-- Recent Contributions Table -->
+    <div class="rounded-3xl bg-white p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-extrabold text-primary">Recent Contributions</h3>
+        <a href="./contributions.html" class="text-xs font-bold text-primary hover:underline">View All</a>
+      </div>
+      <div id="contributions-skeleton" class="space-y-3">
+        <div class="skeleton h-12"></div>
+        <div class="skeleton h-12"></div>
+        <div class="skeleton h-12"></div>
+        <div class="skeleton h-12"></div>
+      </div>
+      <div id="contributions-table" class="hidden">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-widest text-slate-400">
+              <th class="py-3 pr-4">Member</th>
+              <th class="py-3 pr-4">Type</th>
+              <th class="py-3 pr-4">Amount</th>
+              <th class="py-3">Date</th>
+            </tr>
+          </thead>
+          <tbody id="contributions-tbody"></tbody>
+        </table>
+        <div id="no-contributions" class="hidden py-8 text-center text-slate-400 font-semibold">No contributions recorded yet.</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-client.js"></script>
+  <script src="../assets/js/common.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/router.js"></script>
+  <script>
+  (async () => {
+    const profile = await initPageGuard();
+    if (!profile) return;
+
+    // Admin reports are strictly department-scoped — no cross-department data
+    const deptName = profile.departments?.name || 'Your Department';
+    document.getElementById('scope-badge').textContent = `${escapeHtml(deptName)} Scope`;
+    document.getElementById('page-subtitle').textContent = `${escapeHtml(deptName)} performance — members, giving, and activity.`;
+
+    async function loadReport() {
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+      // 1. Members in this department
+      const { data: members } = await supabase
+        .from('profiles')
+        .select('id, full_name, status, created_at')
+        .eq('department_id', profile.department_id)
+        .order('created_at', { ascending: false });
+
+      const memberList = members || [];
+      const memberIds = memberList.map(m => m.id);
+
+      // 2. Contributions from these members
+      const { data: contributions } = memberIds.length
+        ? await supabase
+            .from('contributions')
+            .select('id, amount, type, date, member:profiles!contributions_member_id_fkey(id, full_name)')
+            .in('member_id', memberIds)
+            .order('date', { ascending: false })
+        : { data: [] };
+
+      const contribList = contributions || [];
+
+      // KPIs
+      const active = memberList.filter(m => m.status === 'active').length;
+      const totalGiving = contribList.reduce((s, c) => s + (c.amount || 0), 0);
+      const monthGiving = contribList
+        .filter(c => c.date >= monthStart)
+        .reduce((s, c) => s + (c.amount || 0), 0);
+
+      document.getElementById('kpi-members').textContent = memberList.length;
+      document.getElementById('kpi-active').textContent = active;
+      document.getElementById('kpi-giving').textContent = formatTZS(totalGiving);
+      document.getElementById('kpi-month-giving').textContent = formatTZS(monthGiving);
+
+      document.getElementById('stats-skeleton').classList.add('hidden');
+      document.getElementById('stats-content').classList.remove('hidden');
+
+      // Giving by type
+      const byType = contribList.reduce((acc, c) => {
+        acc[c.type] = (acc[c.type] || 0) + (c.amount || 0);
+        return acc;
+      }, {});
+      const typeEntries = Object.entries(byType).sort((a, b) => b[1] - a[1]);
+      const maxAmount = typeEntries[0]?.[1] || 1;
+      const typeColors = ['bg-blue-500', 'bg-yellow-400', 'bg-purple-500', 'bg-green-500', 'bg-rose-500'];
+      const typeBox = document.getElementById('giving-by-type');
+
+      typeBox.innerHTML = typeEntries.length ? typeEntries.map(([type, amount], i) => `
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-bold capitalize text-slate-700">${escapeHtml(type)}</span>
+            <span class="font-bold text-primary">${formatTZS(amount)}</span>
+          </div>
+          <div class="h-2 rounded-full bg-slate-100">
+            <div class="bar h-2 rounded-full ${typeColors[i % typeColors.length]}" style="width:${Math.round(amount / maxAmount * 100)}%"></div>
+          </div>
+        </div>
+      `).join('') : '<p class="text-sm text-slate-400">No giving data recorded.</p>';
+
+      document.getElementById('giving-by-type-skeleton').classList.add('hidden');
+      typeBox.classList.remove('hidden');
+
+      // Recent members
+      const recentBox = document.getElementById('recent-members');
+      const recentMembers = memberList.slice(0, 5);
+      recentBox.innerHTML = recentMembers.length ? recentMembers.map(m => `
+        <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
+          <div class="h-9 w-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <span class="text-white text-xs font-bold">${escapeHtml(getInitials(m.full_name || '?'))}</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-sm text-slate-800">${escapeHtml(m.full_name || '—')}</p>
+            <p class="text-xs text-slate-400">${formatDate(m.created_at)}</p>
+          </div>
+          <span class="inline-block rounded-full px-2 py-1 text-xs font-bold ${m.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'}">${m.status || '—'}</span>
+        </div>
+      `).join('') : '<p class="text-sm text-slate-400">No members yet.</p>';
+
+      document.getElementById('recent-members-skeleton').classList.add('hidden');
+      recentBox.classList.remove('hidden');
+
+      // Recent contributions
+      const tbody = document.getElementById('contributions-tbody');
+      const recent = contribList.slice(0, 10);
+      if (recent.length) {
+        tbody.innerHTML = recent.map(c => `
+          <tr class="border-b border-slate-100">
+            <td class="py-3 pr-4 font-bold text-slate-800">${escapeHtml(c.member?.full_name || '—')}</td>
+            <td class="py-3 pr-4 capitalize text-slate-500">${escapeHtml(c.type || '—')}</td>
+            <td class="py-3 pr-4 font-extrabold text-primary">${formatTZS(c.amount)}</td>
+            <td class="py-3 text-slate-500 text-xs">${formatDate(c.date)}</td>
+          </tr>
+        `).join('');
+      } else {
+        document.getElementById('no-contributions').classList.remove('hidden');
+      }
+
+      document.getElementById('contributions-skeleton').classList.add('hidden');
+      document.getElementById('contributions-table').classList.remove('hidden');
+    }
+
+    document.getElementById('btn-export').addEventListener('click', () => Toast.info('Export functionality coming soon.'));
+
+    await loadReport();
+  })();
+  </script>
+</body>
+</html>

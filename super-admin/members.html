@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>All Members | Super Admin — BLB Church</title>
+  <meta name="description" content="BLB Church Super Admin — View and manage all church members across every department."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                   "#00236f",
+            "primary-container":         "#1e3a8a",
+            "on-primary":                "#ffffff",
+            "on-primary-container":      "#90a8ff",
+            "secondary":                 "#735c00",
+            "secondary-container":       "#fed01b",
+            "secondary-fixed":           "#ffe083",
+            "secondary-fixed-dim":       "#eec200",
+            "on-secondary":              "#ffffff",
+            "on-secondary-container":    "#6f5900",
+            "on-secondary-fixed":        "#231b00",
+            "surface":                   "#f9f9f9",
+            "surface-bright":            "#f9f9f9",
+            "surface-dim":               "#dadada",
+            "surface-container-lowest":  "#ffffff",
+            "surface-container-low":     "#f3f3f4",
+            "surface-container":         "#eeeeee",
+            "surface-container-high":    "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-variant":           "#e2e2e2",
+            "on-surface":                "#1a1c1c",
+            "on-surface-variant":        "#444651",
+            "outline":                   "#757682",
+            "outline-variant":           "#c5c5d3",
+            "error":                     "#ba1a1a",
+            "on-error":                  "#ffffff",
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 2.5rem;
+      color: #64748b; font-weight: 600; font-size: 0.875rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-item:hover { transform: translateX(4px); color: #1d4ed8; }
+
+    .nav-item-active {
+      display: flex; align-items: center; gap: 1rem;
+      margin-left: 1rem; padding: 0.75rem 1.5rem;
+      background: #ffffff; color: #00236f; font-weight: 600; font-size: 0.875rem;
+      border-radius: 9999px 0 0 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 12px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .member-row { transition: background 0.15s; }
+    .member-row:hover { background: rgba(243,243,244,0.6); }
+
+    .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+  </style>
+</head>
+
+<body data-required-role="super_admin" style="opacity:0; transition: opacity 0.3s ease;">
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <div class="px-10 mb-10">
+    <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Super Admin</p>
+  </div>
+
+  <nav class="flex-1">
+    <p class="px-10 pt-2 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">System</p>
+    <a href="./dashboard.html" class="nav-item">
+      <span class="material-symbols-outlined">dashboard</span>
+      <span>System Overview</span>
+    </a>
+    <a href="./admins.html" class="nav-item">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Manage Admins</span>
+    </a>
+    <a href="./roles.html" class="nav-item">
+      <span class="material-symbols-outlined">manage_accounts</span>
+      <span>Roles &amp; Permissions</span>
+    </a>
+    <a href="./settings.html" class="nav-item">
+      <span class="material-symbols-outlined">settings</span>
+      <span>Settings</span>
+    </a>
+
+    <p class="px-10 pt-5 pb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Church Data</p>
+    <a href="./departments.html" class="nav-item">
+      <span class="material-symbols-outlined">apartment</span>
+      <span>All Departments</span>
+    </a>
+    <a href="./members.html" class="nav-item-active">
+      <span class="material-symbols-outlined">group</span>
+      <span>All Members</span>
+    </a>
+    <a href="./contributions.html" class="nav-item">
+      <span class="material-symbols-outlined">payments</span>
+      <span>All Contributions</span>
+    </a>
+    <a href="./events.html" class="nav-item">
+      <span class="material-symbols-outlined">event</span>
+      <span>All Events</span>
+    </a>
+    <a href="./media.html" class="nav-item">
+      <span class="material-symbols-outlined">subscriptions</span>
+      <span>All Media</span>
+    </a>
+    <a href="./reports.html" class="nav-item">
+      <span class="material-symbols-outlined">bar_chart</span>
+      <span>Full Reports</span>
+    </a>
+  </nav>
+
+  <div class="mt-auto px-6 space-y-1">
+    <button data-action="logout"
+      class="w-full mt-4 flex items-center justify-center gap-2 py-3 px-4 border border-blue-900/10 rounded-xl text-blue-900 font-bold text-xs uppercase tracking-widest hover:bg-blue-50 transition-colors">
+      <span class="material-symbols-outlined text-sm">logout</span>
+      Logout
+    </button>
+  </div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main class="ml-72 min-h-screen p-12">
+
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-12">
+    <div>
+      <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-primary px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3">Church-Wide Access</span>
+      <h2 class="font-headline font-extrabold text-4xl text-primary tracking-tighter leading-none mb-2">All Members</h2>
+      <p class="text-on-surface-variant">Every member across all departments — <span id="total-count" class="font-bold text-primary">—</span> total.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="text-right">
+        <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
+        <p class="text-xs text-on-surface-variant">Super Admin</p>
+      </div>
+      <div class="h-14 w-14 rounded-full p-1 bg-secondary-fixed flex-shrink-0">
+        <div id="header-avatar" class="h-full w-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+          <span class="text-white font-bold text-lg" id="header-initials">?</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stat Cards Skeleton -->
+  <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+    <div class="skeleton h-36"></div>
+  </div>
+
+  <!-- Stat Cards -->
+  <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">diversity_3</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Total Members</p>
+      <h3 id="stat-total" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-green-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-green-700">verified_user</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Active</p>
+      <h3 id="stat-active" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-yellow-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-secondary">person_add</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">New This Month</p>
+      <h3 id="stat-new" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+    <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
+      <div class="p-3 bg-purple-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-purple-700">apartment</span></div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-widest mb-1">Departments</p>
+      <h3 id="stat-depts" class="font-headline font-extrabold text-3xl text-primary">—</h3>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-4 mb-8">
+    <div class="relative flex-1 min-w-[240px]">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+      <input id="search-input" type="text" placeholder="Search name, email, phone…"
+        class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
+    </div>
+    <select id="dept-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
+      <option value="">All Departments</option>
+    </select>
+    <select id="status-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
+      <option value="">All Statuses</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+      <option value="pending">Pending</option>
+    </select>
+    <select id="role-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
+      <option value="">All Roles</option>
+      <option value="member">Member</option>
+      <option value="admin">Admin</option>
+      <option value="super_admin">Super Admin</option>
+    </select>
+  </div>
+
+  <!-- Table Skeleton -->
+  <div id="table-skeleton" class="space-y-3">
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+    <div class="skeleton h-14"></div>
+  </div>
+
+  <!-- Table -->
+  <div id="table-content" class="bg-surface-container-lowest rounded-xl overflow-hidden hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-surface-container-low">
+        <tr class="text-left text-xs uppercase tracking-widest text-on-surface-variant">
+          <th class="px-6 py-4">Member</th>
+          <th class="px-6 py-4">Department</th>
+          <th class="px-6 py-4">Role</th>
+          <th class="px-6 py-4">Status</th>
+          <th class="px-6 py-4">Joined</th>
+          <th class="px-6 py-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="members-tbody"></tbody>
+    </table>
+
+    <div id="empty-state" class="hidden py-16 text-center">
+      <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">group_off</span>
+      <p class="font-bold text-primary">No members found</p>
+      <p class="text-sm text-on-surface-variant mt-1">Try adjusting your search or filters.</p>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-8 flex items-center justify-between">
+    <p class="text-sm text-on-surface-variant" id="pagination-info">Showing — members</p>
+    <div class="flex gap-2" id="pagination-controls"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/auth.js"></script>
+<script src="../assets/js/router.js"></script>
+<script>
+(async () => {
+  const profile = await initPageGuard();
+  if (!profile) return;
+
+  // Populate avatar
+  document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  const PAGE_SIZE = 20;
+  let allMembers = [];
+  let departments = [];
+  let currentPage = 1;
+
+  async function loadDepartments() {
+    const { data } = await supabase.from('departments').select('id, name').order('name');
+    departments = data || [];
+    const sel = document.getElementById('dept-filter');
+    departments.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = d.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  async function loadMembers() {
+    // Super admin: no department filter — fetch ALL members church-wide
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, phone, role, status, department_id, avatar_url, created_at, departments(name)')
+      .order('full_name');
+
+    if (error) { Toast.error('Failed to load members.'); return; }
+    allMembers = data || [];
+    renderStats();
+    renderTable();
+  }
+
+  function renderStats() {
+    const active = allMembers.filter(m => m.status === 'active').length;
+    const thisMonth = allMembers.filter(m => {
+      const d = new Date(m.created_at);
+      const now = new Date();
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }).length;
+    const deptCount = new Set(allMembers.map(m => m.department_id).filter(Boolean)).size;
+
+    document.getElementById('stat-total').textContent = allMembers.length;
+    document.getElementById('stat-active').textContent = active;
+    document.getElementById('stat-new').textContent = thisMonth;
+    document.getElementById('stat-depts').textContent = deptCount;
+    document.getElementById('total-count').textContent = allMembers.length;
+
+    document.getElementById('stats-skeleton').classList.add('hidden');
+    document.getElementById('stats-content').classList.remove('hidden');
+  }
+
+  function getFiltered() {
+    const q = document.getElementById('search-input').value.trim().toLowerCase();
+    const dept = document.getElementById('dept-filter').value;
+    const status = document.getElementById('status-filter').value;
+    const role = document.getElementById('role-filter').value;
+    return allMembers.filter(m => {
+      const searchOk = !q || [m.full_name, m.email, m.phone].join(' ').toLowerCase().includes(q);
+      const deptOk = !dept || String(m.department_id) === dept;
+      const statusOk = !status || m.status === status;
+      const roleOk = !role || m.role === role;
+      return searchOk && deptOk && statusOk && roleOk;
+    });
+  }
+
+  function statusBadge(s) {
+    const map = {
+      active:   'bg-green-50 text-green-700',
+      inactive: 'bg-slate-100 text-slate-500',
+      pending:  'bg-yellow-50 text-yellow-700',
+    };
+    return `<span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${map[s] || 'bg-slate-100 text-slate-500'}">${s || '—'}</span>`;
+  }
+
+  function roleBadge(r) {
+    const map = {
+      super_admin: 'bg-purple-50 text-purple-700',
+      admin:       'bg-blue-50 text-blue-700',
+      member:      'bg-slate-100 text-slate-600',
+    };
+    return `<span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${map[r] || 'bg-slate-100 text-slate-600'}">${r?.replace('_', ' ') || '—'}</span>`;
+  }
+
+  function renderTable() {
+    const filtered = getFiltered();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = 1;
+    const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    document.getElementById('table-skeleton').classList.add('hidden');
+    document.getElementById('table-content').classList.remove('hidden');
+
+    const tbody = document.getElementById('members-tbody');
+    const empty = document.getElementById('empty-state');
+
+    if (!slice.length) {
+      tbody.innerHTML = '';
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      tbody.innerHTML = slice.map(m => `
+        <tr class="member-row border-t border-surface-container-low">
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="h-9 w-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <span class="text-white text-xs font-bold">${escapeHtml(getInitials(m.full_name || '?'))}</span>
+              </div>
+              <div>
+                <p class="font-bold text-on-surface">${escapeHtml(m.full_name || '—')}</p>
+                <p class="text-xs text-on-surface-variant">${escapeHtml(m.email || '')}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 text-on-surface-variant">${escapeHtml(m.departments?.name || 'Unassigned')}</td>
+          <td class="px-6 py-4">${roleBadge(m.role)}</td>
+          <td class="px-6 py-4">${statusBadge(m.status)}</td>
+          <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(m.created_at)}</td>
+          <td class="px-6 py-4">
+            <button onclick="viewMember('${m.id}')" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('pagination-info').textContent =
+      `Showing ${slice.length} of ${filtered.length} members`;
+
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages) {
+    const container = document.getElementById('pagination-controls');
+    container.innerHTML = '';
+    if (totalPages <= 1) return;
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === currentPage
+        ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
+        : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
+      btn.addEventListener('click', () => { currentPage = i; renderTable(); });
+      container.appendChild(btn);
+    }
+  }
+
+  window.viewMember = (id) => {
+    // Navigate to member detail — placeholder
+    Toast.info('Member detail view coming soon.');
+  };
+
+  const debouncedRender = debounce(() => { currentPage = 1; renderTable(); }, 300);
+  document.getElementById('search-input').addEventListener('input', debouncedRender);
+  document.getElementById('dept-filter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+  document.getElementById('status-filter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+  document.getElementById('role-filter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+
+  await loadDepartments();
+  await loadMembers();
+})();
+</script>
+</body>
+</html>

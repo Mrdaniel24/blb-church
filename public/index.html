@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>BLB Church | The Digital Sanctuary — Welcome Home</title>
+  <meta name="description" content="Welcome to BLB Church — A modern stewardship of tradition. Join our community for worship, fellowship, and spiritual growth.">
+  
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#00236f", "primary-container": "#1e3a8a",
+            "on-primary": "#ffffff", "on-primary-container": "#90a8ff",
+            "secondary": "#735c00", "secondary-container": "#fed01b",
+            "on-secondary": "#ffffff", "on-secondary-container": "#6f5900",
+            "secondary-fixed": "#ffe083", "on-secondary-fixed": "#231b00",
+            "on-secondary-fixed-variant": "#574500",
+            "primary-fixed": "#dce1ff",
+            "surface": "#f9f9f9", "surface-container-low": "#f3f3f4",
+            "surface-container-lowest": "#ffffff", "surface-container": "#eeeeee",
+            "surface-container-high": "#e8e8e8",
+            "on-surface": "#1a1c1c", "on-surface-variant": "#444651",
+            "outline-variant": "#c5c5d3", "outline": "#757682",
+            "error": "#ba1a1a", "on-error": "#ffffff", "error-container": "#ffdad6",
+          },
+          fontFamily: { "headline": ["Inter"], "body": ["Plus Jakarta Sans"], "label": ["Plus Jakarta Sans"] },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <style>
+    .hero-gradient { background: linear-gradient(135deg, #00236f 0%, #1e3a8a 100%); }
+    .editorial-shadow { box-shadow: 0px 24px 48px rgba(0, 35, 111, 0.06); }
+  </style>
+</head>
+
+<body class="bg-surface text-on-surface">
+
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm duration-300 ease-in-out">
+  <div class="flex justify-between items-center px-6 md:px-12 h-20 max-w-[1920px] mx-auto">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings: 'FILL' 1;">church</span>
+      </div>
+      <span class="text-xl font-bold tracking-tighter text-primary font-headline">BLB Church</span>
+    </div>
+    <div class="hidden md:flex items-center space-x-8">
+      <a class="text-primary font-bold border-b-2 border-secondary-container pb-1 font-label text-sm tracking-wide uppercase" href="#">Home</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#services">Services</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#about">About</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors font-label text-sm tracking-wide uppercase" href="#contact">Contact</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="login.html" class="font-label text-sm tracking-wide uppercase text-primary font-bold hover:text-primary-container transition-colors" id="nav-login-btn">Login</a>
+      <a href="register.html" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-sm font-bold tracking-wider uppercase transition-all hover:opacity-90 hidden md:inline-block">Join Us</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-primary text-white">
+    <div class="absolute inset-0 z-0">
+      <img class="w-full h-full object-cover opacity-30 mix-blend-overlay" alt="Church interior with light rays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChBWWr5Aqa1ZDMJZilhYE64t86eeyGf4ziZ5jifHJKqJWrJut9uh3jUIcqJWO2p_2j1jnAT0eBB4Vp63m7tirbcwug8vIbAKcRoJM_6EjYDl-mQP_Cc-feXaM981opIk3B1i4OdbL_TuJ4ViHEvud_965c4J0OgCsbhocJ_nQyoUQ6LZoTaon2AVCSlKkUWdmPdr6jRxLNYxiujNRORrJnzZyYmNTuhIM9kxnMTJbh8wmujNv099DyDtMWmyPb9-xehu0p-u3yFIRY"/>
+      <div class="absolute inset-0 hero-gradient opacity-80"></div>
+    </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+      <div class="md:col-span-8 space-y-8">
+        <span class="inline-block px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label text-xs font-extrabold tracking-[0.1em] uppercase">The Digital Sanctuary</span>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-[-0.03em] leading-tight text-white font-headline">
+          Welcome to <br/><span class="text-secondary-fixed">BLB Church</span>
+        </h1>
+        <p class="text-lg md:text-xl font-body font-medium text-primary-fixed max-w-2xl leading-relaxed">
+          A modern stewardship of tradition. Join a community where faith meets fellowship and shared purpose.
+        </p>
+        <div class="flex flex-wrap gap-4 pt-4">
+          <a href="#services" class="bg-primary-container text-white px-10 py-5 rounded-full font-label font-bold text-sm uppercase tracking-widest editorial-shadow flex items-center gap-2 hover:translate-y-[-2px] transition-transform">
+            Join Us This Sunday <span class="material-symbols-outlined text-base">arrow_forward</span>
+          </a>
+          <a href="register.html" class="bg-secondary-fixed text-on-secondary-fixed px-10 py-5 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:translate-y-[-2px] transition-transform">
+            Become a Member
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Times -->
+  <section id="services" class="bg-surface-container-low py-24 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
+        <div class="space-y-4">
+          <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tight font-headline">Weekly Gatherings</h2>
+          <div class="h-1.5 w-24 bg-secondary-container"></div>
+        </div>
+        <p class="max-w-md text-on-surface-variant font-medium leading-relaxed">
+          We offer multiple services designed to accommodate every season of life. Experience worship and fellowship.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group hover:bg-primary transition-colors duration-500">
+          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
+            <span class="material-symbols-outlined text-4xl">auto_awesome</span>
+          </div>
+          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">Saturday Vigil</h3>
+          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">Traditional liturgical experience with choral accompaniment.</p>
+          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">5:00 PM</div>
+        </div>
+        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group hover:bg-primary transition-colors duration-500">
+          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
+            <span class="material-symbols-outlined text-4xl">light_mode</span>
+          </div>
+          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">Sunday Morning</h3>
+          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">Contemporary service with our live ministry band and youth program.</p>
+          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">9:00 AM</div>
+        </div>
+        <div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow border-2 border-secondary-container group hover:bg-primary transition-colors duration-500">
+          <div class="mb-8 text-secondary group-hover:text-secondary-fixed transition-colors">
+            <span class="material-symbols-outlined text-4xl">sunny</span>
+          </div>
+          <h3 class="text-2xl font-bold mb-2 group-hover:text-white font-headline">The Gathering</h3>
+          <p class="text-on-surface-variant group-hover:text-primary-fixed mb-6 font-medium">A focused teaching session followed by community communion.</p>
+          <div class="text-3xl font-black text-primary group-hover:text-secondary-fixed font-headline">11:30 AM</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Grid: Latest Updates -->
+  <section class="py-24 md:py-32 px-6 md:px-12 bg-surface">
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-16 md:mb-20">
+        <span class="text-secondary font-label text-xs font-black uppercase tracking-widest mb-4 block">The Latest</span>
+        <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tighter font-headline">Insights & Announcements</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 md:grid-rows-2 gap-8 h-full" id="homepage-updates">
+        <!-- Featured Item -->
+        <div class="md:col-span-7 md:row-span-2 relative group overflow-hidden rounded-xl bg-surface-container-lowest min-h-[400px]">
+          <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Featured sermon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkq-Vr97EHm9XQ3SaMg1D4xQDaofdZSeQTHooEnpG0LL032VyZXgyrrzqBpm8T57Kyife9mbLOeWAx3O7p7-Ku5XUyhrgf9CaMPGA9heXh_CtggXMHCK3mod_eetGKySnUgl7u5UIWAU0-LTB3pI7M11WgxEc2tOYCctuvDrOH2ZwYL2IGvQDDe3tHXdhfhUiOT9C_hGi1JkshGJU53AlmzG-n-8dqN0KOz3JVrgUym20mUnLoPk_2K6OoA6gXGLFgaOID1y-TUIfH"/>
+          <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent"></div>
+          <div class="absolute bottom-0 p-8 md:p-12 text-white">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="bg-secondary text-on-secondary-fixed px-3 py-1 text-[10px] font-black uppercase rounded">Welcome</span>
+            </div>
+            <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight font-headline">A Home for <br/>Every Believer</h3>
+            <p class="text-primary-fixed/80 max-w-lg font-medium mb-8">Discover the heart of our community through worship, fellowship, and service.</p>
+            <a href="login.html" class="flex items-center gap-2 font-label text-sm font-bold tracking-widest uppercase text-secondary-fixed group-hover:gap-4 transition-all">
+              Enter Sanctuary <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Stat -->
+        <div class="md:col-span-5 bg-surface-container-high p-8 flex flex-col justify-between rounded-xl">
+          <div>
+            <div class="flex justify-between items-start mb-6">
+              <span class="bg-primary text-white p-3 rounded-lg"><span class="material-symbols-outlined">diversity_3</span></span>
+              <div class="text-right">
+                <div class="text-2xl font-black text-primary font-headline" id="upcoming-event-date">EVERY WEEK</div>
+                <div class="text-xs font-bold text-secondary uppercase tracking-widest">Community</div>
+              </div>
+            </div>
+            <h3 class="text-2xl font-bold text-primary mb-2 font-headline">Fellowship & Growth</h3>
+            <p class="text-on-surface-variant font-medium text-sm leading-relaxed">Join our community for Bible study, prayer groups, and youth programs throughout the week.</p>
+          </div>
+          <a href="login.html" class="mt-8 text-primary font-label text-xs font-black uppercase border-b-2 border-primary/10 w-fit hover:border-secondary transition-colors">View Events</a>
+        </div>
+
+        <!-- CTA -->
+        <div class="md:col-span-5 bg-secondary-fixed p-8 flex flex-col justify-center items-center text-center rounded-xl">
+          <h3 class="text-3xl font-black text-primary mb-4 tracking-tight font-headline">Become a Member</h3>
+          <p class="text-on-secondary-fixed-variant font-bold mb-6">Start your journey into our community today.</p>
+          <a href="register.html" class="bg-primary text-white px-8 py-3 rounded-full font-label font-black text-xs uppercase tracking-widest transition-all hover:bg-primary-container">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-24 md:py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
+        <div class="relative">
+          <div class="relative z-10 w-[85%] aspect-[3/4] overflow-hidden rounded-xl editorial-shadow">
+            <img class="w-full h-full object-cover" alt="Church community" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCPBauNdwhynmlznJz66BoJZU3V6AFzAuRMCpwR1547Ci7D470_v02dZoqtECypu2wA39CUfE7S5UgJ8Yedwv0D6MWqLn7sptupSOXgocIUk_BxKBzesTS5QGQ0stM8t6iYvhSdTAWCEhvsRfy8R0zxnVbzqZ-9YfhiIWRAjN9hQZdETmcYZ6w0sPllWvPDLRoDYjJApl4bSxFBU2n-fipmJevaQ4zhe-QoPWJnxIodC1qW_LZfCQlzD9_8dZpVrH6M465ajuixUrG"/>
+          </div>
+          <div class="absolute -bottom-8 md:-bottom-12 -right-4 w-[60%] aspect-square z-20 overflow-hidden rounded-xl border-8 border-white editorial-shadow">
+            <img class="w-full h-full object-cover" alt="Bible study" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTqod3M39k3IGVDmI1RsWRiQmo7cuDi3EUr8XKEqoW1DwQP25sUEiFgx2yYygZsUU5OecDRoUUrjKJ74DLlAdt3cMIqcpAY-i0OinjtXh4xG9Og-yDk2N_UTxrBPMRyvgnJVqgbT8jgnIagAowP-cVjj-RnyzKiH0jO4wTkHBP73V1x0yXI9GbROr71o-uhbnx5PMe8iJSBJfNEKHTB-lfPY4bKwuVBfbv4DD0KdSXAMpZ_v95lFQFd4RAL_AVdMv0vcIinJjaFJ_s"/>
+          </div>
+        </div>
+        <div class="space-y-8">
+          <span class="text-secondary font-label text-xs font-black uppercase tracking-widest">Our Presence</span>
+          <h2 class="text-4xl md:text-5xl font-bold text-primary tracking-tighter leading-tight font-headline">A Sanctuary <br/>For Every Soul</h2>
+          <p class="text-on-surface-variant text-lg font-medium leading-relaxed italic">
+            "We don't just build buildings; we cultivate spaces where the human spirit finds room to breathe and the heart finds reason to hope."
+          </p>
+          <p class="text-on-surface-variant font-medium leading-relaxed">
+            Through every ministry, every fellowship gathering, and every note played in our sanctuary, we are writing a story of connection. Our community is united by a common call to love and serve.
+          </p>
+          <div class="flex items-center gap-12 pt-8">
+            <div class="text-center">
+              <div class="text-4xl font-black text-primary font-headline" id="stat-members">–</div>
+              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Members</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-black text-primary font-headline" id="stat-departments">–</div>
+              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Ministries</div>
+            </div>
+            <div class="text-center">
+              <div class="text-4xl font-black text-primary font-headline">100%</div>
+              <div class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Welcome</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-24 px-6 md:px-12 bg-primary">
+    <div class="max-w-5xl mx-auto bg-surface-container-lowest p-12 md:p-20 rounded-3xl relative overflow-hidden flex flex-col items-center text-center">
+      <div class="absolute top-0 right-0 p-8 opacity-10">
+        <span class="material-symbols-outlined text-9xl text-primary">church</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-bold text-primary mb-6 font-headline">Join Our Community</h2>
+      <p class="text-on-surface-variant text-lg font-medium max-w-xl mb-10 leading-relaxed">
+        Create your free member account and access sermons, events, announcements, and stay connected with BLB Church.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="register.html" class="bg-primary text-white px-10 py-4 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:bg-primary-container transition-all">
+          Create Account
+        </a>
+        <a href="login.html" class="border-2 border-primary text-primary px-10 py-4 rounded-full font-label font-bold text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all">
+          Sign In
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer id="contact" class="bg-surface-container-high py-20 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-16">
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-2 mb-6">
+          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary-container text-base" style="font-variation-settings: 'FILL' 1;">church</span>
+          </div>
+          <span class="text-xl font-black tracking-tighter text-primary font-headline">BLB Church</span>
+        </div>
+        <p class="text-on-surface-variant font-medium text-sm leading-relaxed mb-8">
+          The Digital Sanctuary — Faith, fellowship, and community.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-label text-xs font-black uppercase tracking-[0.2em] text-secondary mb-8">Quick Links</h4>
+        <ul class="space-y-4">
+          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="#about">Our Story</a></li>
+          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="#services">Services</a></li>
+          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="login.html">Member Portal</a></li>
+          <li><a class="text-primary font-bold hover:text-secondary-container transition-colors" href="register.html">Join Us</a></li>
+        </ul>
+      </div>
+      <div class="md:col-span-2">
+        <h4 class="font-label text-xs font-black uppercase tracking-[0.2em] text-secondary mb-8">Visit Us</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <div class="flex items-start gap-4 mb-4">
+              <span class="material-symbols-outlined text-primary mt-1">location_on</span>
+              <div class="text-sm font-medium text-on-surface-variant">
+                <p class="font-bold text-primary mb-1">BLB Church HQ</p>
+                <p>Dar es Salaam, Tanzania</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 mb-4">
+              <span class="material-symbols-outlined text-primary">call</span>
+              <p class="text-sm font-bold text-primary">Contact us via portal</p>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="material-symbols-outlined text-primary">mail</span>
+              <p class="text-sm font-bold text-primary">bondelabalaka@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-20 pt-10 border-t border-outline-variant/15 flex flex-col md:flex-row justify-between items-center gap-6">
+      <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">&copy; 2026 BLB Church. All rights reserved.</p>
+      <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">The Digital Sanctuary</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Supabase CDN (for dynamic stats) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../assets/js/supabase-client.js"></script>
+
+<script>
+  // Load dynamic stats
+  (async () => {
+    try {
+      const { count: memberCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      const { count: deptCount } = await supabase
+        .from('departments')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      if (memberCount !== null) document.getElementById('stat-members').textContent = memberCount + '+';
+      if (deptCount !== null) document.getElementById('stat-departments').textContent = deptCount;
+    } catch (e) {
+      // Stats are non-critical, fail silently
+    }
+
+    // If user is logged in, change Login button to Dashboard
+    const session = await getSession();
+    if (session) {
+      const loginBtn = document.getElementById('nav-login-btn');
+      loginBtn.textContent = 'Dashboard';
+      loginBtn.href = '#';
+      loginBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const profile = await getUserProfile();
+        if (profile) {
+          const rolePaths = {
+            'super_admin': '/super-admin/dashboard.html',
+            'admin': '/admin/dashboard.html',
+            'member': '/member/dashboard.html'
+          };
+          window.location.href = rolePaths[profile.role] || '/member/dashboard.html';
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
