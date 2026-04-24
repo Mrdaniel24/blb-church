@@ -173,12 +173,13 @@ async function handleRegistration(formData) {
     const result = await registerUser(formData);
     if (!result.success) return result;
 
+    // Try auto-login — this may fail if email confirmation is enabled
     const loginResult = await loginUser(formData.email, formData.password);
     if (!loginResult.success) {
-      return {
-        success: false,
-        error: loginResult.error || 'Account created but auto-login failed. Please sign in.'
-      };
+      // Registration succeeded but auto-login failed (email confirmation required)
+      // Redirect to login with a success message
+      window.location.href = getAbsolutePath('/public/login.html?registered=1');
+      return { success: true, needsConfirmation: true };
     }
 
     clearProfileCache?.();
@@ -264,6 +265,12 @@ async function initPageGuard() {
 
     hydrateUserIdentity(profile);
 
+    // Hide nav items the user has no permission for
+    if (profile.role === 'admin') {
+      const perms = await getAdminPermissions();
+      applyNavPermissions(perms);
+    }
+
     requestAnimationFrame(() => {
       document.body.style.opacity = '1';
     });
@@ -307,6 +314,20 @@ function prettyRole(role) {
         .replace(/_/g, ' ')
         .replace(/\b\w/g, ch => ch.toUpperCase());
   }
+}
+
+/**
+ * Hide nav links tagged with data-perm="<key>" when user lacks that permission.
+ * Called automatically by initPageGuard() for admin-role users.
+ * @param {Object|null} perms
+ */
+function applyNavPermissions(perms) {
+  document.querySelectorAll('[data-perm]').forEach(el => {
+    const key = el.dataset.perm;
+    if (!hasPermission(perms, key)) {
+      el.style.display = 'none';
+    }
+  });
 }
 
 /**
@@ -396,6 +417,7 @@ window.handleRegistration = handleRegistration;
 window.redirectIfLoggedIn = redirectIfLoggedIn;
 window.redirectToDashboard = redirectToDashboard;
 window.initPageGuard = initPageGuard;
+window.applyNavPermissions = applyNavPermissions;
 window.requireModulePermission = requireModulePermission;
 window.applyDepartmentScope = applyDepartmentScope;
 window.canAccessRole = canAccessRole;

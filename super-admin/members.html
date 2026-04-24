@@ -88,6 +88,15 @@
 
     .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,35,111,0.08); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9999px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
   </style>
 </head>
 
@@ -136,6 +145,10 @@
       <span class="material-symbols-outlined">event</span>
       <span>All Events</span>
     </a>
+    <a href="./announcements.html" class="nav-item">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>All Announcements</span>
+    </a>
     <a href="./media.html" class="nav-item">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>All Media</span>
@@ -166,6 +179,10 @@
       <p class="text-on-surface-variant">Every member across all departments — <span id="total-count" class="font-bold text-primary">—</span> total.</p>
     </div>
     <div class="flex items-center gap-4">
+      <button id="btn-export" class="flex items-center gap-2 px-5 py-3 rounded-xl border border-outline-variant text-primary font-bold text-sm hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-sm">download</span>
+        Export
+      </button>
       <div class="text-right">
         <p class="font-bold text-sm text-primary" data-user-name>Loading…</p>
         <p class="text-xs text-on-surface-variant">Super Admin</p>
@@ -178,7 +195,7 @@
     </div>
   </header>
 
-  <!-- Stat Cards Skeleton -->
+  <!-- Stats Skeleton -->
   <div id="stats-skeleton" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
     <div class="skeleton h-36"></div>
     <div class="skeleton h-36"></div>
@@ -186,7 +203,7 @@
     <div class="skeleton h-36"></div>
   </div>
 
-  <!-- Stat Cards -->
+  <!-- Stats -->
   <section id="stats-content" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 hidden">
     <div class="stat-card bg-surface-container-lowest p-6 rounded-xl">
       <div class="p-3 bg-blue-50 rounded-lg inline-block mb-4"><span class="material-symbols-outlined text-primary">diversity_3</span></div>
@@ -217,17 +234,20 @@
       <input id="search-input" type="text" placeholder="Search name, email, phone…"
         class="w-full bg-surface-container-low border-none rounded-full py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-secondary"/>
     </div>
+
     <select id="dept-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
       <option value="">All Departments</option>
     </select>
+
     <select id="status-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
       <option value="">All Statuses</option>
       <option value="active">Active</option>
       <option value="inactive">Inactive</option>
-      <option value="pending">Pending</option>
+      <option value="suspended">Suspended</option>
     </select>
+
     <select id="role-filter" class="bg-surface-container-low border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-secondary font-semibold text-on-surface">
-      <option value="">All Roles</option>
+      <option value="" selected>All Roles</option>
       <option value="member">Member</option>
       <option value="admin">Admin</option>
       <option value="super_admin">Super Admin</option>
@@ -262,7 +282,10 @@
     <div id="empty-state" class="hidden py-16 text-center">
       <span class="material-symbols-outlined text-4xl text-slate-300 mb-3 block">group_off</span>
       <p class="font-bold text-primary">No members found</p>
-      <p class="text-sm text-on-surface-variant mt-1">Try adjusting your search or filters.</p>
+      <p class="text-sm text-on-surface-variant mt-1">The current filters may be hiding available records.</p>
+      <button id="btn-reset-filters" class="mt-4 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-container transition-colors">
+        Reset Filters
+      </button>
     </div>
   </div>
 
@@ -283,18 +306,43 @@
   const profile = await initPageGuard();
   if (!profile) return;
 
-  // Populate avatar
+  document.querySelector('[data-user-name]').textContent = profile.full_name || 'Super Admin';
   document.getElementById('header-initials').textContent = getInitials(profile.full_name || 'SA');
+
+  if (profile.avatar_url) {
+    const img = document.createElement('img');
+    img.src = profile.avatar_url;
+    img.className = 'w-full h-full object-cover';
+    img.alt = profile.full_name || 'Super Admin';
+    const avatarEl = document.getElementById('header-avatar');
+    avatarEl.innerHTML = '';
+    avatarEl.appendChild(img);
+  }
 
   const PAGE_SIZE = 20;
   let allMembers = [];
   let departments = [];
+  let departmentMap = {};
   let currentPage = 1;
 
   async function loadDepartments() {
-    const { data } = await supabase.from('departments').select('id, name').order('name');
+    const { data, error } = await supabase
+      .from('departments')
+      .select('id, name')
+      .order('name');
+
+    if (error) {
+      console.error('Departments load error:', error);
+      Toast.error('Failed to load departments.');
+      return;
+    }
+
     departments = data || [];
+    departmentMap = Object.fromEntries(departments.map(d => [String(d.id), d.name]));
+
     const sel = document.getElementById('dept-filter');
+    sel.innerHTML = '<option value="">All Departments</option>';
+
     departments.forEach(d => {
       const opt = document.createElement('option');
       opt.value = d.id;
@@ -304,32 +352,56 @@
   }
 
   async function loadMembers() {
-    // Super admin: no department filter — fetch ALL members church-wide
-    const { data, error } = await supabase
+    let result = await supabase
       .from('profiles')
-      .select('id, full_name, email, phone, role, status, department_id, avatar_url, created_at, departments(name)')
-      .order('full_name');
+      .select('id, email, full_name, phone, department_id, role, status, avatar_url, joined_at, created_at')
+      .order('joined_at', { ascending: false });
 
-    if (error) { Toast.error('Failed to load members.'); return; }
-    allMembers = data || [];
+    if (result.error) {
+      console.warn('joined_at order failed, using created_at fallback', result.error);
+      result = await supabase
+        .from('profiles')
+        .select('id, email, full_name, phone, department_id, role, status, avatar_url, joined_at, created_at')
+        .order('created_at', { ascending: false });
+    }
+
+    if (result.error) {
+      console.error('Members load error:', result.error);
+      Toast.error('Failed to load members.');
+      return;
+    }
+
+    allMembers = normalizeMembers(result.data || []);
     renderStats();
     renderTable();
   }
 
+  function normalizeMembers(rows) {
+    return rows.map(member => ({
+      ...member,
+      department_name: departmentMap[String(member.department_id)] || 'Unassigned',
+      joined_display: member.joined_at || member.created_at || null
+    }));
+  }
+
   function renderStats() {
-    const active = allMembers.filter(m => m.status === 'active').length;
+    const active = allMembers.filter(m => String(m.status || '').toLowerCase() === 'active').length;
+
     const thisMonth = allMembers.filter(m => {
-      const d = new Date(m.created_at);
+      const value = m.joined_display;
+      if (!value) return false;
+      const d = new Date(value);
       const now = new Date();
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      return !isNaN(d.getTime()) && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
     }).length;
+
     const deptCount = new Set(allMembers.map(m => m.department_id).filter(Boolean)).size;
 
-    document.getElementById('stat-total').textContent = allMembers.length;
-    document.getElementById('stat-active').textContent = active;
-    document.getElementById('stat-new').textContent = thisMonth;
-    document.getElementById('stat-depts').textContent = deptCount;
-    document.getElementById('total-count').textContent = allMembers.length;
+    document.getElementById('stat-total').textContent = allMembers.length.toLocaleString();
+    document.getElementById('stat-active').textContent = active.toLocaleString();
+    document.getElementById('stat-new').textContent = thisMonth.toLocaleString();
+    document.getElementById('stat-depts').textContent = deptCount.toLocaleString();
+    document.getElementById('total-count').textContent = allMembers.length.toLocaleString();
 
     document.getElementById('stats-skeleton').classList.add('hidden');
     document.getElementById('stats-content').classList.remove('hidden');
@@ -340,37 +412,49 @@
     const dept = document.getElementById('dept-filter').value;
     const status = document.getElementById('status-filter').value;
     const role = document.getElementById('role-filter').value;
+
     return allMembers.filter(m => {
-      const searchOk = !q || [m.full_name, m.email, m.phone].join(' ').toLowerCase().includes(q);
+      const bag = [
+        m.full_name || '',
+        m.email || '',
+        m.phone || '',
+        m.department_name || ''
+      ].join(' ').toLowerCase();
+
+      const searchOk = !q || bag.includes(q);
       const deptOk = !dept || String(m.department_id) === dept;
-      const statusOk = !status || m.status === status;
-      const roleOk = !role || m.role === role;
+      const statusOk = !status || String(m.status || '').toLowerCase() === status.toLowerCase();
+      const roleOk = !role || String(m.role || '').toLowerCase() === role.toLowerCase();
+
       return searchOk && deptOk && statusOk && roleOk;
     });
   }
 
   function statusBadge(s) {
+    const value = String(s || '').toLowerCase();
     const map = {
       active:   'bg-green-50 text-green-700',
       inactive: 'bg-slate-100 text-slate-500',
       pending:  'bg-yellow-50 text-yellow-700',
     };
-    return `<span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${map[s] || 'bg-slate-100 text-slate-500'}">${s || '—'}</span>`;
+    return `<span class="pill ${map[value] || 'bg-slate-100 text-slate-500'}">${escapeHtml(value || '—')}</span>`;
   }
 
   function roleBadge(r) {
+    const value = String(r || '').toLowerCase();
     const map = {
       super_admin: 'bg-purple-50 text-purple-700',
       admin:       'bg-blue-50 text-blue-700',
       member:      'bg-slate-100 text-slate-600',
     };
-    return `<span class="inline-block rounded-full px-3 py-1 text-xs font-bold ${map[r] || 'bg-slate-100 text-slate-600'}">${r?.replace('_', ' ') || '—'}</span>`;
+    return `<span class="pill ${map[value] || 'bg-slate-100 text-slate-600'}">${escapeHtml(value.replace('_', ' ') || '—')}</span>`;
   }
 
   function renderTable() {
     const filtered = getFiltered();
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = 1;
+
     const slice = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     document.getElementById('table-skeleton').classList.add('hidden');
@@ -388,8 +472,11 @@
         <tr class="member-row border-t border-surface-container-low">
           <td class="px-6 py-4">
             <div class="flex items-center gap-3">
-              <div class="h-9 w-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                <span class="text-white text-xs font-bold">${escapeHtml(getInitials(m.full_name || '?'))}</span>
+              <div class="h-9 w-9 rounded-full bg-primary flex items-center justify-center overflow-hidden flex-shrink-0">
+                ${m.avatar_url
+                  ? `<img src="${escapeHtml(m.avatar_url)}" alt="${escapeHtml(m.full_name || 'Member')}" class="w-full h-full object-cover"/>`
+                  : `<span class="text-white text-xs font-bold">${escapeHtml(getInitials(m.full_name || '?'))}</span>`
+                }
               </div>
               <div>
                 <p class="font-bold text-on-surface">${escapeHtml(m.full_name || '—')}</p>
@@ -397,10 +484,10 @@
               </div>
             </div>
           </td>
-          <td class="px-6 py-4 text-on-surface-variant">${escapeHtml(m.departments?.name || 'Unassigned')}</td>
+          <td class="px-6 py-4 text-on-surface-variant">${escapeHtml(m.department_name || 'Unassigned')}</td>
           <td class="px-6 py-4">${roleBadge(m.role)}</td>
           <td class="px-6 py-4">${statusBadge(m.status)}</td>
-          <td class="px-6 py-4 text-on-surface-variant text-xs">${formatDate(m.created_at)}</td>
+          <td class="px-6 py-4 text-on-surface-variant text-xs">${m.joined_display ? formatDate(m.joined_display) : '—'}</td>
           <td class="px-6 py-4">
             <button onclick="viewMember('${m.id}')" class="rounded-lg bg-surface-container-low px-3 py-2 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">View</button>
           </td>
@@ -408,9 +495,7 @@
       `).join('');
     }
 
-    document.getElementById('pagination-info').textContent =
-      `Showing ${slice.length} of ${filtered.length} members`;
-
+    document.getElementById('pagination-info').textContent = `Showing ${slice.length} of ${filtered.length} members`;
     renderPagination(totalPages);
   }
 
@@ -418,23 +503,127 @@
     const container = document.getElementById('pagination-controls');
     container.innerHTML = '';
     if (totalPages <= 1) return;
+
     for (let i = 1; i <= totalPages; i++) {
       const btn = document.createElement('button');
       btn.textContent = i;
       btn.className = i === currentPage
         ? 'w-9 h-9 rounded-full bg-primary text-white text-sm font-bold'
         : 'w-9 h-9 rounded-full bg-surface-container-low text-on-surface text-sm font-bold hover:bg-surface-container transition-colors';
-      btn.addEventListener('click', () => { currentPage = i; renderTable(); });
+
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderTable();
+      });
+
       container.appendChild(btn);
     }
   }
 
+  function resetFilters() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('dept-filter').value = '';
+    document.getElementById('status-filter').value = '';
+    document.getElementById('role-filter').value = '';
+    currentPage = 1;
+    renderTable();
+  }
+
+  function exportCSV() {
+    const rows = getFiltered();
+    if (!rows.length) {
+      Toast.warning('No members to export.');
+      return;
+    }
+
+    const headers = ['Full Name', 'Email', 'Phone', 'Department', 'Role', 'Status', 'Joined'];
+    const csvRows = [
+      headers.join(','),
+      ...rows.map(r => [
+        csvCell(r.full_name),
+        csvCell(r.email),
+        csvCell(r.phone),
+        csvCell(r.department_name),
+        csvCell(r.role),
+        csvCell(r.status),
+        csvCell(r.joined_display)
+      ].join(','))
+    ];
+
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const stamp = new Date().toISOString().split('T')[0];
+    a.href = url;
+    a.download = `blb-members-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    Toast.success('Members export downloaded.');
+  }
+
   window.viewMember = (id) => {
-    // Navigate to member detail — placeholder
-    Toast.info('Member detail view coming soon.');
+    const member = allMembers.find(m => String(m.id) === String(id));
+    if (!member) return;
+
+    Modal.show({
+      title: 'Member Details',
+      size: 'sm',
+      content: `
+        <div class="space-y-4">
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Full Name</p>
+            <h3 class="text-lg font-black text-primary">${escapeHtml(member.full_name || '—')}</h3>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Email</p>
+              <p class="font-bold text-on-surface">${escapeHtml(member.email || '—')}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Phone</p>
+              <p class="font-bold text-on-surface">${escapeHtml(member.phone || '—')}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Role</p>
+              <p class="font-bold text-on-surface">${escapeHtml(String(member.role || '—').replace('_', ' '))}</p>
+            </div>
+            <div class="rounded-xl bg-surface-container-low p-4">
+              <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Status</p>
+              <p class="font-bold text-on-surface">${escapeHtml(member.status || '—')}</p>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Department</p>
+            <p class="font-bold text-on-surface">${escapeHtml(member.department_name || 'Unassigned')}</p>
+          </div>
+
+          <div class="rounded-xl bg-surface-container-low p-4">
+            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-1">Joined</p>
+            <p class="font-bold text-on-surface">${member.joined_display ? formatDate(member.joined_display) : '—'}</p>
+          </div>
+        </div>
+      `
+    });
   };
 
-  const debouncedRender = debounce(() => { currentPage = 1; renderTable(); }, 300);
+  document.getElementById('btn-export').addEventListener('click', exportCSV);
+
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'btn-reset-filters') {
+      resetFilters();
+    }
+  });
+
+  const debouncedRender = debounce(() => {
+    currentPage = 1;
+    renderTable();
+  }, 300);
+
   document.getElementById('search-input').addEventListener('input', debouncedRender);
   document.getElementById('dept-filter').addEventListener('change', () => { currentPage = 1; renderTable(); });
   document.getElementById('status-filter').addEventListener('change', () => { currentPage = 1; renderTable(); });
@@ -443,6 +632,11 @@
   await loadDepartments();
   await loadMembers();
 })();
+
+function csvCell(value) {
+  const safe = String(value ?? '').replace(/"/g, '""');
+  return `"${safe}"`;
+}
 </script>
 </body>
 </html>

@@ -136,6 +136,10 @@
       <span class="material-symbols-outlined">event</span>
       <span>All Events</span>
     </a>
+    <a href="./announcements.html" class="nav-item">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>All Announcements</span>
+    </a>
     <a href="./media.html" class="nav-item">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>All Media</span>
@@ -289,7 +293,7 @@ const PAGE = { departments: [], memberCounts: {} };
 
 async function loadPage() {
   const [{ data: depts }, { data: members }] = await Promise.all([
-    supabase.from('departments').select('id,name,description').order('name'),
+    supabase.from('departments').select('id,name,description,leader_name,meeting_schedule,image_url,is_active').order('name'),
     supabase.from('profiles').select('id,department_id').in('role', ['member', 'admin'])
   ]);
 
@@ -339,20 +343,30 @@ function renderCards(depts) {
   ];
 
   grid.innerHTML = depts.map((d, i) => {
-    const c     = colors[i % colors.length];
-    const count = PAGE.memberCounts[d.id] || 0;
-    const desc  = d.description || 'No description provided.';
+    const c       = colors[i % colors.length];
+    const count   = PAGE.memberCounts[d.id] || 0;
+    const desc    = d.description || 'No description provided.';
+    const active  = d.is_active !== false;
+    const imgHtml = d.image_url
+      ? `<img src="${escapeHtml(d.image_url)}" class="w-full h-24 object-cover rounded-lg mb-4" alt="${escapeHtml(d.name)}"/>`
+      : '';
     return `
-      <div class="dept-card bg-surface-container-lowest rounded-xl p-8 flex flex-col gap-4">
-        <div class="flex items-start justify-between">
-          <div class="p-3 ${c.bg} rounded-lg">
-            <span class="material-symbols-outlined ${c.icon} text-2xl">apartment</span>
+      <div class="dept-card bg-surface-container-lowest rounded-xl p-6 flex flex-col gap-3 ${active ? '' : 'opacity-60'}">
+        ${imgHtml}
+        <div class="flex items-start justify-between gap-2">
+          <div class="p-2 ${c.bg} rounded-lg flex-shrink-0">
+            <span class="material-symbols-outlined ${c.icon} text-xl">apartment</span>
           </div>
-          <span class="text-xs font-bold ${c.badge} px-2 py-1 rounded-full">${count} member${count !== 1 ? 's' : ''}</span>
+          <div class="flex gap-2 flex-wrap justify-end">
+            <span class="text-xs font-bold ${c.badge} px-2 py-1 rounded-full">${count} member${count !== 1 ? 's' : ''}</span>
+            <span class="text-xs font-bold px-2 py-1 rounded-full ${active ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-500'}">${active ? 'Active' : 'Inactive'}</span>
+          </div>
         </div>
         <div class="flex-1">
-          <h3 class="font-headline font-bold text-lg text-primary mb-1">${escapeHtml(d.name)}</h3>
-          <p class="text-sm text-on-surface-variant line-clamp-2">${escapeHtml(desc)}</p>
+          <h3 class="font-headline font-bold text-base text-primary mb-1">${escapeHtml(d.name)}</h3>
+          <p class="text-xs text-on-surface-variant line-clamp-2 mb-2">${escapeHtml(desc)}</p>
+          ${d.leader_name ? `<p class="text-xs text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-sm">person</span>${escapeHtml(d.leader_name)}</p>` : ''}
+          ${d.meeting_schedule ? `<p class="text-xs text-on-surface-variant flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">schedule</span>${escapeHtml(d.meeting_schedule)}</p>` : ''}
         </div>
         <div class="flex gap-2 pt-2 border-t border-surface-container-low">
           <button onclick="openEditModal('${escapeHtml(d.id)}')"
@@ -388,107 +402,115 @@ function bindButtons() {
   document.getElementById('btn-empty-add').addEventListener('click', () => openAddModal());
 }
 
+function deptFormFields(d = {}) {
+  return `
+    <div>
+      <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Department Name *</label>
+      <input id="dept-name" type="text" required maxlength="80" value="${escapeHtml(d.name || '')}"
+        class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
+        placeholder="e.g. Women's Ministry"/>
+    </div>
+    <div>
+      <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Description</label>
+      <textarea id="dept-desc" rows="2" maxlength="500"
+        class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none resize-none"
+        placeholder="Brief description…">${escapeHtml(d.description || '')}</textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Leader Name</label>
+        <input id="dept-leader" type="text" maxlength="100" value="${escapeHtml(d.leader_name || '')}"
+          class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
+          placeholder="e.g. Pastor John"/>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Meeting Schedule</label>
+        <input id="dept-schedule" type="text" maxlength="150" value="${escapeHtml(d.meeting_schedule || '')}"
+          class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
+          placeholder="e.g. Sundays 9am"/>
+      </div>
+    </div>
+    <div>
+      <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Image URL</label>
+      <input id="dept-image" type="url" value="${escapeHtml(d.image_url || '')}"
+        class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
+        placeholder="https://…"/>
+    </div>
+    <label class="flex items-center gap-3 cursor-pointer">
+      <input id="dept-active" type="checkbox" class="w-4 h-4 accent-primary" ${d.is_active !== false ? 'checked' : ''}/>
+      <span class="text-sm font-semibold text-on-surface">Active department</span>
+    </label>
+  `;
+}
+
 function openAddModal() {
-  const { close, body } = Modal.show({
+  const { close } = Modal.show({
     title: 'Add Department',
     size: 'sm',
-    content: `
-      <form id="dept-form" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Department Name *</label>
-          <input id="dept-name" type="text" required maxlength="80"
-            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"
-            placeholder="e.g. Women's Ministry"/>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Description</label>
-          <textarea id="dept-desc" rows="3" maxlength="500"
-            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none resize-none"
-            placeholder="Brief description of this department…"></textarea>
-        </div>
-        <div class="flex gap-3 pt-2">
-          <button type="button" id="modal-cancel"
-            class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
-            Cancel
-          </button>
-          <button type="submit"
-            class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
-            Create Department
-          </button>
-        </div>
-      </form>
-    `
+    content: `<form id="dept-form" class="space-y-4">${deptFormFields()}
+      <div class="flex gap-3 pt-2">
+        <button type="button" id="modal-cancel" class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">Cancel</button>
+        <button type="submit" class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">Create Department</button>
+      </div>
+    </form>`
   });
 
   document.getElementById('modal-cancel').addEventListener('click', close);
   document.getElementById('dept-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const name = document.getElementById('dept-name').value.trim();
-    const desc = document.getElementById('dept-desc').value.trim();
-    if (!name) return;
+    const payload = readDeptForm();
+    if (!payload) return;
 
     Loader.show('Creating department…');
-    const { error } = await supabase.from('departments').insert({ name, description: desc || null });
+    const { error } = await supabase.from('departments').insert(payload);
     Loader.hide();
 
-    if (error) {
-      Toast.error('Failed to create department.');
-      return;
-    }
+    if (error) { Toast.error(error.message.includes('unique') ? 'A department with this name already exists.' : 'Failed to create department.'); return; }
     close();
     Toast.success('Department created.');
     await reloadDepartments();
   });
 }
 
+function readDeptForm() {
+  const name = document.getElementById('dept-name').value.trim();
+  if (!name) return null;
+  return {
+    name,
+    description:      document.getElementById('dept-desc').value.trim() || null,
+    leader_name:      document.getElementById('dept-leader').value.trim() || null,
+    meeting_schedule: document.getElementById('dept-schedule').value.trim() || null,
+    image_url:        document.getElementById('dept-image').value.trim() || null,
+    is_active:        document.getElementById('dept-active').checked,
+  };
+}
+
 function openEditModal(id) {
   const dept = PAGE.departments.find(d => d.id === id);
   if (!dept) return;
 
-  const { close, body } = Modal.show({
+  const { close } = Modal.show({
     title: 'Edit Department',
     size: 'sm',
-    content: `
-      <form id="dept-form" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Department Name *</label>
-          <input id="dept-name" type="text" required maxlength="80" value="${escapeHtml(dept.name)}"
-            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none"/>
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Description</label>
-          <textarea id="dept-desc" rows="3" maxlength="500"
-            class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-secondary outline-none resize-none">${escapeHtml(dept.description || '')}</textarea>
-        </div>
-        <div class="flex gap-3 pt-2">
-          <button type="button" id="modal-cancel"
-            class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">
-            Cancel
-          </button>
-          <button type="submit"
-            class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
-            Save Changes
-          </button>
-        </div>
-      </form>
-    `
+    content: `<form id="dept-form" class="space-y-4">${deptFormFields(dept)}
+      <div class="flex gap-3 pt-2">
+        <button type="button" id="modal-cancel" class="flex-1 py-2 border border-outline-variant rounded-lg text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-colors">Cancel</button>
+        <button type="submit" class="flex-1 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">Save Changes</button>
+      </div>
+    </form>`
   });
 
   document.getElementById('modal-cancel').addEventListener('click', close);
   document.getElementById('dept-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const name = document.getElementById('dept-name').value.trim();
-    const desc = document.getElementById('dept-desc').value.trim();
-    if (!name) return;
+    const payload = readDeptForm();
+    if (!payload) return;
 
     Loader.show('Saving…');
-    const { error } = await supabase.from('departments').update({ name, description: desc || null }).eq('id', id);
+    const { error } = await supabase.from('departments').update(payload).eq('id', id);
     Loader.hide();
 
-    if (error) {
-      Toast.error('Failed to update department.');
-      return;
-    }
+    if (error) { Toast.error('Failed to update department.'); return; }
     close();
     Toast.success('Department updated.');
     await reloadDepartments();
@@ -514,7 +536,7 @@ function confirmDelete(id, name) {
 
 async function reloadDepartments() {
   const [{ data: depts }, { data: members }] = await Promise.all([
-    supabase.from('departments').select('id,name,description').order('name'),
+    supabase.from('departments').select('id,name,description,leader_name,meeting_schedule,image_url,is_active').order('name'),
     supabase.from('profiles').select('id,department_id').in('role', ['member', 'admin'])
   ]);
 

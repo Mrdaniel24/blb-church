@@ -213,6 +213,20 @@
       await redirectIfLoggedIn();
     })();
 
+    // Check for registration success
+    const registeredParam = getUrlParam('registered');
+    if (registeredParam === '1') {
+      const alertDiv = document.getElementById('login-error');
+      const alertText = document.getElementById('login-error-text');
+      alertDiv.classList.remove('hidden');
+      alertDiv.style.background = '#dcfce7';
+      alertDiv.style.borderColor = '#86efac';
+      alertDiv.querySelector('.material-symbols-outlined').textContent = 'check_circle';
+      alertDiv.querySelector('.material-symbols-outlined').style.color = '#166534';
+      alertText.textContent = 'Account created successfully! Please sign in with your credentials.';
+      alertText.style.color = '#166534';
+    }
+
     // Check for error params
     const errorParam = getUrlParam('error');
     if (errorParam === 'inactive') {

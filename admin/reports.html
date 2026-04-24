@@ -45,7 +45,7 @@
   </style>
 </head>
 
-<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;" data-required-perm="can_view_reports">
 
   <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
     <div class="px-6 mb-10">
@@ -54,11 +54,13 @@
     </div>
     <div class="space-y-2">
       <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
-      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
-      <a class="nav-item" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
-      <a class="nav-item" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
-      <a class="nav-item" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
-      <a class="nav-item nav-item-active" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./members.html" data-perm="can_manage_members"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item" href="./contributions.html" data-perm="can_manage_contributions"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item" href="./events.html" data-perm="can_manage_events"><span class="material-symbols-outlined">event</span><span>Events</span></a>
+      <a class="nav-item" href="./announcements.html" data-perm="can_manage_announcements"><span class="material-symbols-outlined">campaign</span><span>Announcements</span></a>
+      <a class="nav-item" href="./media.html" data-perm="can_manage_media"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item nav-item-active" href="./reports.html" data-perm="can_view_reports"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./departments.html" data-perm="can_manage_departments"><span class="material-symbols-outlined">account_tree</span><span>Departments</span></a>
     </div>
   </aside>
 
@@ -138,7 +140,7 @@
     <div class="rounded-3xl bg-white p-6 shadow-sm">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-extrabold text-primary">Recent Contributions</h3>
-        <a href="./contributions.html" class="text-xs font-bold text-primary hover:underline">View All</a>
+        <a href="./contributions.html" class="text-xs font-bold text-primary hover:underline" data-perm="can_manage_contributions">View All</a>
       </div>
       <div id="contributions-skeleton" class="space-y-3">
         <div class="skeleton h-12"></div>
@@ -196,9 +198,9 @@
       const { data: contributions } = memberIds.length
         ? await supabase
             .from('contributions')
-            .select('id, amount, type, date, member:profiles!contributions_member_id_fkey(id, full_name)')
+            .select('id, amount, category, contribution_date, member:profiles!contributions_member_id_fkey(id, full_name)')
             .in('member_id', memberIds)
-            .order('date', { ascending: false })
+            .order('contribution_date', { ascending: false })
         : { data: [] };
 
       const contribList = contributions || [];
@@ -207,7 +209,7 @@
       const active = memberList.filter(m => m.status === 'active').length;
       const totalGiving = contribList.reduce((s, c) => s + (c.amount || 0), 0);
       const monthGiving = contribList
-        .filter(c => c.date >= monthStart)
+        .filter(c => c.contribution_date >= monthStart)
         .reduce((s, c) => s + (c.amount || 0), 0);
 
       document.getElementById('kpi-members').textContent = memberList.length;
@@ -220,7 +222,7 @@
 
       // Giving by type
       const byType = contribList.reduce((acc, c) => {
-        acc[c.type] = (acc[c.type] || 0) + (c.amount || 0);
+        acc[c.category] = (acc[c.category] || 0) + (c.amount || 0);
         return acc;
       }, {});
       const typeEntries = Object.entries(byType).sort((a, b) => b[1] - a[1]);
@@ -269,9 +271,9 @@
         tbody.innerHTML = recent.map(c => `
           <tr class="border-b border-slate-100">
             <td class="py-3 pr-4 font-bold text-slate-800">${escapeHtml(c.member?.full_name || '—')}</td>
-            <td class="py-3 pr-4 capitalize text-slate-500">${escapeHtml(c.type || '—')}</td>
+            <td class="py-3 pr-4 capitalize text-slate-500">${escapeHtml(c.category || '—')}</td>
             <td class="py-3 pr-4 font-extrabold text-primary">${formatTZS(c.amount)}</td>
-            <td class="py-3 text-slate-500 text-xs">${formatDate(c.date)}</td>
+            <td class="py-3 text-slate-500 text-xs">${formatDate(c.contribution_date)}</td>
           </tr>
         `).join('');
       } else {

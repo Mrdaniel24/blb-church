@@ -45,7 +45,7 @@
     .table-row:hover { background:#f8fafc; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;" data-required-perm="can_manage_contributions">
   <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
     <div class="px-6 mb-10">
       <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
@@ -54,11 +54,13 @@
 
     <div class="space-y-2">
       <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
-      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
-      <a class="nav-item nav-item-active" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
-      <a class="nav-item" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
-      <a class="nav-item" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
-      <a class="nav-item" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./members.html" data-perm="can_manage_members"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item nav-item-active" href="./contributions.html" data-perm="can_manage_contributions"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item" href="./events.html" data-perm="can_manage_events"><span class="material-symbols-outlined">event</span><span>Events</span></a>
+      <a class="nav-item" href="./announcements.html" data-perm="can_manage_announcements"><span class="material-symbols-outlined">campaign</span><span>Announcements</span></a>
+      <a class="nav-item" href="./media.html" data-perm="can_manage_media"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item" href="./reports.html" data-perm="can_view_reports"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./departments.html" data-perm="can_manage_departments"><span class="material-symbols-outlined">account_tree</span><span>Departments</span></a>
     </div>
   </aside>
 
@@ -132,8 +134,10 @@
               <option value="">All types</option>
               <option value="tithe">Tithe</option>
               <option value="offering">Offering</option>
-              <option value="special">Special Seed</option>
-              <option value="thanksgiving">Thanksgiving</option>
+              <option value="building_fund">Building Fund</option>
+              <option value="missions">Missions</option>
+              <option value="special">Special</option>
+              <option value="other">Other</option>
             </select>
             <input id="date-filter" type="date" class="rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary" />
           </div>
@@ -146,7 +150,7 @@
                 <th class="py-4 pr-4">Member</th>
                 <th class="py-4 pr-4">Type</th>
                 <th class="py-4 pr-4">Amount</th>
-                <th class="py-4 pr-4">Method</th>
+                <th class="py-4 pr-4">Method / Status</th>
                 <th class="py-4 pr-4">Date</th>
                 <th class="py-4 pr-4">Department</th>
                 <th class="py-4">Actions</th>
@@ -191,28 +195,71 @@
     const profile = await initPageGuard();
     if (!profile) return;
 
-    // Admin is always department-scoped — never cross-department access
+    const perms = profile.permissions;
+    const viewAll = hasPermission(perms, 'can_view_all_contributions');
     const deptName = profile.departments?.name || 'Your Department';
+
+    // Update scope badge and subtitle to reflect actual scope
     document.getElementById('sidebar-role-label').textContent = 'Admin Portal';
-    document.getElementById('scope-badge').textContent = `${escapeHtml(deptName)} Scope`;
-    document.getElementById('page-subtitle').textContent = `Manage contribution records for ${escapeHtml(deptName)}.`;
+    if (viewAll) {
+      document.getElementById('scope-badge').textContent = 'All Contributions';
+      document.getElementById('scope-badge').classList.replace('bg-blue-50', 'bg-green-50');
+      document.getElementById('scope-badge').classList.replace('text-primary', 'text-green-700');
+      document.getElementById('page-subtitle').textContent = 'Viewing all contribution records across all departments.';
+    } else {
+      document.getElementById('scope-badge').textContent = `${escapeHtml(deptName)} — Department Scope`;
+      document.getElementById('page-subtitle').textContent = `Manage contribution records for ${escapeHtml(deptName)} only.`;
+    }
 
     let allContributions = [];
 
     async function loadContributions() {
-      // Admin: only fetch contributions from members in their own department
-      const { data, error } = await supabase
+      let memberIds = null;
+
+      // If not allowed to see all, get member IDs from admin's department only
+      if (!viewAll && perms?.department_id) {
+        const { data: deptMembers, error: deptErr } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('department_id', perms.department_id);
+        if (deptErr) { Toast.error('Failed to load department members.'); return; }
+        memberIds = (deptMembers || []).map(m => m.id);
+        if (memberIds.length === 0) {
+          allContributions = [];
+          renderPage();
+          return;
+        }
+      }
+
+      let q = supabase
         .from('contributions')
         .select(`
-          id, amount, type, date, notes,
-          member:profiles!contributions_member_id_fkey(id, full_name, email, department_id)
+          id, amount, category, contribution_date, notes, payment_method, status,
+          member:profiles!contributions_member_id_fkey(id, full_name, email, department_id,
+            departments(name))
         `)
-        .eq('member.department_id', profile.department_id)
-        .order('date', { ascending: false });
+        .order('contribution_date', { ascending: false });
 
+      if (memberIds !== null) {
+        q = q.in('member_id', memberIds);
+      }
+
+      const { data, error } = await q;
       if (error) { Toast.error('Failed to load contributions.'); return; }
-      allContributions = (data || []).filter(c => c.member?.department_id === profile.department_id);
+      allContributions = data || [];
       renderPage();
+    }
+
+    function renderPaymentBadge(status, method) {
+      if (!status || status === 'completed') {
+        const isOnline = method === 'mobile_money' || method === 'card';
+        return isOnline
+          ? `<span class="pill bg-green-50 text-green-700 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:0.85rem">phone_android</span>Snippe</span>`
+          : `<span class="pill bg-slate-100 text-slate-600">Cash</span>`;
+      }
+      if (status === 'pending')
+        return `<span class="pill bg-amber-50 text-amber-700 flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:0.85rem">schedule</span>Pending</span>`;
+      return `<span class="pill bg-rose-50 text-rose-600">Failed</span>`;
     }
 
     function applyFilters() {
@@ -222,8 +269,8 @@
       return allContributions.filter(item => {
         const name = item.member?.full_name || '';
         const searchOk = !q || [name, item.notes].join(' ').toLowerCase().includes(q);
-        const typeOk = !type || item.type === type;
-        const dateOk = !date || item.date === date;
+        const typeOk = !type || item.category === type;
+        const dateOk = !date || item.contribution_date === date;
         return searchOk && typeOk && dateOk;
       });
     }
@@ -232,10 +279,10 @@
       const now = new Date();
       const total = data.reduce((sum, item) => sum + (item.amount || 0), 0);
       const thisMonth = data.filter(item => {
-        const d = new Date(item.date);
+        const d = new Date(item.contribution_date);
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
       }).reduce((sum, item) => sum + (item.amount || 0), 0);
-      const counts = data.reduce((acc, item) => { acc[item.type] = (acc[item.type] || 0) + 1; return acc; }, {});
+      const counts = data.reduce((acc, item) => { acc[item.category] = (acc[item.category] || 0) + 1; return acc; }, {});
       const topType = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
 
       document.getElementById('stat-total-amount').textContent = formatTZS(total);
@@ -256,11 +303,11 @@
             <div class="font-bold text-slate-800">${escapeHtml(item.member?.full_name || '—')}</div>
             <div class="text-xs text-slate-400">${escapeHtml(item.member?.email || '')}</div>
           </td>
-          <td class="py-4 pr-4 capitalize"><span class="pill bg-slate-100 text-slate-700">${escapeHtml(item.type || '—')}</span></td>
+          <td class="py-4 pr-4 capitalize"><span class="pill bg-slate-100 text-slate-700">${escapeHtml(item.category || '—')}</span></td>
           <td class="py-4 pr-4 font-extrabold text-primary">${formatTZS(item.amount)}</td>
-          <td class="py-4 pr-4 text-slate-600">${escapeHtml(item.notes || '—')}</td>
-          <td class="py-4 pr-4 text-slate-600">${escapeHtml(item.date || '')}</td>
-          <td class="py-4 pr-4 text-slate-600">${escapeHtml(deptName)}</td>
+          <td class="py-4 pr-4">${renderPaymentBadge(item.status, item.payment_method)}</td>
+          <td class="py-4 pr-4 text-slate-600">${escapeHtml(item.contribution_date || '')}</td>
+          <td class="py-4 pr-4 text-slate-600">${escapeHtml(item.member?.departments?.name || deptName)}</td>
           <td class="py-4">
             <div class="flex gap-2">
               <button class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700">View</button>
@@ -274,7 +321,7 @@
     function renderTypeSummary(data) {
       const box = document.getElementById('type-summary');
       const totals = data.reduce((acc, item) => {
-        acc[item.type] = (acc[item.type] || 0) + (item.amount || 0);
+        acc[item.category] = (acc[item.category] || 0) + (item.amount || 0);
         return acc;
       }, {});
       const rows = Object.entries(totals);

@@ -142,7 +142,7 @@
   </style>
 </head>
 
-<body data-required-role="admin" style="opacity:0; transition:opacity 0.3s ease;">
+<body data-required-role="admin" style="opacity:0; transition:opacity 0.3s ease;" data-required-perm="can_manage_members">
 
   <!-- SIDEBAR -->
   <aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
@@ -156,26 +156,34 @@
         <span class="material-symbols-outlined">dashboard</span>
         <span>Dashboard</span>
       </a>
-      <a href="./members.html" class="nav-item-active">
+      <a href="./members.html" class="nav-item-active" data-perm="can_manage_members">
         <span class="material-symbols-outlined">group</span>
         <span>Members</span>
       </a>
-      <a href="./contributions.html" class="nav-item">
+      <a href="./contributions.html" class="nav-item" data-perm="can_manage_contributions">
         <span class="material-symbols-outlined">payments</span>
         <span>Contributions</span>
       </a>
-      <a href="./events.html" class="nav-item">
-        <span class="material-symbols-outlined">campaign</span>
-        <span>Events &amp; Notices</span>
+      <a href="./events.html" class="nav-item" data-perm="can_manage_events">
+        <span class="material-symbols-outlined">event</span>
+        <span>Events</span>
       </a>
-      <a href="./media.html" class="nav-item">
+      <a href="./announcements.html" class="nav-item" data-perm="can_manage_announcements">
+        <span class="material-symbols-outlined">campaign</span>
+        <span>Announcements</span>
+      </a>
+      <a href="./media.html" class="nav-item" data-perm="can_manage_media">
         <span class="material-symbols-outlined">subscriptions</span>
         <span>Media</span>
       </a>
-      <a href="./reports.html" class="nav-item">
+      <a href="./reports.html" class="nav-item" data-perm="can_view_reports">
         <span class="material-symbols-outlined">bar_chart</span>
         <span>Reports</span>
       </a>
+    <a href="./departments.html" class="nav-item" data-perm="can_manage_departments">
+      <span class="material-symbols-outlined">account_tree</span>
+      <span>Departments</span>
+    </a>
     </nav>
 
     <div class="mt-auto px-6 space-y-1">
@@ -534,8 +542,7 @@
       grid.querySelectorAll('[data-view-member]').forEach(btn => {
         btn.addEventListener('click', () => {
           const memberId = btn.dataset.viewMember;
-          const member = state.allMembers.find(m => String(m.id) === String(memberId));
-          if (member) openViewProfileModal(member);
+          window.location.href = `./member-profile.html?id=${encodeURIComponent(memberId)}`;
         });
       });
     }

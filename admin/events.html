@@ -41,7 +41,7 @@
     .calendar-chip { border-radius:9999px; padding:.35rem .75rem; font-size:.72rem; font-weight:800; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;">
+<body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;" data-required-perm="can_manage_events">
   <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
     <div class="px-6 mb-10">
       <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
@@ -50,11 +50,13 @@
 
     <div class="space-y-2">
       <a class="nav-item" href="./dashboard.html"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
-      <a class="nav-item" href="./members.html"><span class="material-symbols-outlined">group</span><span>Members</span></a>
-      <a class="nav-item" href="./contributions.html"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
-      <a class="nav-item nav-item-active" href="./events.html"><span class="material-symbols-outlined">campaign</span><span>Events &amp; Notices</span></a>
-      <a class="nav-item" href="./media.html"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
-      <a class="nav-item" href="./reports.html"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./members.html" data-perm="can_manage_members"><span class="material-symbols-outlined">group</span><span>Members</span></a>
+      <a class="nav-item" href="./contributions.html" data-perm="can_manage_contributions"><span class="material-symbols-outlined">payments</span><span>Contributions</span></a>
+      <a class="nav-item nav-item-active" href="./events.html" data-perm="can_manage_events"><span class="material-symbols-outlined">event</span><span>Events</span></a>
+      <a class="nav-item" href="./announcements.html" data-perm="can_manage_announcements"><span class="material-symbols-outlined">campaign</span><span>Announcements</span></a>
+      <a class="nav-item" href="./media.html" data-perm="can_manage_media"><span class="material-symbols-outlined">subscriptions</span><span>Media</span></a>
+      <a class="nav-item" href="./reports.html" data-perm="can_view_reports"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
+      <a class="nav-item" href="./departments.html" data-perm="can_manage_departments"><span class="material-symbols-outlined">account_tree</span><span>Departments</span></a>
     </div>
   </aside>
 
@@ -161,6 +163,96 @@
     </section>
   </main>
 
+<!-- ═══════════ CREATE EVENT MODAL ═══════════ -->
+<div id="modal-add-event" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background:rgba(0,0,0,0.45); backdrop-filter:blur(4px);">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+
+    <div class="flex items-center justify-between px-8 py-6 border-b border-slate-200">
+      <div>
+        <h3 class="font-headline font-bold text-2xl text-primary">Create Event</h3>
+        <p class="text-sm text-slate-500 mt-1">Add a new event for your department.</p>
+      </div>
+      <button id="modal-close-event" class="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+        <span class="material-symbols-outlined text-slate-500">close</span>
+      </button>
+    </div>
+
+    <div class="px-8 py-6 space-y-6">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">
+          Title <span class="text-red-600">*</span>
+        </label>
+        <input id="event-title" type="text" placeholder="e.g. JAM SESSION"
+          class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-secondary"/>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Description</label>
+        <textarea id="event-description" rows="3" placeholder="Write event details..."
+          class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-base focus:ring-2 focus:ring-secondary resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">
+            Start Date <span class="text-red-600">*</span>
+          </label>
+          <input id="event-start-date" type="datetime-local"
+            class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">End Date</label>
+          <input id="event-end-date" type="datetime-local"
+            class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Location</label>
+          <input id="event-location" type="text" placeholder="e.g. BONDE LA BARAKA"
+            class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Category</label>
+          <select id="event-category"
+            class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary">
+            <option value="general">General</option>
+            <option value="department">Department</option>
+            <option value="special">Special</option>
+            <option value="conference">Conference</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">
+          Event Poster (Optional)
+        </label>
+        <input id="event-image" type="file" accept="image/*"
+          class="w-full bg-slate-100 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-secondary"/>
+        <div id="event-image-preview-wrap" class="hidden mt-4">
+          <img id="event-image-preview" src="" alt="Event poster preview"
+            class="w-full max-w-xs h-44 object-contain rounded-xl border border-slate-200 bg-slate-50"/>
+        </div>
+      </div>
+
+      <div id="event-error" class="hidden rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-700 font-semibold"></div>
+    </div>
+
+    <div class="px-8 py-5 border-t border-slate-200 flex gap-3">
+      <button id="btn-cancel-event"
+        class="flex-1 py-3 rounded-xl border border-slate-300 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-colors">
+        Cancel
+      </button>
+      <button id="btn-submit-event"
+        class="flex-1 py-3 rounded-xl bg-primary text-white font-bold text-sm hover:opacity-90 transition-opacity">
+        Create Event
+      </button>
+    </div>
+  </div>
+</div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-client.js"></script>
   <script src="../assets/js/common.js"></script>
@@ -185,18 +277,18 @@
       // Admin sees: their own department's events + general/church-wide events (department_id IS NULL)
       const { data, error } = await supabase
         .from('events')
-        .select('id, title, description, start_date, end_date, location, category, created_by')
+        .select('id, title, description, event_date, end_date, location, category, created_by')
         .or(`created_by.eq.${profile.id},category.eq.general`)
-        .order('start_date', { ascending: false });
+        .order('event_date', { ascending: false });
 
       if (error) { Toast.error('Failed to load events.'); return; }
 
       // Also fetch events created by members in this department
       const { data: deptEvents } = await supabase
         .from('events')
-        .select('id, title, description, start_date, end_date, location, category, created_by, creator:profiles!events_created_by_fkey(department_id)')
+        .select('id, title, description, event_date, end_date, location, category, created_by, creator:profiles!events_created_by_fkey(department_id)')
         .neq('category', 'general')
-        .order('start_date', { ascending: false });
+        .order('event_date', { ascending: false });
 
       const deptFiltered = (deptEvents || []).filter(e => e.creator?.department_id === profile.department_id);
       const merged = [...(data || []), ...deptFiltered];
@@ -213,7 +305,7 @@
       const scope = document.getElementById('event-scope-filter').value;
       const status = document.getElementById('event-status-filter').value;
       return allEvents.filter(item => {
-        const isUpcoming = new Date(item.start_date) > now;
+        const isUpcoming = new Date(item.event_date) > now;
         const itemStatus = isUpcoming ? 'upcoming' : 'completed';
         const isGeneral = item.category === 'general';
         const searchOk = !q || [item.title, item.location, item.category, item.description].join(' ').toLowerCase().includes(q);
@@ -225,9 +317,9 @@
 
     function renderEventStats(data) {
       const now = new Date();
-      document.getElementById('stat-upcoming-events').textContent = data.filter(x => new Date(x.start_date) > now).length;
+      document.getElementById('stat-upcoming-events').textContent = data.filter(x => new Date(x.event_date) > now).length;
       document.getElementById('stat-month-events').textContent = data.filter(x => {
-        const d = new Date(x.start_date);
+        const d = new Date(x.event_date);
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
       }).length;
       document.getElementById('stat-general-events').textContent = data.filter(x => x.category === 'general').length;
@@ -243,7 +335,7 @@
       }
       list.innerHTML = data.map(item => {
         const isGeneral = item.category === 'general';
-        const isUpcoming = new Date(item.start_date) > now;
+        const isUpcoming = new Date(item.event_date) > now;
         return `
         <div class="card-hover rounded-3xl border border-slate-100 bg-slate-50 p-5">
           <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
@@ -253,7 +345,7 @@
                 <span class="calendar-chip ${isUpcoming ? 'bg-green-50 text-green-700' : 'bg-slate-200 text-slate-700'}">${isUpcoming ? 'Upcoming' : 'Past'}</span>
               </div>
               <h4 class="text-lg font-extrabold text-slate-900">${escapeHtml(item.title)}</h4>
-              <p class="mt-2 text-sm text-slate-500">${escapeHtml(item.location || '')} · ${formatDate(item.start_date)}</p>
+              <p class="mt-2 text-sm text-slate-500">${escapeHtml(item.location || '')} · ${formatDate(item.event_date)}</p>
             </div>
             <div class="flex gap-2">
               <button class="rounded-xl bg-white px-4 py-2 text-xs font-bold text-slate-700">View</button>
@@ -267,10 +359,10 @@
     function renderHighlights(data) {
       const now = new Date();
       const box = document.getElementById('upcoming-highlights');
-      const upcoming = data.filter(x => new Date(x.start_date) > now).slice(0, 3);
+      const upcoming = data.filter(x => new Date(x.event_date) > now).slice(0, 3);
       box.innerHTML = upcoming.length ? upcoming.map(item => `
         <div class="rounded-2xl bg-slate-50 p-4">
-          <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">${formatDate(item.start_date)}</p>
+          <p class="text-xs font-extrabold uppercase tracking-widest text-slate-400">${formatDate(item.event_date)}</p>
           <h4 class="mt-1 font-bold text-slate-800">${escapeHtml(item.title)}</h4>
           <p class="mt-1 text-sm text-slate-500">${escapeHtml(item.location || '')}</p>
         </div>
@@ -293,6 +385,97 @@
     });
 
     await loadEvents();
+
+    // ── Create Event Modal ──
+    const modal = document.getElementById('modal-add-event');
+    document.getElementById('btn-create-event').addEventListener('click', () => {
+      resetEventForm();
+      modal.classList.remove('hidden');
+    });
+    document.getElementById('modal-close-event').addEventListener('click', () => modal.classList.add('hidden'));
+    document.getElementById('btn-cancel-event').addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.add('hidden'); });
+
+    document.getElementById('event-image').addEventListener('change', function () {
+      const file = this.files?.[0];
+      const wrap = document.getElementById('event-image-preview-wrap');
+      const preview = document.getElementById('event-image-preview');
+      if (!file) { wrap.classList.add('hidden'); preview.src = ''; return; }
+      const reader = new FileReader();
+      reader.onload = e => { preview.src = e.target.result; wrap.classList.remove('hidden'); };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('btn-submit-event').addEventListener('click', async () => {
+      const errBox = document.getElementById('event-error');
+      try {
+        errBox.classList.add('hidden');
+        Loader.show('Creating event...');
+
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        const uid = authData?.user?.id;
+        if (!uid) throw new Error('User session not found.');
+
+        const title = document.getElementById('event-title').value.trim();
+        const description = document.getElementById('event-description').value.trim();
+        const startDate = document.getElementById('event-start-date').value;
+        const endDate = document.getElementById('event-end-date').value;
+        const location = document.getElementById('event-location').value.trim();
+        const category = document.getElementById('event-category').value;
+        const imageFile = document.getElementById('event-image').files?.[0] || null;
+
+        if (!title) throw new Error('Title is required.');
+        if (!startDate) throw new Error('Start date is required.');
+
+        let imageUrl = null;
+        if (imageFile) {
+          const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+          const filePath = `events/${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { error: upErr } = await supabase.storage.from('event-posters').upload(filePath, imageFile, { cacheControl: '3600', upsert: false });
+          if (upErr) throw upErr;
+          const { data: urlData } = supabase.storage.from('event-posters').getPublicUrl(filePath);
+          imageUrl = urlData?.publicUrl || null;
+        }
+
+        const { error } = await supabase.from('events').insert([{
+          title,
+          description: description || null,
+          event_date: new Date(startDate).toISOString(),
+          end_date: endDate ? new Date(endDate).toISOString() : null,
+          location: location || null,
+          category: category || 'general',
+          image_url: imageUrl,
+          status: 'upcoming',
+          created_by: uid
+        }]);
+
+        if (error) throw error;
+
+        Toast.success('Event created successfully.');
+        modal.classList.add('hidden');
+        await loadEvents();
+      } catch (err) {
+        errBox.textContent = err?.message || 'Failed to create event.';
+        errBox.classList.remove('hidden');
+        Toast.error(err?.message || 'Failed to create event.');
+      } finally {
+        Loader.hide();
+      }
+    });
+
+    function resetEventForm() {
+      ['event-title','event-description','event-location'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('event-start-date').value = '';
+      document.getElementById('event-end-date').value = '';
+      document.getElementById('event-category').value = 'general';
+      document.getElementById('event-image').value = '';
+      document.getElementById('event-image-preview-wrap').classList.add('hidden');
+      document.getElementById('event-image-preview').src = '';
+      const errBox = document.getElementById('event-error');
+      errBox.classList.add('hidden');
+      errBox.textContent = '';
+    }
   })();
   </script>
 </body>

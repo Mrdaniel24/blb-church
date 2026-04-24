@@ -105,25 +105,33 @@
       <span class="material-symbols-outlined">dashboard</span>
       <span>Dashboard</span>
     </a>
-    <a href="./members.html" class="nav-item">
+    <a href="./members.html" class="nav-item" data-perm="can_manage_members">
       <span class="material-symbols-outlined">group</span>
       <span>Members</span>
     </a>
-    <a href="./contributions.html" class="nav-item">
+    <a href="./contributions.html" class="nav-item" data-perm="can_manage_contributions">
       <span class="material-symbols-outlined">payments</span>
       <span>Contributions</span>
     </a>
-    <a href="./events.html" class="nav-item">
-      <span class="material-symbols-outlined">campaign</span>
-      <span>Events &amp; Notices</span>
+    <a href="./events.html" class="nav-item" data-perm="can_manage_events">
+      <span class="material-symbols-outlined">event</span>
+      <span>Events</span>
     </a>
-    <a href="./media.html" class="nav-item">
+    <a href="./announcements.html" class="nav-item" data-perm="can_manage_announcements">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>Announcements</span>
+    </a>
+    <a href="./media.html" class="nav-item" data-perm="can_manage_media">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>Media</span>
     </a>
-    <a href="./reports.html" class="nav-item">
+    <a href="./reports.html" class="nav-item" data-perm="can_view_reports">
       <span class="material-symbols-outlined">bar_chart</span>
       <span>Reports</span>
+    </a>
+    <a href="./departments.html" class="nav-item" data-perm="can_manage_departments">
+      <span class="material-symbols-outlined">account_tree</span>
+      <span>Departments</span>
     </a>
   </nav>
 
@@ -268,7 +276,7 @@
     <div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
       <!-- Add Member -->
       <a href="./members.html"
-        class="flex-1 relative overflow-hidden bg-primary text-on-primary rounded-xl p-8 flex flex-col justify-between transition-transform active:scale-95 hover:opacity-90">
+        class="flex-1 relative overflow-hidden bg-primary text-on-primary rounded-xl p-8 flex flex-col justify-between transition-transform active:scale-95 hover:opacity-90" data-perm="can_manage_members">
         <span class="material-symbols-outlined text-4xl opacity-20 absolute -right-4 -top-4 scale-[3]">add_circle</span>
         <span class="material-symbols-outlined text-3xl mb-4">person_add</span>
         <div>
@@ -288,7 +296,7 @@
       </button>
       <!-- View Contributions -->
       <a href="./contributions.html"
-        class="flex-1 relative overflow-hidden bg-surface-container-lowest text-primary border border-primary/5 rounded-xl p-8 flex flex-col justify-between transition-transform active:scale-95 hover:shadow-md">
+        class="flex-1 relative overflow-hidden bg-surface-container-lowest text-primary border border-primary/5 rounded-xl p-8 flex flex-col justify-between transition-transform active:scale-95 hover:shadow-md" data-perm="can_manage_contributions">
         <span class="material-symbols-outlined text-4xl opacity-5 absolute -right-4 -top-4 scale-[3]">summarize</span>
         <span class="material-symbols-outlined text-3xl mb-4">analytics</span>
         <div>
@@ -336,7 +344,7 @@
     <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8">
       <div class="flex justify-between items-center mb-8">
         <h4 class="font-headline font-bold text-xl text-primary">Recent Activity</h4>
-        <a href="./contributions.html" class="text-xs font-bold text-primary border-b-2 border-secondary-container pb-1">View All</a>
+        <a href="./contributions.html" class="text-xs font-bold text-primary border-b-2 border-secondary-container pb-1" data-perm="can_manage_contributions">View All</a>
       </div>
 
       <!-- Skeleton -->
@@ -408,13 +416,13 @@ async function loadStats() {
     supabase.from('profiles').select('*', { count: 'exact', head: true })
       .gte('created_at', firstOfMonth + 'T00:00:00'),
 
-    supabase.from('contributions').select('amount').gte('date', firstOfMonth),
+    supabase.from('contributions').select('amount').gte('contribution_date', firstOfMonth),
 
     supabase.from('contributions').select('amount')
-      .gte('date', new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toISOString().split('T')[0])
-      .lt('date', firstOfMonth),
+      .gte('contribution_date', new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toISOString().split('T')[0])
+      .lt('contribution_date', firstOfMonth),
 
-    supabase.from('events').select('*', { count: 'exact', head: true }).gte('start_date', today),
+    supabase.from('events').select('*', { count: 'exact', head: true }).gte('event_date', today),
   ]);
 
   const monthTotal = (monthContribs || []).reduce((s, c) => s + (c.amount || 0), 0);
@@ -454,8 +462,8 @@ async function loadChart() {
 
   const { data: contribs } = await supabase
     .from('contributions')
-    .select('amount, date')
-    .gte('date', sixMonthsAgo.toISOString().split('T')[0]);
+    .select('amount, contribution_date')
+    .gte('contribution_date', sixMonthsAgo.toISOString().split('T')[0]);
 
   // Build 6-month buckets
   const buckets = [];
@@ -470,7 +478,7 @@ async function loadChart() {
     });
   }
   (contribs || []).forEach(c => {
-    const d = new Date(c.date);
+    const d = new Date(c.contribution_date);
     const bucket = buckets.find(b => b.year === d.getFullYear() && b.month === d.getMonth());
     if (bucket) bucket.total += (c.amount || 0);
   });
@@ -571,8 +579,8 @@ async function loadActivity() {
   // Fetch last 8 contributions
   const { data: contribs } = await supabase
     .from('contributions')
-    .select('id, amount, type, date, member_id')
-    .order('date', { ascending: false })
+    .select('id, amount, category, contribution_date, member_id')
+    .order('contribution_date', { ascending: false })
     .limit(8);
 
   // Fetch last 5 new members
@@ -604,9 +612,9 @@ async function loadActivity() {
       id:        c.id,
       name:      p.full_name || 'Member',
       avatar:    p.avatar_url || null,
-      subtitle:  capitalize(c.type?.replace(/_/g, ' ') || 'Contribution') + ' received',
+      subtitle:  capitalize(c.category?.replace(/_/g, ' ') || 'Contribution') + ' received',
       amount:    c.amount,
-      timestamp: c.date,
+      timestamp: c.contribution_date,
     });
   });
 
@@ -753,7 +761,7 @@ document.getElementById('btn-post-announcement').addEventListener('click', async
       content:     body.querySelector('#ann-content').value.trim(),
       target_type: targetType,
       department_id: targetType === 'department' ? deptId : null,
-      is_urgent:   body.querySelector('#ann-urgent').checked,
+      priority:    body.querySelector('#ann-urgent').checked ? 'urgent' : 'general',
       expires_at:  expiresRaw ? expiresRaw : null,
       created_by:  session?.user?.id,
     };

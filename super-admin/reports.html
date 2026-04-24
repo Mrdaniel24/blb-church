@@ -152,6 +152,10 @@
       <span class="material-symbols-outlined">event</span>
       <span>All Events</span>
     </a>
+    <a href="./announcements.html" class="nav-item">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>All Announcements</span>
+    </a>
     <a href="./media.html" class="nav-item">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>All Media</span>
@@ -475,8 +479,9 @@ const CONTRIB_COLORS = {
   tithe:          { bg: 'bg-blue-100',  bar: '#00236f' },
   offering:       { bg: 'bg-amber-100', bar: '#fed01b' },
   building_fund:  { bg: 'bg-green-100', bar: '#16a34a' },
-  thanksgiving:   { bg: 'bg-purple-100',bar: '#7c3aed' },
+  missions:       { bg: 'bg-purple-100',bar: '#7c3aed' },
   special:        { bg: 'bg-red-100',   bar: '#dc2626' },
+  other:          { bg: 'bg-slate-100', bar: '#64748b' },
 };
 
 const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -524,14 +529,14 @@ async function loadAll() {
 
   // Fetch all data in parallel
   let membersQ   = supabase.from('profiles').select('id,full_name,email,status,department_id,departments(name),created_at').in('role', ['member','admin']).order('created_at', { ascending: false });
-  let contribsQ  = supabase.from('contributions').select('id,member_id,amount,type,date,profiles(full_name)').order('date', { ascending: false });
-  let eventsQ    = supabase.from('events').select('id,title,category,start_date,location').order('start_date', { ascending: false });
+  let contribsQ  = supabase.from('contributions').select('id,member_id,amount,category,contribution_date,profiles(full_name)').order('contribution_date', { ascending: false });
+  let eventsQ    = supabase.from('events').select('id,title,category,event_date,location').order('event_date', { ascending: false });
   let deptsQ     = supabase.from('departments').select('id,name').order('name');
 
   if (fromDate) {
     membersQ  = membersQ.gte('created_at', fromDate);
-    contribsQ = contribsQ.gte('date', fromDate.slice(0,10));
-    eventsQ   = eventsQ.gte('start_date', fromDate.slice(0,10));
+    contribsQ = contribsQ.gte('contribution_date', fromDate.slice(0,10));
+    eventsQ   = eventsQ.gte('event_date', fromDate.slice(0,10));
   }
 
   const [
@@ -660,7 +665,7 @@ function renderContributionsTab() {
   // By type
   const typeMap = {};
   contribs.forEach(c => {
-    const t = c.type || 'other';
+    const t = c.category || 'other';
     typeMap[t] = (typeMap[t] || 0) + (parseFloat(c.amount) || 0);
   });
   const maxType = Math.max(...Object.values(typeMap), 1);
@@ -688,7 +693,7 @@ function renderContributionsTab() {
   // Monthly trend
   const monthMap = {};
   contribs.forEach(c => {
-    const d = new Date(c.date);
+    const d = new Date(c.contribution_date);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
     monthMap[key] = (monthMap[key] || 0) + (parseFloat(c.amount) || 0);
   });
@@ -721,14 +726,14 @@ function renderContributionsTab() {
   } else {
     empty.classList.add('hidden');
     tbody.innerHTML = contribs.slice(0, 20).map(c => {
-      const typeLabel = (c.type || 'other').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-      const col = CONTRIB_COLORS[c.type] || { bg: 'bg-slate-100 text-slate-600' };
+      const typeLabel = (c.category || 'other').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const col = CONTRIB_COLORS[c.category] || { bg: 'bg-slate-100 text-slate-600' };
       return `
         <tr class="table-row border-t border-surface-container-low">
           <td class="px-6 py-4 font-bold text-sm text-primary">${escapeHtml(c.profiles?.full_name || 'Unknown')}</td>
           <td class="px-6 py-4"><span class="text-xs font-bold px-2 py-1 rounded-full ${col.bg || 'bg-slate-100 text-slate-600'}">${escapeHtml(typeLabel)}</span></td>
           <td class="px-6 py-4 font-bold text-sm text-primary">${formatTZS(c.amount)}</td>
-          <td class="px-6 py-4 text-sm text-on-surface-variant">${formatDate(c.date)}</td>
+          <td class="px-6 py-4 text-sm text-on-surface-variant">${formatDate(c.contribution_date)}</td>
         </tr>`;
     }).join('');
   }
@@ -764,7 +769,7 @@ function renderEventsTab() {
         <tr class="table-row border-t border-surface-container-low">
           <td class="px-6 py-4 font-bold text-sm text-primary">${escapeHtml(ev.title || 'Untitled')}</td>
           <td class="px-6 py-4"><span class="text-xs font-bold px-2 py-1 rounded-full ${colClass}">${escapeHtml(catLabel)}</span></td>
-          <td class="px-6 py-4 text-sm text-on-surface-variant">${formatDate(ev.start_date)}</td>
+          <td class="px-6 py-4 text-sm text-on-surface-variant">${formatDate(ev.event_date)}</td>
           <td class="px-6 py-4 text-sm text-on-surface-variant">${escapeHtml(ev.location || '—')}</td>
         </tr>`;
     }).join('');

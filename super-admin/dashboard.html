@@ -167,6 +167,10 @@
       <span class="material-symbols-outlined">event</span>
       <span>All Events</span>
     </a>
+    <a href="./announcements.html" class="nav-item">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>All Announcements</span>
+    </a>
     <a href="./media.html" class="nav-item">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>All Media</span>
@@ -682,7 +686,7 @@ async function loadStats() {
       .gte('created_at', firstOfMonth + 'T00:00:00'),
 
     supabase.from('events').select('*', { count: 'exact', head: true })
-      .gte('start_date', today),
+      .gte('event_date', today),
 
     supabase.from('announcements').select('*', { count: 'exact', head: true })
       .or(`expires_at.is.null,expires_at.gte.${today}`),
@@ -775,8 +779,8 @@ async function loadContribChart() {
 
   const { data: contribs } = await supabase
     .from('contributions')
-    .select('amount, date')
-    .gte('date', sixMonthsAgo.toISOString().split('T')[0]);
+    .select('amount, contribution_date')
+    .gte('contribution_date', sixMonthsAgo.toISOString().split('T')[0]);
 
   const buckets = [];
   for (let i = 5; i >= 0; i--) {
@@ -790,7 +794,7 @@ async function loadContribChart() {
     });
   }
   (contribs || []).forEach(c => {
-    const d = new Date(c.date);
+    const d = new Date(c.contribution_date);
     const bucket = buckets.find(b => b.year === d.getFullYear() && b.month === d.getMonth());
     if (bucket) bucket.total += (c.amount || 0);
   });
@@ -930,8 +934,8 @@ async function loadAdminRegistry() {
 async function loadActivity() {
   const { data: contribs } = await supabase
     .from('contributions')
-    .select('id, amount, type, date, member_id')
-    .order('date', { ascending: false })
+    .select('id, amount, category, contribution_date, member_id')
+    .order('contribution_date', { ascending: false })
     .limit(5);
 
   const { data: newMembers } = await supabase
@@ -959,9 +963,9 @@ async function loadActivity() {
       kind:      'contribution',
       name:      p.full_name || 'Member',
       avatar:    p.avatar_url || null,
-      subtitle:  capitalize(c.type?.replace(/_/g, ' ') || 'Contribution'),
+      subtitle:  capitalize(c.category?.replace(/_/g, ' ') || 'Contribution'),
       amount:    c.amount,
-      timestamp: c.date,
+      timestamp: c.contribution_date,
     });
   });
 

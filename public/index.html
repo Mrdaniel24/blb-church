@@ -198,11 +198,11 @@
     .scroll-indicator {
       position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
       z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-      animation: bounce-slow 3s ease-in-out infinite;
+      animation: bounce-slow 4s ease-in-out infinite;
     }
     @keyframes bounce-slow {
       0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(8px); }
+      50% { transform: translateX(-50%) translateY(5px); }
     }
     .scroll-line {
       width: 1px; height: 48px;
@@ -229,7 +229,7 @@
       padding: 2.5rem;
       transition: transform 0.35s ease, box-shadow 0.35s ease;
       box-shadow: 0 4px 24px rgba(0,35,111,0.06);
-      cursor: default;
+      cursor: pointer;
     }
     .service-card::before {
       content: ''; position: absolute;
@@ -308,6 +308,63 @@
 
     /* ── Utility ── */
     .editorial-shadow { box-shadow: 0 24px 48px rgba(0,35,111,0.07); }
+
+    /* ── Focus States (keyboard / a11y) ── */
+    :focus-visible {
+      outline: 2px solid #fed01b;
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    /* Nav link underline indicator doubles as focus indicator */
+    .nav-link:focus-visible {
+      outline: 2px solid #fed01b;
+      outline-offset: 5px;
+      border-radius: 2px;
+    }
+    #main-nav.scrolled .nav-link:focus-visible {
+      outline-color: #00236f;
+    }
+    .nav-btn-cta:focus-visible {
+      outline: 2px solid #00236f;
+      outline-offset: 3px;
+    }
+    .mobile-nav-link:focus-visible {
+      outline: 2px solid #fed01b;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .footer-link:focus-visible {
+      outline: 2px solid #fed01b;
+      outline-offset: 3px;
+    }
+    .hamburger:focus-visible {
+      outline: 2px solid #fed01b;
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    /* ── prefers-reduced-motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      /* Disable only continuous decorative keyframe animations */
+      .scroll-indicator { animation: none; }
+      .badge-dot { animation: none; opacity: 1; }
+
+      /* Reveal: fade in without the slide-up movement */
+      .reveal {
+        transform: none !important;
+        transition: opacity 0.5s ease !important;
+      }
+      .reveal-delay-1, .reveal-delay-2,
+      .reveal-delay-3, .reveal-delay-4,
+      .reveal-delay-5 { transition-delay: 0ms !important; }
+
+      /* Card hovers: keep shadow/colour feedback, remove translateY lift */
+      .service-card:hover { transform: none; }
+      .bento-featured:hover img { transform: none; }
+
+      /* Nav logo image hover */
+      .bento-featured img { transition: none; }
+    }
   </style>
 </head>
 
@@ -339,8 +396,8 @@
 
     <!-- Desktop CTA -->
     <div class="hidden md:flex items-center gap-5">
-      <a href="login.html" class="nav-btn-login" id="nav-login-btn">Login</a>
-      <a href="register.html" class="nav-btn-cta">Join Us</a>
+      <a href="/public/login.html" class="nav-btn-login" id="nav-login-btn">Login</a>
+      <a href="/public/register.html" class="nav-btn-cta">Join Us</a>
     </div>
 
     <!-- Mobile Hamburger -->
@@ -355,8 +412,10 @@
   <a href="#services" class="mobile-nav-link" onclick="closeMobileMenu()">Services</a>
   <a href="#about" class="mobile-nav-link" onclick="closeMobileMenu()">About</a>
   <a href="#contact" class="mobile-nav-link" onclick="closeMobileMenu()">Contact</a>
+
   <div style="padding-top:1.25rem; display:flex; flex-direction:column; gap:0.75rem;">
-    <a href="login.html"
+    
+    <a href="/public/login.html"
        style="text-align:center; padding:0.875rem; border-radius:0.75rem;
               border:2px solid rgba(255,255,255,0.2); color:#ffffff;
               font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem;
@@ -364,7 +423,8 @@
               letter-spacing:0.08em;" id="mobile-login-btn">
       Sign In
     </a>
-    <a href="register.html"
+
+    <a href="/public/register.html"
        style="text-align:center; padding:0.875rem; border-radius:0.75rem;
               background:#fed01b; color:#231b00;
               font-family:'Plus Jakarta Sans',sans-serif; font-size:0.875rem;
@@ -372,6 +432,7 @@
               letter-spacing:0.08em;">
       Become a Member
     </a>
+
   </div>
 </div>
 
@@ -410,7 +471,7 @@
 
       <!-- CTAs -->
       <div class="reveal reveal-delay-3 flex flex-wrap gap-4">
-        <a href="register.html"
+        <a href="/public/register.html"
            style="display:inline-flex; align-items:center; gap:0.5rem;
                   background:#fed01b; color:#231b00;
                   padding:1.1rem 2.25rem; border-radius:9999px;
@@ -633,6 +694,10 @@
         <!-- Will be overridden by md breakpoint via JS -->
         <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;"
              src="https://images.unsplash.com/photo-1438232992991-995b671e4688?w=1200&q=80"
+             srcset="https://images.unsplash.com/photo-1438232992991-995b671e4688?w=600&q=75 600w,
+                     https://images.unsplash.com/photo-1438232992991-995b671e4688?w=900&q=80 900w,
+                     https://images.unsplash.com/photo-1438232992991-995b671e4688?w=1200&q=80 1200w"
+             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 75vw"
              alt="Church interior" loading="lazy"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,35,111,0.95) 0%,rgba(0,35,111,0.3) 60%,transparent 100%);"></div>
         <div style="position:absolute;bottom:0;padding:2.5rem 3rem;color:#fff;">
@@ -650,7 +715,7 @@
                     color:rgba(220,225,255,0.75);max-width:420px;line-height:1.65;margin:0 0 1.5rem;">
             Discover the heart of our community through worship, fellowship, and service.
           </p>
-          <a href="login.html"
+          <a href="/public/login.html"
              style="display:inline-flex;align-items:center;gap:0.5rem;
                     font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:800;
                     letter-spacing:0.1em;text-transform:uppercase;
@@ -691,7 +756,7 @@
             Join Bible study, prayer groups, and youth programs throughout the week.
           </p>
         </div>
-        <a href="login.html"
+        <a href="/public/login.html"
            style="margin-top:1.5rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
                   letter-spacing:0.15em;text-transform:uppercase;color:#00236f;text-decoration:none;
                   border-bottom:2px solid rgba(0,35,111,0.15);width:fit-content;
@@ -715,7 +780,7 @@
                   color:#574500;margin:0 0 1.5rem;">
           Start your journey into our community today.
         </p>
-        <a href="register.html"
+        <a href="/public/register.html"
            style="display:inline-block;background:#00236f;color:#ffffff;
                   padding:0.75rem 2rem;border-radius:9999px;
                   font-family:'Plus Jakarta Sans',sans-serif;font-size:0.75rem;font-weight:800;
@@ -745,6 +810,9 @@
         <div style="border-radius:1.25rem;overflow:hidden;box-shadow:0 32px 64px rgba(0,35,111,0.16);aspect-ratio:3/4;">
           <img style="width:100%;height:100%;object-fit:cover;"
                src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80"
+               srcset="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400&q=75 400w,
+                       https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80 800w"
+               sizes="(max-width: 768px) 75vw, 30vw"
                alt="Church community" loading="lazy"/>
         </div>
         <!-- floating accent card -->
@@ -754,7 +822,10 @@
                     box-shadow:0 16px 40px rgba(0,35,111,0.18);aspect-ratio:1/1;">
           <img style="width:100%;height:100%;object-fit:cover;"
                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
-               alt="Bible study" loading="lazy"/>
+               srcset="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=75 300w,
+                       https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80 600w"
+               sizes="(max-width: 768px) 45vw, 18vw"
+               alt="Bible study group" loading="lazy"/>
         </div>
         <!-- gold accent dot -->
         <div style="position:absolute;top:-1rem;left:-1rem;
@@ -786,7 +857,7 @@
         Through every ministry, every fellowship gathering, and every note played in our sanctuary, we are writing a story of connection. Our community is united by a common call to love and serve.
       </p>
 
-      <a href="register.html"
+      <a href="/public/register.html"
          style="display:inline-flex;align-items:center;gap:0.5rem;
                 background:#00236f;color:#ffffff;
                 padding:1rem 2rem;border-radius:9999px;
@@ -801,6 +872,165 @@
         <span class="material-symbols-outlined" style="font-size:1rem;">arrow_forward</span>
       </a>
     </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════
+     MINISTRIES SECTION
+════════════════════════════════════ -->
+<section id="ministries" style="background:#00236f; padding:6rem 1.5rem; position:relative; overflow:hidden;">
+
+  <!-- Decorative rings -->
+  <div aria-hidden="true" style="position:absolute;top:-8rem;right:-8rem;width:560px;height:560px;
+            border-radius:9999px;border:1px solid rgba(255,255,255,0.05);pointer-events:none;"></div>
+  <div aria-hidden="true" style="position:absolute;bottom:-10rem;left:-6rem;width:420px;height:420px;
+            border-radius:9999px;border:1px solid rgba(255,255,255,0.04);pointer-events:none;"></div>
+
+  <div style="max-width:1280px; margin:0 auto; position:relative; z-index:1;">
+
+    <!-- Header -->
+    <div class="reveal" style="margin-bottom:3.5rem; text-align:center;">
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+                   letter-spacing:0.2em;text-transform:uppercase;color:#fed01b;display:block;margin-bottom:1rem;">
+        Our Ministries
+      </span>
+      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
+                 letter-spacing:-0.03em;color:#ffffff;line-height:1.1;margin:0 0 1rem;">
+        Serving Together
+      </h2>
+      <span class="gold-line" style="display:block;margin:0 auto;"></span>
+    </div>
+
+    <!-- Skeleton loader -->
+    <div id="min-skeleton" class="animate-pulse"
+         style="display:grid;grid-template-columns:1fr;gap:2.5rem;align-items:center;">
+      <div style="background:rgba(255,255,255,0.07);border-radius:1.5rem;aspect-ratio:4/3;"></div>
+      <div>
+        <div style="height:0.7rem;background:rgba(255,255,255,0.1);border-radius:4px;width:20%;margin-bottom:1.5rem;"></div>
+        <div style="height:2.5rem;background:rgba(255,255,255,0.1);border-radius:8px;width:62%;margin-bottom:1.25rem;"></div>
+        <div style="height:0.875rem;background:rgba(255,255,255,0.07);border-radius:4px;width:88%;margin-bottom:0.625rem;"></div>
+        <div style="height:0.875rem;background:rgba(255,255,255,0.07);border-radius:4px;width:70%;margin-bottom:2.5rem;"></div>
+        <div style="height:3rem;background:rgba(255,255,255,0.1);border-radius:9999px;width:10rem;"></div>
+      </div>
+    </div>
+
+    <!-- Ministry content (shown after data loads) -->
+    <div id="min-content" style="display:none;">
+      <div id="min-grid" style="display:grid;grid-template-columns:1fr;gap:3.5rem;align-items:center;">
+
+        <!-- Text panel -->
+        <div id="min-txt-panel">
+
+          <!-- Counter + progress bar -->
+          <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:2rem;">
+            <span id="min-counter"
+                  style="font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:900;
+                         letter-spacing:0.12em;color:rgba(255,255,255,0.28);white-space:nowrap;">
+              01 / 01
+            </span>
+            <div style="flex:1;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+              <div id="min-progress"
+                   style="height:100%;width:0%;background:#fed01b;border-radius:2px;"></div>
+            </div>
+          </div>
+
+          <!-- Ministry name -->
+          <h3 id="min-name"
+              style="font-family:'Inter',sans-serif;
+                     font-size:clamp(1.75rem,4vw,2.75rem);font-weight:900;
+                     letter-spacing:-0.03em;color:#ffffff;line-height:1.1;
+                     margin:0 0 1.25rem;
+                     transition:opacity 0.3s ease,transform 0.3s ease;">
+          </h3>
+
+          <!-- Description -->
+          <p id="min-desc"
+             style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:500;
+                    color:rgba(220,225,255,0.72);line-height:1.75;
+                    margin:0 0 2.25rem;max-width:460px;
+                    transition:opacity 0.3s ease,transform 0.3s ease;">
+          </p>
+
+          <!-- CTA button + dot navigation -->
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;">
+            <a id="min-cta" href="/public/register.html"
+               style="display:inline-flex;align-items:center;gap:0.5rem;
+                      background:#fed01b;color:#231b00;
+                      padding:0.9rem 2rem;border-radius:9999px;
+                      font-family:'Plus Jakarta Sans',sans-serif;
+                      font-size:0.78rem;font-weight:800;
+                      letter-spacing:0.1em;text-transform:uppercase;
+                      text-decoration:none;
+                      transition:transform 0.2s,box-shadow 0.2s;"
+               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 12px 32px rgba(254,208,27,0.4)';"
+               onmouseout="this.style.transform='';this.style.boxShadow='';">
+              Join Ministry
+              <span class="material-symbols-outlined" style="font-size:1rem;">arrow_forward</span>
+            </a>
+            <div id="min-dots" style="display:flex;gap:0.5rem;align-items:center;"></div>
+          </div>
+
+        </div><!-- /#min-txt-panel -->
+
+        <!-- Image panel -->
+        <div id="min-img-panel"
+             style="position:relative;border-radius:1.5rem;overflow:hidden;
+                    aspect-ratio:4/3;
+                    box-shadow:0 40px 80px rgba(0,0,0,0.4);">
+
+          <!-- Crossfade layer A (starts visible) -->
+          <div id="min-img-a"
+               style="position:absolute;inset:0;
+                      background-size:cover;background-position:center;
+                      background-color:#1e3a8a;
+                      transition:opacity 0.8s ease;opacity:1;">
+            <div id="min-img-a-fb"
+                 style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined"
+                    style="font-size:5.5rem;color:rgba(254,208,27,0.12);
+                           font-variation-settings:'FILL' 1;">church</span>
+            </div>
+          </div>
+
+          <!-- Crossfade layer B (starts hidden) -->
+          <div id="min-img-b"
+               style="position:absolute;inset:0;
+                      background-size:cover;background-position:center;
+                      background-color:#1e3a8a;
+                      transition:opacity 0.8s ease;opacity:0;">
+            <div id="min-img-b-fb"
+                 style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+              <span class="material-symbols-outlined"
+                    style="font-size:5.5rem;color:rgba(254,208,27,0.12);
+                           font-variation-settings:'FILL' 1;">church</span>
+            </div>
+          </div>
+
+          <!-- Gradient overlay -->
+          <div style="position:absolute;inset:0;
+                      background:linear-gradient(to top,rgba(0,35,111,0.55) 0%,transparent 55%);
+                      z-index:1;pointer-events:none;"></div>
+
+          <!-- Ministry name badge on image -->
+          <div style="position:absolute;bottom:1.5rem;left:1.5rem;z-index:2;">
+            <div style="display:inline-flex;align-items:center;gap:0.5rem;
+                        background:rgba(0,0,0,0.38);
+                        backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+                        border:1px solid rgba(254,208,27,0.25);
+                        padding:0.4rem 1rem;border-radius:9999px;">
+              <div style="width:6px;height:6px;border-radius:9999px;background:#fed01b;flex-shrink:0;"></div>
+              <span id="min-badge"
+                    style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.68rem;font-weight:800;
+                           letter-spacing:0.12em;text-transform:uppercase;color:#ffffff;"></span>
+            </div>
+          </div>
+
+        </div><!-- /#min-img-panel -->
+
+      </div><!-- /#min-grid -->
+    </div><!-- /#min-content -->
 
   </div>
 </section>
@@ -837,7 +1067,7 @@
           Create your free member account and access sermons, events, announcements, and stay connected with BLB Church.
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;">
-          <a href="register.html"
+          <a href="/public/register.html"
              style="display:inline-flex;align-items:center;gap:0.5rem;
                     background:#00236f;color:#ffffff;
                     padding:1rem 2.25rem;border-radius:9999px;
@@ -851,7 +1081,7 @@
             Create Account
             <span class="material-symbols-outlined" style="font-size:1rem;">person_add</span>
           </a>
-          <a href="login.html"
+          <a href="/public/login.html"
              style="display:inline-flex;align-items:center;gap:0.5rem;
                     background:transparent;color:#00236f;
                     border:2px solid #00236f;
@@ -905,8 +1135,8 @@
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.875rem;">
           <li><a class="footer-link" href="#about">Our Story</a></li>
           <li><a class="footer-link" href="#services">Service Times</a></li>
-          <li><a class="footer-link" href="login.html">Member Portal</a></li>
-          <li><a class="footer-link" href="register.html">Join Us</a></li>
+          <li><a class="footer-link" href="/public/login.html">Member Portal</a></li>
+          <li><a class="footer-link" href="/public/register.html">Join Us</a></li>
         </ul>
       </div>
 
@@ -1145,13 +1375,21 @@ document.addEventListener('click', (e) => {
    4. SCROLL-REVEAL INTERSECTION OBSERVER
 ───────────────────────────────────── */
 (function initReveal() {
+  const heroEls = new Set(document.querySelectorAll('#hero .reveal'));
   const els = document.querySelectorAll('.reveal');
   const io  = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    entries.forEach(e => {
+      if (heroEls.has(e.target)) return; /* hero always stays visible */
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      } else {
+        e.target.classList.remove('visible'); /* reset so it animates again on re-entry */
+      }
+    });
   }, { threshold: 0.12 });
   els.forEach(el => io.observe(el));
-  /* Immediately reveal hero elements */
-  document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+  /* Hero elements reveal immediately and stay */
+  heroEls.forEach(el => el.classList.add('visible'));
 })();
 
 
@@ -1241,19 +1479,770 @@ document.addEventListener('click', (e) => {
         el.href = '#';
         el.addEventListener('click', async (e) => {
           e.preventDefault();
-          const profile = await getUserProfile();
-          if (profile) {
+          try {
+            const profile = await getUserProfile();
             const paths = {
               super_admin: '/super-admin/dashboard.html',
               admin:       '/admin/dashboard.html',
               member:      '/member/dashboard.html',
             };
-            window.location.href = paths[profile.role] || '/member/dashboard.html';
+            window.location.href = profile
+              ? (paths[profile.role] || '/member/dashboard.html')
+              : '/member/dashboard.html';
+          } catch (_) {
+            window.location.href = '/member/dashboard.html';
           }
         });
       });
     }
   } catch (_) { /* non-critical */ }
+})();
+
+
+/* ─────────────────────────────────────
+   9. MINISTRIES ROTATING SHOWCASE
+───────────────────────────────────── */
+(async function initMinistriesSection() {
+  const INTERVAL = 8000; /* ms per ministry — set to 60000 for 1-minute rotation */
+
+  const skeletonEl = document.getElementById('min-skeleton');
+  const contentEl  = document.getElementById('min-content');
+  const gridEl     = document.getElementById('min-grid');
+  const txtPanel   = document.getElementById('min-txt-panel');
+  const imgPanel   = document.getElementById('min-img-panel');
+  const nameEl     = document.getElementById('min-name');
+  const descEl     = document.getElementById('min-desc');
+  const counterEl  = document.getElementById('min-counter');
+  const progressEl = document.getElementById('min-progress');
+  const dotsEl     = document.getElementById('min-dots');
+  const badgeEl    = document.getElementById('min-badge');
+  const imgA       = document.getElementById('min-img-a');
+  const imgB       = document.getElementById('min-img-b');
+  const imgAFb     = document.getElementById('min-img-a-fb');
+  const imgBFb     = document.getElementById('min-img-b-fb');
+
+  /* ── Fetch ministries + public media in parallel ── */
+  let ministries = [], mediaItems = [];
+  try {
+    const [minRes, mediaRes] = await Promise.all([
+      supabase.from('departments')
+              .select('id,name,description')
+              .eq('is_active', true)
+              .order('name'),
+      supabase.from('media_items')
+              .select('id,file_url,category')
+              .eq('is_public', true)
+              .limit(30),
+    ]);
+    ministries = minRes.data  || [];
+    mediaItems = mediaRes.data || [];
+  } catch (_) { /* non-critical */ }
+
+  /* Hide section entirely if no ministries found */
+  if (ministries.length === 0) {
+    const section = document.getElementById('ministries');
+    if (section) section.style.display = 'none';
+    return;
+  }
+
+  /* ── Map ministry name → icon for image fallback ── */
+  function ministryIcon(name) {
+    const n = (name || '').toLowerCase();
+    if (n.includes('choir')  || n.includes('music'))      return 'music_note';
+    if (n.includes('praise') || n.includes('worship'))    return 'lyrics';
+    if (n.includes('youth')  || n.includes('young'))      return 'groups';
+    if (n.includes('women')  || n.includes('ladies'))     return 'group';
+    if (n.includes('men')    || n.includes('brothers'))   return 'group';
+    if (n.includes('prayer') || n.includes('intercess'))  return 'self_improvement';
+    if (n.includes('children')|| n.includes('kids'))      return 'child_care';
+    if (n.includes('media')  || n.includes('audio'))      return 'videocam';
+    if (n.includes('usher'))                               return 'meeting_room';
+    if (n.includes('evange') || n.includes('outreach'))   return 'volunteer_activism';
+    return 'church';
+  }
+
+  /* ── Assign media images round-robin to ministries ── */
+  function imageForIndex(i) {
+    if (mediaItems.length === 0) return null;
+    return mediaItems[i % mediaItems.length].file_url || null;
+  }
+
+  /* ── State ── */
+  let currentIdx  = 0;
+  let activeLayer = 'a';   /* which img layer is currently visible */
+  let imgReady    = false; /* true after first image is loaded */
+  let rotatorTimer = null;
+
+  /* ── Build dot indicators ── */
+  function buildDots() {
+    dotsEl.innerHTML = '';
+    ministries.forEach((m, i) => {
+      const btn = document.createElement('button');
+      btn.setAttribute('aria-label', 'View ' + m.name);
+      btn.style.cssText =
+        'width:8px;height:8px;border-radius:9999px;padding:0;border:none;cursor:pointer;' +
+        'background:' + (i === 0 ? '#fed01b' : 'rgba(255,255,255,0.25)') + ';' +
+        'transform:' + (i === 0 ? 'scale(1.35)' : 'scale(1)') + ';' +
+        'transition:background 0.3s,transform 0.3s;';
+      btn.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(btn);
+    });
+  }
+
+  function updateDots(idx) {
+    dotsEl.querySelectorAll('button').forEach((d, i) => {
+      d.style.background = i === idx ? '#fed01b' : 'rgba(255,255,255,0.25)';
+      d.style.transform  = i === idx ? 'scale(1.35)' : 'scale(1)';
+    });
+  }
+
+  /* ── Animate progress bar over INTERVAL ms ── */
+  function startProgress() {
+    progressEl.style.transition = 'none';
+    progressEl.style.width      = '0%';
+    void progressEl.offsetWidth; /* force reflow so transition resets */
+    progressEl.style.transition = 'width ' + INTERVAL + 'ms linear';
+    progressEl.style.width      = '100%';
+  }
+
+  /* ── Fade text out, swap content, fade back in ── */
+  function setTextFade(el, text) {
+    el.style.opacity   = '0';
+    el.style.transform = 'translateY(8px)';
+    setTimeout(() => {
+      el.textContent = text;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.style.opacity   = '1';
+        el.style.transform = 'translateY(0)';
+      }));
+    }, 350);
+  }
+
+  /* ── Crossfade between image layers ── */
+  function loadImage(url, icon) {
+    const symbol = icon || 'church';
+
+    if (!imgReady) {
+      /* First call: populate layer A directly, no crossfade */
+      const iconEl = imgAFb.querySelector('.material-symbols-outlined');
+      if (iconEl) iconEl.textContent = symbol;
+      if (url) {
+        const img = new Image();
+        img.onload  = () => { imgA.style.backgroundImage = 'url(' + url + ')'; imgAFb.style.display = 'none'; };
+        img.onerror = () => { imgAFb.style.display = 'flex'; };
+        img.src = url;
+      }
+      imgReady = true;
+      return;
+    }
+
+    /* Subsequent calls: crossfade to the inactive layer */
+    const incoming   = activeLayer === 'a' ? imgB  : imgA;
+    const incomingFb = activeLayer === 'a' ? imgBFb : imgAFb;
+    const outgoing   = activeLayer === 'a' ? imgA  : imgB;
+    const nextLayer  = activeLayer === 'a' ? 'b'   : 'a';
+
+    const iconEl = incomingFb.querySelector('.material-symbols-outlined');
+    if (iconEl) iconEl.textContent = symbol;
+
+    const swap = () => {
+      incoming.style.opacity = '1';
+      outgoing.style.opacity = '0';
+      activeLayer = nextLayer;
+    };
+
+    if (url) {
+      const img = new Image();
+      img.onload  = () => { incoming.style.backgroundImage = 'url(' + url + ')'; incomingFb.style.display = 'none'; swap(); };
+      img.onerror = () => { incoming.style.backgroundImage = 'none'; incomingFb.style.display = 'flex'; swap(); };
+      img.src = url;
+    } else {
+      incoming.style.backgroundImage = 'none';
+      incomingFb.style.display = 'flex';
+      swap();
+    }
+  }
+
+  /* ── Render a ministry by index ── */
+  function renderMinistry(idx) {
+    const m    = ministries[idx];
+    const url  = imageForIndex(idx);
+    const icon = ministryIcon(m.name);
+    const pad  = n => String(n + 1).padStart(2, '0');
+
+    counterEl.textContent = pad(idx) + ' / ' + pad(ministries.length - 1);
+
+    setTextFade(nameEl,  m.name);
+    setTextFade(descEl,  m.description ||
+      'A vital part of our church community, dedicated to service, worship, and fellowship.');
+    setTextFade(badgeEl, m.name);
+
+    loadImage(url, icon);
+    updateDots(idx);
+    startProgress();
+  }
+
+  /* ── Go to a specific ministry (also used by dots) ── */
+  function goTo(idx) {
+    clearTimeout(rotatorTimer);
+    currentIdx = ((idx % ministries.length) + ministries.length) % ministries.length;
+    renderMinistry(currentIdx);
+    schedule();
+  }
+
+  /* ── Schedule next auto-rotation ── */
+  function schedule() {
+    rotatorTimer = setTimeout(() => {
+      currentIdx = (currentIdx + 1) % ministries.length;
+      renderMinistry(currentIdx);
+      schedule();
+    }, INTERVAL);
+  }
+
+  /* ── Pause rotation while user hovers ── */
+  contentEl.addEventListener('mouseenter', () => {
+    clearTimeout(rotatorTimer);
+    progressEl.style.transition = 'none'; /* freeze progress bar */
+  });
+  contentEl.addEventListener('mouseleave', () => {
+    startProgress();
+    schedule();
+  });
+
+  /* ── Responsive 2-column layout ── */
+  function applyMinistryLayout() {
+    if (window.innerWidth >= 768) {
+      gridEl.style.gridTemplateColumns = '5fr 7fr';
+      gridEl.style.gap    = '4rem';
+      txtPanel.style.order = '-1'; /* text left on desktop */
+      imgPanel.style.order =  '1'; /* image right on desktop */
+    } else {
+      gridEl.style.gridTemplateColumns = '1fr';
+      gridEl.style.gap    = '2.5rem';
+      imgPanel.style.order = '-1'; /* image on top on mobile */
+      txtPanel.style.order =  '1'; /* text below on mobile */
+    }
+  }
+  window.addEventListener('resize', applyMinistryLayout);
+
+  /* ── Initialise ── */
+  buildDots();
+  applyMinistryLayout();
+  skeletonEl.style.display = 'none';
+  contentEl.style.display  = 'block';
+  renderMinistry(0);
+  schedule();
+})();
+</script>
+
+
+<!-- ════════════════════════════════════
+     PUBLIC ANNOUNCEMENT — FULLSCREEN MODAL
+════════════════════════════════════ -->
+<style>
+/* ── Overlay backdrop ─────────────────────────────────────── */
+#ann-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.45s ease;
+  background: rgba(0, 8, 24, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+#ann-overlay.ann-show { opacity: 1; pointer-events: all; }
+
+/* ── Modal card ───────────────────────────────────────────── */
+#ann-modal {
+  position: relative;
+  width: 100%; max-width: 860px;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  transform: scale(0.88) translateY(24px);
+  transition: transform 0.55s cubic-bezier(0.34, 1.28, 0.64, 1);
+  box-shadow: 0 48px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(254,208,27,0.08);
+}
+#ann-overlay.ann-show #ann-modal { transform: scale(1) translateY(0); }
+
+/* ── Lamp layer — absolute, behind everything ─────────────── */
+#ann-lamp {
+  position: absolute; inset: 0;
+  background: #00061a;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle conic beams — very low opacity */
+#ann-beam-l {
+  position: absolute; top: 0; right: 50%;
+  height: 55%; width: 0; opacity: 0;
+  background: conic-gradient(from 70deg at center top,
+    rgba(254,208,27,0.55) 0deg,
+    rgba(254,208,27,0.06) 28deg,
+    transparent 52deg);
+  transition: width 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.9s ease;
+  transition-delay: 0.3s;
+}
+#ann-beam-r {
+  position: absolute; top: 0; left: 50%;
+  height: 55%; width: 0; opacity: 0;
+  background: conic-gradient(from 290deg at center top,
+    transparent 0deg,
+    rgba(254,208,27,0.06) 30deg,
+    rgba(254,208,27,0.55) 52deg);
+  transition: width 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.9s ease;
+  transition-delay: 0.3s;
+}
+#ann-overlay.ann-show #ann-beam-l,
+#ann-overlay.ann-show #ann-beam-r { width: min(28rem, 46vw); opacity: 1; }
+
+/* Beam side-edge fades */
+#ann-beam-l::before { content:''; position:absolute; top:0; left:0; width:5rem; height:100%; background:linear-gradient(to right,#00061a,transparent); }
+#ann-beam-r::before { content:''; position:absolute; top:0; right:0; width:5rem; height:100%; background:linear-gradient(to left,#00061a,transparent); }
+
+/* Strong bottom fade — beams vanish before reaching text */
+#ann-beam-l::after,
+#ann-beam-r::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height: 70%;
+  background: linear-gradient(to top, #00061a, transparent);
+}
+
+/* ── TOP BORDER LIGHT — the main effect ──────────────────── */
+/* Bright glowing line at the very top of the modal */
+#ann-top-line {
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px; opacity: 0;
+  background: linear-gradient(to right,
+    transparent,
+    rgba(254,208,27,0.6) 20%,
+    #ffffff 50%,
+    rgba(254,208,27,0.6) 80%,
+    transparent);
+  box-shadow:
+    0 0 12px 3px rgba(254,208,27,0.7),
+    0 0 40px 8px  rgba(254,208,27,0.25),
+    0 0 80px 20px rgba(254,208,27,0.08);
+  border-radius: 9999px;
+  transition: width 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.9s ease;
+  transition-delay: 0.25s;
+  z-index: 5;
+}
+#ann-overlay.ann-show #ann-top-line { width: min(32rem, 55vw); opacity: 1; }
+
+/* Downward wash — light from the top line falling onto content */
+#ann-top-wash {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 260px;
+  background: linear-gradient(to bottom,
+    rgba(254,208,27,0.055) 0%,
+    rgba(254,208,27,0.02)  35%,
+    transparent            100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soft central orb */
+#ann-glow-orb {
+  position: absolute; top: -20px; left: 50%;
+  transform: translateX(-50%);
+  width: 500px; height: 200px;
+  background: radial-gradient(ellipse at center top,
+    rgba(254,208,27,0.07) 0%, transparent 65%);
+  filter: blur(24px);
+  z-index: 1;
+}
+
+/* ── Card content ─────────────────────────────────────────── */
+#ann-card {
+  position: relative; z-index: 10;
+  padding: 1.75rem 2rem 1.5rem;
+}
+
+/* Header row */
+#ann-hdr {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.ann-badge {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.28rem 0.8rem; border-radius: 9999px;
+  font-size: 0.62rem; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase;
+}
+.ann-badge-dot {
+  width: 6px; height: 6px; border-radius: 9999px;
+  animation: annPulse 1.8s ease-in-out infinite;
+}
+@keyframes annPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+
+.ann-hdr-right { display: flex; align-items: center; gap: 0.5rem; }
+.ann-hdr-counter {
+  font-size: 0.6rem; font-weight: 700;
+  color: rgba(255,255,255,0.28);
+  font-family: monospace;
+}
+.ann-icon-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.5rem; padding: 0.38rem;
+  cursor: pointer; color: rgba(255,255,255,0.55);
+  display: flex; align-items: center;
+  transition: background 0.2s, color 0.2s;
+  font-family: inherit;
+}
+.ann-icon-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+/* ── Layout: text + optional image ───────────────────────── */
+#ann-layout {
+  display: flex; gap: 2rem; align-items: flex-start;
+}
+#ann-layout.layout-text-only {
+  flex-direction: column; align-items: center; text-align: center;
+  padding: 1rem 0 0.5rem;
+}
+
+/* Text block */
+#ann-text { flex: 1; min-width: 0; }
+
+.ann-label-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+#ann-layout.layout-text-only .ann-label-row { justify-content: center; }
+.ann-label-line {
+  flex-shrink: 0; height: 1px; width: 2rem;
+  background: rgba(254,208,27,0.5);
+}
+.ann-label-txt {
+  font-size: 0.62rem; font-weight: 800;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(254,208,27,0.8);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+#ann-title {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 900; letter-spacing: -0.03em;
+  color: #fff; line-height: 1.1; margin: 0 0 0.85rem;
+}
+#ann-layout.layout-text-only #ann-title {
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  max-width: 580px; margin: 0 auto 0.85rem;
+}
+
+#ann-content {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem; font-weight: 500;
+  color: rgba(220,225,255,0.68); line-height: 1.75;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+#ann-layout.layout-text-only #ann-content {
+  max-width: 560px; margin: 0 auto;
+  -webkit-line-clamp: 5;
+}
+
+/* ── Image block (FeaturedSpotlight style) ────────────────── */
+#ann-img-block { flex-shrink: 0; position: relative; }
+#ann-img-block.ann-hidden { display: none; }
+
+#ann-img-frame {
+  position: absolute; inset: -8px;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  transition: border-color 0.5s ease;
+  pointer-events: none;
+}
+#ann-modal:hover #ann-img-frame { border-color: rgba(254,208,27,0.2); }
+
+#ann-img-wrap {
+  width: 260px; height: 210px;
+  border-radius: 0.875rem; overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  transition: transform 0.7s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.7s ease;
+}
+@media (min-width: 640px) {
+  #ann-img-wrap { width: 300px; height: 240px; }
+}
+#ann-modal:hover #ann-img-wrap {
+  transform: translateX(4px) translateY(-4px);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+
+#ann-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 1s cubic-bezier(0.16,1,0.3,1);
+}
+#ann-modal:hover #ann-img { transform: scale(1.04); }
+
+/* Gradient overlay on image */
+#ann-img-wrap::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.12), transparent);
+  opacity: 0; transition: opacity 0.5s ease;
+}
+#ann-modal:hover #ann-img-wrap::after { opacity: 1; }
+
+/* Corner accents */
+.ann-corner {
+  position: absolute; background: rgba(254,208,27,0.85);
+  opacity: 0; transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.ann-c-tl-v { top:8px;left:8px; width:2px;height:18px; transform:scaleY(0); transform-origin:top; transition-delay:0.05s; }
+.ann-c-tl-h { top:8px;left:8px; height:2px;width:18px; transform:scaleX(0); transform-origin:left; transition-delay:0.1s; }
+.ann-c-br-v { bottom:8px;right:8px; width:2px;height:18px; transform:scaleY(0); transform-origin:bottom; transition-delay:0.15s; }
+.ann-c-br-h { bottom:8px;right:8px; height:2px;width:18px; transform:scaleX(0); transform-origin:right; transition-delay:0.2s; }
+#ann-modal:hover .ann-corner { opacity:1; }
+#ann-modal:hover .ann-c-tl-v { transform:scaleY(1); }
+#ann-modal:hover .ann-c-tl-h { transform:scaleX(1); }
+#ann-modal:hover .ann-c-br-v { transform:scaleY(1); }
+#ann-modal:hover .ann-c-br-h { transform:scaleX(1); }
+
+/* ── Footer: progress + nav ───────────────────────────────── */
+#ann-footer {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-top: 1.5rem; padding-top: 1.1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+#ann-prog-wrap {
+  flex: 1; height: 2px; background: rgba(255,255,255,0.08);
+  border-radius: 9999px; overflow: hidden;
+}
+#ann-prog-fill {
+  height: 100%; background: #fed01b;
+  transform-origin: left; border-radius: 9999px;
+}
+</style>
+
+<!-- ── Modal HTML ── -->
+<div id="ann-overlay" role="dialog" aria-modal="true" aria-label="Church Announcement">
+
+  <!-- Modal card -->
+  <div id="ann-modal">
+
+    <!-- Lamp layer (absolute, behind everything) -->
+    <div id="ann-lamp">
+      <div id="ann-beam-l"></div>
+      <div id="ann-beam-r"></div>
+      <div id="ann-glow-orb"></div>
+      <div id="ann-top-wash"></div>
+    </div>
+
+    <!-- Top border glow line (above lamp layer) -->
+    <div id="ann-top-line"></div>
+
+    <!-- Card content -->
+    <div id="ann-card">
+
+      <!-- Header -->
+      <div id="ann-hdr">
+        <div id="ann-badge" class="ann-badge" style="background:rgba(254,208,27,0.12);color:#fed01b;">
+          <span class="ann-badge-dot" style="background:#fed01b;"></span>
+          <span id="ann-badge-txt">Matangazo</span>
+        </div>
+        <div class="ann-hdr-right">
+          <span id="ann-counter" class="ann-hdr-counter" style="display:none;"></span>
+          <button class="ann-icon-btn" onclick="annPrev()" id="ann-prev-btn" style="display:none;" aria-label="Iliyopita">
+            <span class="material-symbols-outlined" style="font-size:1rem;">chevron_left</span>
+          </button>
+          <button class="ann-icon-btn" onclick="annNext()" id="ann-next-btn" style="display:none;" aria-label="Inayofuata">
+            <span class="material-symbols-outlined" style="font-size:1rem;">chevron_right</span>
+          </button>
+          <button class="ann-icon-btn" onclick="annDismiss()" aria-label="Funga">
+            <span class="material-symbols-outlined" style="font-size:1rem;">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body layout (text + optional image) -->
+      <div id="ann-layout" class="layout-text-only">
+
+        <!-- Text -->
+        <div id="ann-text">
+          <div class="ann-label-row">
+            <div class="ann-label-line"></div>
+            <span class="ann-label-txt" id="ann-label-txt">BLB Church</span>
+          </div>
+          <h2 id="ann-title"></h2>
+          <p id="ann-content"></p>
+        </div>
+
+        <!-- Image (hidden by default, shown when image_url exists) -->
+        <div id="ann-img-block" class="ann-hidden">
+          <div id="ann-img-frame"></div>
+          <div id="ann-img-wrap">
+            <img id="ann-img" src="" alt="Tangazo" loading="lazy"/>
+            <div class="ann-corner ann-c-tl-v"></div>
+            <div class="ann-corner ann-c-tl-h"></div>
+            <div class="ann-corner ann-c-br-v"></div>
+            <div class="ann-corner ann-c-br-h"></div>
+          </div>
+        </div>
+
+      </div><!-- /#ann-layout -->
+
+      <!-- Footer: progress bar + dismiss hint -->
+      <div id="ann-footer">
+        <div id="ann-prog-wrap">
+          <div id="ann-prog-fill"></div>
+        </div>
+        <button onclick="annDismiss()" class="ann-icon-btn" style="padding:0.3rem 0.75rem;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;gap:0.3rem;white-space:nowrap;">
+          <span class="material-symbols-outlined" style="font-size:0.85rem;">close</span>
+          Funga
+        </button>
+      </div>
+
+    </div><!-- /#ann-card -->
+  </div><!-- /#ann-modal -->
+</div><!-- /#ann-overlay -->
+
+<script>
+/* ─── Public Announcement Modal ──────────────────────────── */
+(async function initAnnModal() {
+  const SECS      = 10;
+  const DELAY_MS  = 1500;
+
+  const overlay   = document.getElementById('ann-overlay');
+  const layout    = document.getElementById('ann-layout');
+  const titleEl   = document.getElementById('ann-title');
+  const contentEl = document.getElementById('ann-content');
+  const badgeTxt  = document.getElementById('ann-badge-txt');
+  const badge     = document.getElementById('ann-badge');
+  const labelTxt  = document.getElementById('ann-label-txt');
+  const counter   = document.getElementById('ann-counter');
+  const prevBtn   = document.getElementById('ann-prev-btn');
+  const nextBtn   = document.getElementById('ann-next-btn');
+  const progFill  = document.getElementById('ann-prog-fill');
+  const imgBlock  = document.getElementById('ann-img-block');
+  const imgEl     = document.getElementById('ann-img');
+
+  const now = new Date().toISOString();
+  const { data: items } = await supabase
+    .from('announcements')
+    .select('id, title, content, priority, image_url')
+    .eq('target_type', 'public')
+    .eq('is_active', true)
+    .or(`expires_at.is.null,expires_at.gte.${now}`)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (!items || items.length === 0) return;
+
+  // Urgent first
+  items.sort((a, b) => (a.priority === 'urgent' ? -1 : b.priority === 'urgent' ? 1 : 0));
+
+  let current   = 0;
+  let timer     = null;
+  let dismissed = false;
+
+  const PCFG = {
+    urgent: { badge:'rgba(239,68,68,0.15)', dot:'#ef4444', txt:'Dharura!',    label:'Taarifa ya Haraka' },
+    new:    { badge:'rgba(16,185,129,0.15)',dot:'#10b981', txt:'Habari Mpya', label:'Matangazo Mapya'   },
+    update: { badge:'rgba(59,130,246,0.15)',dot:'#60a5fa', txt:'Sasisho',     label:'Sasisho'           },
+    general:{ badge:'rgba(254,208,27,0.12)',dot:'#fed01b', txt:'Matangazo',   label:'BLB Church'        },
+  };
+
+  function startProgress() {
+    progFill.style.transition = 'none';
+    progFill.style.transform  = 'scaleX(1)';
+    void progFill.offsetWidth;
+    progFill.style.transition = `transform ${SECS}s linear`;
+    progFill.style.transform  = 'scaleX(0)';
+  }
+
+  function showItem(idx) {
+    clearTimeout(timer);
+    const item = items[idx];
+    const cfg  = PCFG[item.priority] || PCFG.general;
+
+    // Badge
+    badge.style.background = cfg.badge;
+    badge.querySelector('.ann-badge-dot').style.background = cfg.dot;
+    badgeTxt.textContent   = cfg.txt;
+    labelTxt.textContent   = cfg.label;
+
+    // Text
+    titleEl.textContent   = item.title;
+    contentEl.textContent = item.content;
+
+    // Image logic — FeaturedSpotlight layout if image present
+    if (item.image_url) {
+      imgEl.src = item.image_url;
+      imgBlock.classList.remove('ann-hidden');
+      layout.classList.remove('layout-text-only');
+      layout.classList.add('layout-has-image');
+      layout.style.flexDirection = '';
+    } else {
+      imgBlock.classList.add('ann-hidden');
+      layout.classList.remove('layout-has-image');
+      layout.classList.add('layout-text-only');
+    }
+
+    // Multi-announcement navigation
+    if (items.length > 1) {
+      counter.style.display = 'inline';
+      counter.textContent   = `${idx + 1} / ${items.length}`;
+      prevBtn.style.display = nextBtn.style.display = 'flex';
+    }
+
+    startProgress();
+
+    timer = setTimeout(() => {
+      if (current < items.length - 1) { current++; showItem(current); }
+      else annDismiss();
+    }, SECS * 1000);
+  }
+
+  function openModal() {
+    overlay.classList.add('ann-show');
+    showItem(0);
+  }
+
+  // Pause on hover
+  document.getElementById('ann-modal').addEventListener('mouseenter', () => {
+    clearTimeout(timer);
+    progFill.style.transition = 'none';
+  });
+  document.getElementById('ann-modal').addEventListener('mouseleave', () => {
+    if (dismissed) return;
+    startProgress();
+    timer = setTimeout(() => {
+      if (current < items.length - 1) { current++; showItem(current); }
+      else annDismiss();
+    }, SECS * 1000);
+  });
+
+  // Close on backdrop click
+  overlay.addEventListener('click', e => { if (e.target === overlay) annDismiss(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') annDismiss(); });
+
+  window.annDismiss = function() {
+    if (dismissed) return;
+    dismissed = true;
+    clearTimeout(timer);
+    overlay.style.opacity  = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 450);
+  };
+  window.annNext = function() {
+    if (current < items.length - 1) { current++; showItem(current); }
+    else annDismiss();
+  };
+  window.annPrev = function() {
+    if (current > 0) { current--; showItem(current); }
+  };
+
+  setTimeout(openModal, DELAY_MS);
 })();
 </script>
 

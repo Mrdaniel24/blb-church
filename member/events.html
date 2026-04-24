@@ -9,62 +9,228 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary":                   "#00236f",
-            "primary-container":         "#1e3a8a",
-            "primary-fixed-dim":         "#b6c4ff",
-            "on-primary":                "#ffffff",
-            "on-primary-container":      "#90a8ff",
-            "secondary":                 "#735c00",
-            "secondary-container":       "#fed01b",
-            "secondary-fixed":           "#ffe083",
-            "on-secondary":              "#ffffff",
-            "on-secondary-container":    "#6f5900",
-            "on-secondary-fixed":        "#231b00",
-            "surface":                   "#f9f9f9",
-            "surface-container-lowest":  "#ffffff",
-            "surface-container-low":     "#f3f3f4",
-            "surface-container":         "#eeeeee",
-            "surface-container-high":    "#e8e8e8",
-            "on-surface":                "#1a1c1c",
-            "on-surface-variant":        "#444651",
-            "outline":                   "#757682",
-            "outline-variant":           "#c5c5d3",
-            "error":                     "#ba1a1a",
-            "error-container":           "#ffdad6",
-            "on-error":                  "#ffffff",
+            "primary": "#00236f",
+            "primary-container": "#1e3a8a",
+            "primary-fixed-dim": "#b6c4ff",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#90a8ff",
+            "secondary": "#735c00",
+            "secondary-container": "#fed01b",
+            "secondary-fixed": "#ffe083",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#6f5900",
+            "on-secondary-fixed": "#231b00",
+            "surface": "#f9f9f9",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f3f4",
+            "surface-container": "#eeeeee",
+            "surface-container-high": "#e8e8e8",
+            "on-surface": "#1a1c1c",
+            "on-surface-variant": "#444651",
+            "outline": "#757682",
+            "outline-variant": "#c5c5d3",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
           },
           fontFamily: {
-            "headline": ["Inter"], "body": ["Plus Jakarta Sans"], "label": ["Plus Jakarta Sans"]
+            "headline": ["Inter"],
+            "body": ["Plus Jakarta Sans"],
+            "label": ["Plus Jakarta Sans"]
           },
-          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
         },
       },
     }
   </script>
+
   <link rel="stylesheet" href="../assets/css/shared.css"/>
+
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .glass-header { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-    .nav-link-active { color: #00236f !important; background-color: rgba(239,246,255,0.5); border-right: 4px solid #fed01b; }
-    .skeleton { background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
-    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,35,111,0.3); backdrop-filter: blur(4px); z-index: 40; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-header {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .nav-link-active {
+      color: #00236f !important;
+      background-color: rgba(239,246,255,0.5);
+      border-right: 4px solid #fed01b;
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f3f3f4 50%, #e8e8e8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,35,111,0.3);
+      backdrop-filter: blur(4px);
+      z-index: 40;
+    }
     .sidebar-overlay.open { display: block; }
-    .event-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .event-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,35,111,0.1); }
-    .filter-pill-active   { background: #00236f; color: #ffffff; }
-    .filter-pill-inactive { background: transparent; color: #757682; border: 1px solid #c5c5d3; }
-    .filter-pill-inactive:hover { background: #f3f3f4; color: #00236f; border-color: #00236f; }
-    /* View toggle */
-    .view-btn-active   { background: #ffffff; color: #00236f; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .event-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .event-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,35,111,0.1);
+    }
+    .filter-pill-active {
+      background: #00236f;
+      color: #ffffff;
+    }
+    .filter-pill-inactive {
+      background: transparent;
+      color: #757682;
+      border: 1px solid #c5c5d3;
+    }
+    .filter-pill-inactive:hover {
+      background: #f3f3f4;
+      color: #00236f;
+      border-color: #00236f;
+    }
+    .view-btn-active {
+      background: #ffffff;
+      color: #00236f;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
     .view-btn-inactive { color: #757682; }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ── Featured Spotlight ───────────────────────────────── */
+    .featured-spotlight { cursor: pointer; }
+    .spotlight-line {
+      width: 32px;
+      transition: width 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-line { width: 48px; }
+    .spotlight-label {
+      letter-spacing: 0.25em;
+      transition: letter-spacing 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-label { letter-spacing: 0.3em; }
+    .spotlight-title-1 {
+      will-change: transform;
+      transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-title-1 { transform: translateY(-2px); }
+    .spotlight-title-2 {
+      will-change: transform;
+      transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-title-2 { transform: translateX(12px); }
+    .spotlight-desc {
+      color: rgba(68,70,81,0.55);
+      transition: color 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-desc {
+      color: rgba(68,70,81,1);
+      transform: translateY(-4px);
+    }
+    .spotlight-btn {
+      border-color: rgba(117,118,130,0.3);
+      color: #00236f;
+      transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-btn {
+      border-color: #00236f;
+      background-color: #00236f;
+      color: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 8px 32px rgba(0,35,111,0.18);
+    }
+    .spotlight-arrow {
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-arrow { transform: rotate(45deg); }
+    .spotlight-explore {
+      opacity: 0.45;
+      transform: translateX(-8px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 100ms, transform 0.7s cubic-bezier(0.16,1,0.3,1) 100ms;
+    }
+    .featured-spotlight:hover .spotlight-explore { opacity: 1; transform: translateX(0); }
+    .spotlight-image-wrap {
+      will-change: transform;
+      transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-image-wrap { transform: translateX(3px) translateY(-2px); }
+    .spotlight-frame {
+      border-color: transparent;
+      transition: border-color 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-frame {
+      border-color: rgba(0,35,111,0.12);
+      transform: scale(1.01);
+    }
+    .spotlight-img { transition: transform 1s cubic-bezier(0.16,1,0.3,1); }
+    .featured-spotlight:hover .spotlight-img { transform: scale(1.03); }
+    .spotlight-overlay {
+      opacity: 0;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-overlay { opacity: 1; }
+    .sp-corner {
+      position: absolute;
+      background: rgba(255,255,255,0.85);
+      opacity: 0;
+    }
+    .sp-corner-tl-v { width: 1px; height: 24px; left: 12px; top: 12px; transform-origin: top;    transform: scaleY(0); transition: opacity .5s cubic-bezier(0.16,1,0.3,1) 50ms,  transform .5s cubic-bezier(0.16,1,0.3,1) 50ms; }
+    .sp-corner-tl-h { height: 1px; width: 24px; left: 12px; top: 12px; transform-origin: left;   transform: scaleX(0); transition: opacity .5s cubic-bezier(0.16,1,0.3,1) 100ms, transform .5s cubic-bezier(0.16,1,0.3,1) 100ms; }
+    .sp-corner-br-v { width: 1px; height: 24px; right: 12px; bottom: 12px; transform-origin: bottom; transform: scaleY(0); transition: opacity .5s cubic-bezier(0.16,1,0.3,1) 150ms, transform .5s cubic-bezier(0.16,1,0.3,1) 150ms; }
+    .sp-corner-br-h { height: 1px; width: 24px; right: 12px; bottom: 12px; transform-origin: right;  transform: scaleX(0); transition: opacity .5s cubic-bezier(0.16,1,0.3,1) 200ms, transform .5s cubic-bezier(0.16,1,0.3,1) 200ms; }
+    .featured-spotlight:hover .sp-corner { opacity: 1; }
+    .featured-spotlight:hover .sp-corner-tl-v { transform: scaleY(1); }
+    .featured-spotlight:hover .sp-corner-tl-h { transform: scaleX(1); }
+    .featured-spotlight:hover .sp-corner-br-v { transform: scaleY(1); }
+    .featured-spotlight:hover .sp-corner-br-h { transform: scaleX(1); }
+    .spotlight-index {
+      opacity: 0.35;
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .featured-spotlight:hover .spotlight-index { opacity: 1; transform: translateY(12px); }
+
+    /* Horizontal scroll grid */
+    .events-hscroll {
+      display: flex;
+      gap: 1.25rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .events-hscroll::-webkit-scrollbar { height: 6px; }
+    .events-hscroll::-webkit-scrollbar-track { background: transparent; }
+    .events-hscroll::-webkit-scrollbar-thumb { background: #c5c5d3; border-radius: 9999px; }
+    .events-hscroll::-webkit-scrollbar-thumb:hover { background: #00236f; }
+    .events-hscroll .event-card { width: 280px; min-width: 280px; scroll-snap-align: start; flex-shrink: 0; }
   </style>
 </head>
 
@@ -80,20 +246,23 @@
       <p class="text-[10px] uppercase tracking-[0.2em] text-outline font-bold mt-1">Member Portal</p>
     </a>
   </div>
+
   <nav class="flex-grow overflow-y-auto">
     <p class="px-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Main Menu</p>
     <ul class="space-y-0.5">
-      <li><a href="dashboard.html"     class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">dashboard</span><span class="text-sm font-semibold tracking-wide">Dashboard</span></a></li>
+      <li><a href="dashboard.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">dashboard</span><span class="text-sm font-semibold tracking-wide">Dashboard</span></a></li>
       <li><a href="contributions.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">payments</span><span class="text-sm font-semibold tracking-wide">My Giving</span></a></li>
       <li><a href="announcements.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">campaign</span><span class="text-sm font-semibold tracking-wide">Announcements</span></a></li>
-      <li><a href="events.html"        class="nav-link nav-link-active flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">calendar_today</span><span class="text-sm font-semibold tracking-wide">Events</span></a></li>
-      <li><a href="sermons.html"       class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">auto_stories</span><span class="text-sm font-semibold tracking-wide">Sermons</span></a></li>
+      <li><a href="events.html" class="nav-link nav-link-active flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">calendar_today</span><span class="text-sm font-semibold tracking-wide">Events</span></a></li>
+      <li><a href="sermons.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">auto_stories</span><span class="text-sm font-semibold tracking-wide">Sermons</span></a></li>
     </ul>
+
     <p class="px-8 mt-8 mb-3 text-[9px] uppercase tracking-[0.25em] text-outline font-black">Account</p>
     <ul class="space-y-0.5">
       <li><a href="profile.html" class="nav-link flex items-center px-8 py-3.5 text-slate-500 hover:bg-surface-container-low hover:text-primary transition-all"><span class="material-symbols-outlined mr-4 text-xl">manage_accounts</span><span class="text-sm font-semibold tracking-wide">My Profile</span></a></li>
     </ul>
   </nav>
+
   <div class="px-8 mt-auto pt-6 border-t border-outline-variant/20">
     <a href="#" data-action="logout" class="flex items-center px-4 py-3 text-slate-500 hover:text-error hover:bg-error-container/30 rounded-lg transition-all">
       <span class="material-symbols-outlined mr-4 text-xl">logout</span>
@@ -116,6 +285,7 @@
         <p class="text-primary font-bold text-base tracking-tight">Events</p>
       </div>
     </div>
+
     <div class="flex items-center gap-4">
       <a href="profile.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
         <div id="header-avatar" class="w-9 h-9 rounded-full overflow-hidden border-2 border-secondary-container bg-primary flex items-center justify-center">
@@ -140,9 +310,8 @@
           Gather as a community to celebrate, learn, and grow together. Explore upcoming fellowship opportunities.
         </p>
       </div>
-      <!-- View toggle + Search -->
+
       <div class="flex items-center gap-3 shrink-0">
-        <!-- Grid / List toggle -->
         <div class="flex bg-surface-container-low rounded-xl p-1 gap-1">
           <button id="view-grid" onclick="setView('grid')" class="view-btn view-btn-active p-2 rounded-lg transition-all" title="Grid view">
             <span class="material-symbols-outlined text-xl">grid_view</span>
@@ -154,40 +323,109 @@
       </div>
     </div>
 
-    <!-- Two-column: filters + content -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Featured Spotlight -->
+    <div id="spotlight-skeleton" class="skeleton rounded-3xl h-72 md:h-56"></div>
 
-      <!-- LEFT: filters + event grid -->
-      <div class="lg:col-span-8 space-y-7">
+    <div id="spotlight-section" class="hidden">
+      <div id="featured-spotlight"
+           class="featured-spotlight relative flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-12 lg:gap-16 bg-surface-container-lowest rounded-3xl p-8 md:p-10 lg:p-12 shadow-sm"
+           onclick="">
 
-        <!-- Filter row -->
-        <div class="flex flex-col gap-5">
-          <!-- Status pills -->
-          <div class="flex items-center gap-3 flex-wrap">
-            <span class="text-xs font-bold text-outline uppercase tracking-widest">Status:</span>
-            <button onclick="setStatus('upcoming')" data-status="upcoming" class="filter-pill filter-pill-active px-5 py-2 rounded-full text-sm font-bold transition-all">Upcoming</button>
-            <button onclick="setStatus('past')"     data-status="past"     class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">Past Events</button>
-            <button onclick="setStatus('all')"      data-status="all"      class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">All</button>
+        <!-- Left: Text Block (click = event modal) -->
+        <div class="relative z-10 flex w-full shrink-0 flex-col items-center text-center md:w-64 md:items-start md:text-left lg:w-80 lg:pt-4 cursor-pointer" onclick="openSpotlightModal()">
+          <!-- Animated label + line -->
+          <div class="mb-6 flex items-center gap-3 md:mb-8">
+            <div class="spotlight-line h-px bg-primary"></div>
+            <span class="spotlight-label text-[10px] font-black uppercase text-primary">Featured Event</span>
           </div>
-          <!-- Category pills -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-bold text-outline uppercase tracking-widest mr-1">Category:</span>
-            <button onclick="setCategory('all')"      data-cat="all"      class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary text-on-primary transition-all">All</button>
-            <button onclick="setCategory('worship')"  data-cat="worship"  class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Worship</button>
-            <button onclick="setCategory('youth')"    data-cat="youth"    class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Youth</button>
-            <button onclick="setCategory('outreach')" data-cat="outreach" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Outreach</button>
-            <button onclick="setCategory('women')"    data-cat="women"    class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Women</button>
-            <button onclick="setCategory('men')"      data-cat="men"      class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Men</button>
-            <button onclick="setCategory('general')"  data-cat="general"  class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">General</button>
+
+          <!-- Two-line title -->
+          <h2 class="relative w-full">
+            <span id="spotlight-title-1" class="spotlight-title-1 block text-4xl font-extrabold font-headline tracking-tight text-primary leading-tight md:text-5xl">Next</span>
+            <span id="spotlight-title-2" class="spotlight-title-2 block text-4xl font-extrabold font-headline tracking-tight text-secondary leading-tight md:text-5xl">Up</span>
+          </h2>
+
+          <!-- Meta: date + location -->
+          <p id="spotlight-meta" class="spotlight-desc mt-5 text-sm leading-relaxed max-w-[240px] md:mt-6">—</p>
+
+          <!-- Short description -->
+          <p id="spotlight-description" class="spotlight-desc mt-2 text-xs leading-relaxed max-w-[240px] line-clamp-2 md:mt-3">—</p>
+
+          <!-- CTA -->
+          <div class="mt-7 flex items-center gap-4 md:mt-9">
+            <div class="spotlight-btn flex h-11 w-11 items-center justify-center rounded-full border">
+              <span class="material-symbols-outlined text-base spotlight-arrow" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">arrow_outward</span>
+            </div>
+            <span class="spotlight-explore text-[10px] font-black uppercase tracking-widest text-primary">View Details</span>
           </div>
         </div>
 
-        <!-- Results label -->
+        <!-- Right: Image Block (click = lightbox) -->
+        <div id="spotlight-img-wrap" class="spotlight-image-wrap relative ml-0 md:ml-auto shrink-0 cursor-zoom-in" onclick="openSpotlightLightbox(event)" title="Click to view full image">
+          <div class="spotlight-frame absolute -inset-3 border md:-inset-4"></div>
+
+          <div class="relative h-[260px] w-[280px] sm:h-[300px] sm:w-[320px] md:h-[340px] md:w-[350px] lg:h-[400px] lg:w-[400px] overflow-hidden rounded-2xl">
+            <!-- Blurred bg layer -->
+            <div id="spotlight-blur-bg" class="absolute inset-0" style="filter:blur(20px);transform:scale(1.15);">
+              <img id="spotlight-img-bg" src="https://plus.unsplash.com/premium_photo-1681338224373-9669c2497c05?q=80&w=800&auto=format&fit=crop" alt="" class="w-full h-full object-cover" aria-hidden="true">
+            </div>
+            <div class="absolute inset-0 bg-black/20"></div>
+            <!-- Main poster -->
+            <img id="spotlight-img"
+                 src="https://plus.unsplash.com/premium_photo-1681338224373-9669c2497c05?q=80&w=2307&auto=format&fit=crop"
+                 alt="Featured event"
+                 class="spotlight-img relative z-10 h-full w-full object-contain">
+            <div class="spotlight-overlay absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent z-10"></div>
+
+            <!-- Category badge -->
+            <div class="absolute top-4 left-4 z-10">
+              <span id="spotlight-category" class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest">Event</span>
+            </div>
+
+            <!-- Corner accents -->
+            <div class="sp-corner sp-corner-tl-v"></div>
+            <div class="sp-corner sp-corner-tl-h"></div>
+            <div class="sp-corner sp-corner-br-v"></div>
+            <div class="sp-corner sp-corner-br-h"></div>
+          </div>
+
+          <span class="spotlight-index absolute -bottom-6 right-0 font-mono text-xs text-outline">01</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT -->
+      <div class="lg:col-span-8 space-y-7">
+
+        <!-- Filters -->
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-xs font-bold text-outline uppercase tracking-widest">Status:</span>
+            <button onclick="setStatus('upcoming')" data-status="upcoming" class="filter-pill filter-pill-active px-5 py-2 rounded-full text-sm font-bold transition-all">Upcoming</button>
+            <button onclick="setStatus('past')" data-status="past" class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">Past Events</button>
+            <button onclick="setStatus('all')" data-status="all" class="filter-pill filter-pill-inactive px-5 py-2 rounded-full text-sm font-bold transition-all">All</button>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold text-outline uppercase tracking-widest mr-1">Category:</span>
+            <button onclick="setCategory('all')" data-cat="all" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-primary bg-primary text-on-primary transition-all">All</button>
+            <button onclick="setCategory('worship')" data-cat="worship" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Worship</button>
+            <button onclick="setCategory('youth')" data-cat="youth" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Youth</button>
+            <button onclick="setCategory('outreach')" data-cat="outreach" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Outreach</button>
+            <button onclick="setCategory('women')" data-cat="women" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Women</button>
+            <button onclick="setCategory('men')" data-cat="men" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">Men</button>
+            <button onclick="setCategory('general')" data-cat="general" class="cat-pill px-4 py-1.5 rounded-full text-xs font-bold border border-outline-variant text-slate-500 hover:border-primary hover:text-primary transition-all">General</button>
+          </div>
+        </div>
+
         <p id="results-label" class="text-xs text-outline font-medium">Loading…</p>
 
-        <!-- Event cards -->
+        <!-- Events Container -->
         <div id="events-container">
-          <!-- Skeleton grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="skeleton h-72 rounded-2xl"></div>
             <div class="skeleton h-72 rounded-2xl"></div>
@@ -196,47 +434,18 @@
           </div>
         </div>
 
-        <!-- Load more -->
         <div id="load-more-wrap" class="hidden text-center pt-2">
-          <button id="load-more-btn" onclick="loadMore()"
-            class="px-8 py-3 rounded-xl border-2 border-primary/10 text-primary font-bold text-sm hover:bg-primary hover:text-on-primary transition-all duration-300">
+          <button id="load-more-btn" onclick="loadMore()" class="px-8 py-3 rounded-xl border-2 border-primary/10 text-primary font-bold text-sm hover:bg-primary hover:text-on-primary transition-all duration-300">
             Load More
           </button>
         </div>
       </div>
 
-      <!-- RIGHT: next event + quick calendar -->
+      <!-- RIGHT -->
       <div class="lg:col-span-4">
         <div class="sticky top-24 space-y-6">
 
-          <!-- Featured / next event -->
-          <div id="featured-card" class="relative overflow-hidden rounded-2xl bg-primary-container h-72 flex flex-col justify-end p-7">
-            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-primary/10 z-0"></div>
-            <!-- Skeleton -->
-            <div id="featured-skeleton" class="relative z-10 space-y-3">
-              <div class="skeleton h-5 w-20 rounded-full" style="background:rgba(255,255,255,0.15);"></div>
-              <div class="skeleton h-7 w-48 rounded-lg" style="background:rgba(255,255,255,0.15);"></div>
-              <div class="skeleton h-4 w-36 rounded-lg" style="background:rgba(255,255,255,0.15);"></div>
-            </div>
-            <!-- Real content -->
-            <div id="featured-content" class="hidden relative z-10 space-y-2">
-              <div class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest">
-                Next Up
-              </div>
-              <h4 id="feat-title" class="text-xl font-bold font-headline text-white leading-tight">—</h4>
-              <div class="flex flex-wrap gap-3 text-xs font-medium text-primary-fixed-dim">
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span><span id="feat-date">—</span></span>
-                <span class="flex items-center gap-1" id="feat-loc-wrap"><span class="material-symbols-outlined text-sm">location_on</span><span id="feat-loc">—</span></span>
-              </div>
-              <p id="feat-desc" class="text-white/70 text-xs leading-relaxed line-clamp-2 mt-1"></p>
-            </div>
-            <div id="featured-empty" class="hidden relative z-10 text-center">
-              <span class="material-symbols-outlined text-4xl text-primary-fixed-dim mb-2 block">event_busy</span>
-              <p class="text-white/70 text-sm">No upcoming events</p>
-            </div>
-          </div>
-
-          <!-- Upcoming count summary -->
+          <!-- Stats -->
           <div class="bg-surface-container-low rounded-2xl p-6 space-y-4">
             <h4 class="text-primary font-bold text-sm flex items-center gap-2">
               <span class="material-symbols-outlined text-secondary">event_note</span>
@@ -256,15 +465,38 @@
 
         </div>
       </div>
+
     </div>
   </div>
 </main>
 
-<!-- EVENT DETAIL MODAL -->
-<div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"
-  style="background: rgba(0,35,111,0.15); backdrop-filter: blur(4px);">
-  <div id="detail-modal-box" class="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
-    style="box-shadow: 0 32px 64px rgba(0,35,111,0.12);">
+<!-- IMAGE LIGHTBOX -->
+<div id="lightbox" class="hidden fixed inset-0 z-[60] flex flex-col items-center justify-center p-4" style="background:rgba(0,0,0,0.92); backdrop-filter:blur(8px);">
+  <div class="w-full max-w-3xl flex flex-col items-center gap-4">
+    <!-- Top bar -->
+    <div class="w-full flex items-center justify-between px-1">
+      <span id="lightbox-title" class="text-white font-bold text-sm truncate max-w-xs opacity-80"></span>
+      <div class="flex items-center gap-2">
+        <a id="lightbox-download" href="#" download
+           class="flex items-center gap-2 px-4 py-2 rounded-xl bg-secondary-container text-on-secondary-container text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
+          <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20;">download</span>
+          Download
+        </a>
+        <button onclick="closeLightbox()" class="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/10 transition-all">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+    </div>
+    <!-- Image -->
+    <div class="w-full flex items-center justify-center" style="max-height:80vh;">
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl select-none">
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(0,35,111,0.15); backdrop-filter: blur(4px);">
+  <div id="detail-modal-box" class="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto" style="box-shadow: 0 32px 64px rgba(0,35,111,0.12);">
     <div class="p-8 space-y-5">
       <div class="flex items-start justify-between gap-4">
         <div class="space-y-2">
@@ -275,6 +507,7 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
+
       <div class="space-y-3 text-sm">
         <div class="flex items-center gap-3 text-on-surface-variant">
           <span class="material-symbols-outlined text-primary">schedule</span>
@@ -285,6 +518,7 @@
           <span id="modal-location"></span>
         </div>
       </div>
+
       <p id="modal-description" class="text-sm text-on-surface-variant leading-relaxed whitespace-pre-wrap"></p>
     </div>
   </div>
@@ -298,81 +532,218 @@
 
 <script>
 // ── Sidebar ───────────────────────────────────────────────
-function openSidebar()  { document.getElementById('sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('open'); }
-function closeSidebar() { document.getElementById('sidebar').classList.add('-translate-x-full');    document.getElementById('sidebar-overlay').classList.remove('open'); }
+function openSidebar() {
+  document.getElementById('sidebar').classList.remove('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.add('-translate-x-full');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function escapeHtml(str = '') {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+function getInitials(name = '?') {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  return parts.slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
+}
+
+function formatDateTime(value) {
+  if (!value) return 'Date not set';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return 'Invalid date';
+
+  return d.toLocaleString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
 
 // ── State ─────────────────────────────────────────────────
-const PAGE_SIZE  = 8;
-let allEvents    = [];
-let filtered     = [];
-let currentStatus   = 'upcoming';
+const PAGE_SIZE = 8;
+let allEvents = [];
+let filtered = [];
+let currentStatus = 'upcoming';
 let currentCategory = 'all';
-let currentView     = 'grid';
-let visibleCount    = PAGE_SIZE;
+let currentView = 'grid';
+let visibleCount = PAGE_SIZE;
 
-// ── Category colours ─────────────────────────────────────
+// ── Category styles ───────────────────────────────────────
 const CAT_COLORS = {
-  worship:  'bg-primary/5 text-primary',
-  youth:    'bg-secondary-container/30 text-on-secondary-container',
+  worship: 'bg-primary/5 text-primary',
+  youth: 'bg-secondary-container/30 text-on-secondary-container',
   outreach: 'bg-emerald-50 text-emerald-700',
-  women:    'bg-pink-50 text-pink-700',
-  men:      'bg-blue-50 text-blue-700',
-  general:  'bg-surface-container text-on-surface-variant',
+  women: 'bg-pink-50 text-pink-700',
+  men: 'bg-blue-50 text-blue-700',
+  general: 'bg-surface-container text-on-surface-variant',
 };
-function catColor(c) { return CAT_COLORS[c?.toLowerCase()] || 'bg-surface-container text-on-surface-variant'; }
-function catLabel(c) { return c ? c.charAt(0).toUpperCase() + c.slice(1) : 'General'; }
 
-// ── Filter: status ────────────────────────────────────────
-function setStatus(s) {
-  currentStatus = s;
-  visibleCount  = PAGE_SIZE;
+function catColor(c) {
+  return CAT_COLORS[String(c || '').toLowerCase()] || 'bg-surface-container text-on-surface-variant';
+}
+
+function catLabel(c) {
+  const v = String(c || 'general').toLowerCase();
+  return v.charAt(0).toUpperCase() + v.slice(1);
+}
+
+// ── Filters ───────────────────────────────────────────────
+function setStatus(status) {
+  currentStatus = status;
+  visibleCount = PAGE_SIZE;
+
   document.querySelectorAll('[data-status]').forEach(btn => {
-    const active = btn.dataset.status === s;
+    const active = btn.dataset.status === status;
     btn.className = `filter-pill ${active ? 'filter-pill-active' : 'filter-pill-inactive'} px-5 py-2 rounded-full text-sm font-bold transition-all`;
   });
+
   applyFilters();
 }
 
-// ── Filter: category ─────────────────────────────────────
-function setCategory(c) {
-  currentCategory = c;
-  visibleCount    = PAGE_SIZE;
+function setCategory(category) {
+  currentCategory = category;
+  visibleCount = PAGE_SIZE;
+
   document.querySelectorAll('[data-cat]').forEach(btn => {
-    const active = btn.dataset.cat === c;
+    const active = btn.dataset.cat === category;
     btn.className = `cat-pill px-4 py-1.5 rounded-full text-xs font-bold border transition-all ${
-      active ? 'border-primary bg-primary text-on-primary'
-             : 'border-outline-variant text-slate-500 hover:border-primary hover:text-primary'
+      active
+        ? 'border-primary bg-primary text-on-primary'
+        : 'border-outline-variant text-slate-500 hover:border-primary hover:text-primary'
     }`;
   });
+
   applyFilters();
 }
 
-// ── View toggle ───────────────────────────────────────────
-function setView(v) {
-  currentView = v;
-  document.getElementById('view-grid').className = `view-btn ${v==='grid' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
-  document.getElementById('view-list').className = `view-btn ${v==='list' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
+function setView(view) {
+  currentView = view;
+
+  document.getElementById('view-grid').className =
+    `view-btn ${view === 'grid' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
+
+  document.getElementById('view-list').className =
+    `view-btn ${view === 'list' ? 'view-btn-active' : 'view-btn-inactive'} p-2 rounded-lg transition-all`;
+
   renderEvents();
 }
 
-// ── Apply all filters ────────────────────────────────────
 function applyFilters() {
   const now = new Date();
+
   filtered = allEvents.filter(ev => {
-    const start = new Date(ev.start_date);
-    if (currentStatus === 'upcoming' && start < now) return false;
-    if (currentStatus === 'past'     && start >= now) return false;
-    if (currentCategory !== 'all' && (ev.category || '').toLowerCase() !== currentCategory) return false;
+    const date = new Date(ev.event_date);
+    const category = String(ev.category || '').toLowerCase();
+
+    if (currentStatus === 'upcoming' && date < now) return false;
+    if (currentStatus === 'past' && date >= now) return false;
+    if (currentCategory !== 'all' && category !== currentCategory) return false;
+
     return true;
   });
+
+  filtered.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+
   renderEvents();
 }
 
-// ── Render event list/grid ────────────────────────────────
+// ── Render cards ──────────────────────────────────────────
+function buildGridCard(ev) {
+  const isPast = new Date(ev.event_date) < new Date();
+  const encoded = encodeURIComponent(JSON.stringify(ev));
+
+  const imageBlock = ev.image_url
+    ? `<div class="relative w-full overflow-hidden cursor-zoom-in" style="aspect-ratio:1/1;"
+           onclick="event.stopPropagation(); openLightbox('${escapeHtml(ev.image_url)}', '${escapeHtml(ev.title || '')}')">
+        <!-- Blurred background fills areas where image doesn't cover -->
+        <div class="absolute inset-0 scale-110" style="filter:blur(18px);transform:scale(1.15);">
+          <img src="${escapeHtml(ev.image_url)}" alt="" class="w-full h-full object-cover" aria-hidden="true">
+        </div>
+        <div class="absolute inset-0 bg-black/25"></div>
+        <!-- Main poster (full, no crop) -->
+        <img src="${escapeHtml(ev.image_url)}" alt="${escapeHtml(ev.title || '')}"
+             class="relative z-10 w-full h-full object-contain pointer-events-none">
+        <!-- Badges -->
+        <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5">
+          <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest">
+            ${escapeHtml(catLabel(ev.category))}
+          </span>
+          ${isPast ? '<span class="inline-block px-2 py-0.5 bg-black/50 text-white text-[10px] font-bold rounded-full">Past Event</span>' : ''}
+        </div>
+      </div>`
+    : `<div class="relative h-44 bg-gradient-to-br from-primary to-primary-container overflow-hidden flex items-end p-5">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative z-10 flex flex-col gap-1.5">
+          <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest w-fit">
+            ${escapeHtml(catLabel(ev.category))}
+          </span>
+          ${isPast ? '<span class="inline-block px-2 py-0.5 bg-black/30 text-white text-[10px] font-bold rounded-full w-fit">Past Event</span>' : ''}
+        </div>
+      </div>`;
+
+  return `
+    <div class="event-card bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm cursor-pointer"
+         onclick="openModalFromEncoded('${encoded}')">
+      ${imageBlock}
+      <div class="p-5 space-y-2.5">
+        <p class="text-primary font-bold text-xs uppercase tracking-wide">${escapeHtml(formatDateTime(ev.event_date))}</p>
+        <h3 class="text-base font-bold text-primary leading-tight">${escapeHtml(ev.title || '')}</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-2">${escapeHtml(ev.description || '')}</p>
+        ${ev.location ? `<p class="text-xs text-outline flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span>${escapeHtml(ev.location)}</p>` : ''}
+        <div class="pt-1">
+          <span class="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+            View details <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function buildListRow(ev) {
+  const isPast = new Date(ev.event_date) < new Date();
+  const d = new Date(ev.event_date);
+  const encoded = encodeURIComponent(JSON.stringify(ev));
+
+  return `
+    <div class="event-card bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-5 cursor-pointer border border-outline-variant/10"
+         onclick="openModalFromEncoded('${encoded}')">
+      <div class="w-16 h-16 rounded-xl bg-primary flex flex-col items-center justify-center text-on-primary shrink-0">
+        <span class="text-xs font-bold uppercase">${d.toLocaleString('en-US', { month: 'short' })}</span>
+        <span class="text-2xl font-headline font-black leading-none">${d.getDate()}</span>
+      </div>
+
+      <div class="flex-grow min-w-0">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${catColor(ev.category)}">${escapeHtml(catLabel(ev.category))}</span>
+          ${isPast ? '<span class="text-[10px] font-bold text-outline">(Past)</span>' : ''}
+        </div>
+        <h4 class="font-bold text-primary truncate">${escapeHtml(ev.title || '')}</h4>
+        <p class="text-xs text-outline mt-0.5">${escapeHtml(formatDateTime(ev.event_date))}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</p>
+      </div>
+
+      <span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
+    </div>
+  `;
+}
+
 function renderEvents() {
   const container = document.getElementById('events-container');
-  const label     = document.getElementById('results-label');
-  const slice     = filtered.slice(0, visibleCount);
+  const label = document.getElementById('results-label');
+  const slice = filtered.slice(0, visibleCount);
 
   label.textContent = filtered.length === 0
     ? 'No events found'
@@ -384,13 +755,14 @@ function renderEvents() {
         <span class="material-symbols-outlined text-5xl text-outline mb-4 block">event_busy</span>
         <p class="text-on-surface-variant font-medium">No events found for this filter.</p>
         <p class="text-xs text-outline mt-1">Try a different status or category.</p>
-      </div>`;
+      </div>
+    `;
     document.getElementById('load-more-wrap').classList.add('hidden');
     return;
   }
 
   if (currentView === 'grid') {
-    container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${slice.map(buildGridCard).join('')}</div>`;
+    container.innerHTML = `<div class="events-hscroll">${slice.map(buildGridCard).join('')}</div>`;
   } else {
     container.innerHTML = `<div class="space-y-4">${slice.map(buildListRow).join('')}</div>`;
   }
@@ -403,76 +775,54 @@ function renderEvents() {
   }
 }
 
-// ── Grid card ─────────────────────────────────────────────
-function buildGridCard(ev) {
-  const isPast    = new Date(ev.start_date) < new Date();
-  const badge     = catColor(ev.category);
-  const data      = JSON.stringify(ev).replace(/"/g, '&quot;');
-  return `
-    <div class="event-card bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm cursor-pointer"
-      onclick="openModal(${data})">
-      <!-- Colour band header -->
-      <div class="relative h-48 bg-gradient-to-br from-primary to-primary-container flex items-end p-5">
-        <div class="absolute inset-0 opacity-10 flex items-center justify-center">
-          <span class="material-symbols-outlined" style="font-size:120px; color:white;">event</span>
-        </div>
-        <div class="relative z-10 flex flex-col gap-2">
-          <span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-black rounded-full uppercase tracking-widest w-fit">
-            ${escapeHtml(catLabel(ev.category))}
-          </span>
-          ${isPast ? '<span class="inline-block px-2 py-0.5 bg-black/30 text-white text-[10px] font-bold rounded-full w-fit">Past Event</span>' : ''}
-        </div>
-      </div>
-      <div class="p-6 space-y-3">
-        <p class="text-primary font-bold text-xs uppercase tracking-wide">${formatDateTime(ev.start_date)}</p>
-        <h3 class="text-lg font-bold text-primary leading-tight">${escapeHtml(ev.title)}</h3>
-        <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-2">${escapeHtml(ev.description || '')}</p>
-        ${ev.location ? `<p class="text-xs text-outline flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span>${escapeHtml(ev.location)}</p>` : ''}
-        <div class="pt-2">
-          <span class="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
-            View details <span class="material-symbols-outlined text-sm">arrow_forward</span>
-          </span>
-        </div>
-      </div>
-    </div>`;
-}
-
-// ── List row ──────────────────────────────────────────────
-function buildListRow(ev) {
-  const isPast = new Date(ev.start_date) < new Date();
-  const data   = JSON.stringify(ev).replace(/"/g, '&quot;');
-  return `
-    <div class="event-card bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-5 cursor-pointer border border-outline-variant/10"
-      onclick="openModal(${data})">
-      <!-- Date block -->
-      <div class="w-16 h-16 rounded-xl bg-primary flex flex-col items-center justify-center text-on-primary shrink-0">
-        <span class="text-xs font-bold uppercase">${new Date(ev.start_date).toLocaleString('en-US',{month:'short'})}</span>
-        <span class="text-2xl font-headline font-black leading-none">${new Date(ev.start_date).getDate()}</span>
-      </div>
-      <div class="flex-grow min-w-0">
-        <div class="flex items-center gap-2 mb-1 flex-wrap">
-          <span class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${catColor(ev.category)}">${escapeHtml(catLabel(ev.category))}</span>
-          ${isPast ? '<span class="text-[10px] font-bold text-outline">(Past)</span>' : ''}
-        </div>
-        <h4 class="font-bold text-primary truncate">${escapeHtml(ev.title)}</h4>
-        <p class="text-xs text-outline mt-0.5">${formatDateTime(ev.start_date)}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</p>
-      </div>
-      <span class="material-symbols-outlined text-outline shrink-0">chevron_right</span>
-    </div>`;
-}
-
-// ── Load more ─────────────────────────────────────────────
 function loadMore() {
   visibleCount += PAGE_SIZE;
   renderEvents();
 }
 
+// ── Lightbox ──────────────────────────────────────────────
+function openLightbox(src, title) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const dl = document.getElementById('lightbox-download');
+  img.src = src;
+  img.alt = title || '';
+  document.getElementById('lightbox-title').textContent = title || '';
+  dl.href = src;
+  dl.download = (title || 'event-poster').replace(/\s+/g, '-').toLowerCase() + '.jpg';
+  lb.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeLightbox(); closeModal(); }
+});
+
 // ── Modal ─────────────────────────────────────────────────
+function openModalFromEncoded(encoded) {
+  try {
+    const ev = JSON.parse(decodeURIComponent(encoded));
+    openModal(ev);
+  } catch (err) {
+    console.error('Failed to open modal:', err);
+  }
+}
+
 function openModal(ev) {
   document.getElementById('modal-category-badge').textContent = catLabel(ev.category);
-  document.getElementById('modal-title').textContent          = ev.title;
-  document.getElementById('modal-date').textContent           = formatDateTime(ev.start_date) + (ev.end_date ? ' – ' + formatDateTime(ev.end_date) : '');
-  document.getElementById('modal-description').textContent    = ev.description || 'No description provided.';
+  document.getElementById('modal-title').textContent = ev.title || 'Untitled event';
+  document.getElementById('modal-date').textContent =
+    formatDateTime(ev.event_date) + (ev.end_date ? ' – ' + formatDateTime(ev.end_date) : '');
+  document.getElementById('modal-description').textContent = ev.description || 'No description provided.';
 
   const locRow = document.getElementById('modal-location-row');
   if (ev.location) {
@@ -484,76 +834,177 @@ function openModal(ev) {
 
   document.getElementById('detail-modal').classList.remove('hidden');
 }
-function closeModal() { document.getElementById('detail-modal').classList.add('hidden'); }
-document.getElementById('detail-modal').addEventListener('click', e => { if (e.target === document.getElementById('detail-modal')) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ── Featured / next event panel ───────────────────────────
-function renderFeatured() {
-  document.getElementById('featured-skeleton').classList.add('hidden');
-  const now     = new Date();
-  const next    = allEvents.filter(ev => new Date(ev.start_date) >= now)
-                          .sort((a,b) => new Date(a.start_date) - new Date(b.start_date))[0];
-
-  if (!next) { document.getElementById('featured-empty').classList.remove('hidden'); return; }
-
-  document.getElementById('feat-title').textContent = next.title;
-  document.getElementById('feat-date').textContent  = formatDateTime(next.start_date);
-  if (next.location) {
-    document.getElementById('feat-loc').textContent = next.location;
-  } else {
-    document.getElementById('feat-loc-wrap').classList.add('hidden');
-  }
-  document.getElementById('feat-desc').textContent = next.description || '';
-  document.getElementById('featured-content').classList.remove('hidden');
+function closeModal() {
+  document.getElementById('detail-modal').classList.add('hidden');
 }
 
-// ── Stats ──────────────────────────────────────────────────
+document.getElementById('detail-modal').addEventListener('click', function (e) {
+  if (e.target === this) closeModal();
+});
+
+// keydown handled above (covers both lightbox + modal)
+
+// ── Featured Spotlight ────────────────────────────────────
+let spotlightEvent = null;
+
+function openSpotlightModal() {
+  if (spotlightEvent) openModal(spotlightEvent);
+}
+
+function openSpotlightLightbox(e) {
+  e.stopPropagation();
+  if (!spotlightEvent || !spotlightEvent.image_url) return;
+  openLightbox(spotlightEvent.image_url, spotlightEvent.title);
+}
+
+function renderFeatured() {
+  document.getElementById('spotlight-skeleton').classList.add('hidden');
+
+  const now = new Date();
+  const next = allEvents
+    .filter(ev => new Date(ev.event_date) >= now)
+    .sort((a, b) => new Date(a.event_date) - new Date(b.event_date))[0];
+
+  if (!next) {
+    document.getElementById('spotlight-section').classList.add('hidden');
+    return;
+  }
+
+  spotlightEvent = next;
+
+  // Split title: first word(s) on line 1, rest on line 2
+  const words = (next.title || 'Upcoming Event').split(/\s+/);
+  const mid = Math.ceil(words.length / 2);
+  document.getElementById('spotlight-title-1').textContent = words.slice(0, mid).join(' ');
+  document.getElementById('spotlight-title-2').textContent = words.slice(mid).join(' ') || catLabel(next.category);
+
+  // Meta line
+  const parts = [formatDateTime(next.event_date)];
+  if (next.location) parts.push(next.location);
+  document.getElementById('spotlight-meta').textContent = parts.join(' · ');
+
+  // Description
+  document.getElementById('spotlight-description').textContent = next.description || '';
+
+  // Category badge
+  document.getElementById('spotlight-category').textContent = catLabel(next.category);
+
+  // Image (main + blur background)
+  const img = document.getElementById('spotlight-img');
+  const imgBg = document.getElementById('spotlight-img-bg');
+  if (next.image_url) {
+    img.src = next.image_url;
+    img.alt = next.title || 'Event image';
+    imgBg.src = next.image_url;
+  }
+
+  document.getElementById('spotlight-section').classList.remove('hidden');
+}
+
+// ── Stats ─────────────────────────────────────────────────
 function renderStats() {
-  const now       = new Date();
-  const upcoming  = allEvents.filter(ev => new Date(ev.start_date) >= now);
+  const now = new Date();
+
+  const upcoming = allEvents.filter(ev => new Date(ev.event_date) >= now);
   const thisMonth = upcoming.filter(ev => {
-    const d = new Date(ev.start_date);
+    const d = new Date(ev.event_date);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
-  document.getElementById('stat-upcoming').textContent   = upcoming.length;
+
+  document.getElementById('stat-upcoming').textContent = upcoming.length;
   document.getElementById('stat-this-month').textContent = thisMonth.length;
 }
 
-// ── Load from Supabase ────────────────────────────────────
-async function loadEvents() {
-  const { data, error } = await supabase
-    .from('events')
-    .select('id, title, description, start_date, end_date, location, category')
-    .order('start_date', { ascending: false });
-
-  if (error || !data) {
-    Toast.error('Failed to load events.');
-    allEvents = [];
-  } else {
-    allEvents = data;
-  }
-
-  renderFeatured();
-  renderStats();
-  applyFilters();
-}
-
-// ── Header avatar ─────────────────────────────────────────
+// ── Profile header ────────────────────────────────────────
 function setHeaderAvatar(profile) {
+  document.querySelectorAll('[data-user-name]').forEach(el => {
+    el.textContent = profile.full_name || profile.name || 'Member';
+  });
+
+  document.querySelectorAll('[data-user-department]').forEach(el => {
+    el.textContent = profile.department || profile.role || 'BLB Member';
+  });
+
   if (profile.avatar_url) {
-    document.getElementById('header-avatar').innerHTML = `<img src="${profile.avatar_url}" alt="Profile" class="w-full h-full object-cover">`;
+    document.getElementById('header-avatar').innerHTML =
+      `<img src="${profile.avatar_url}" alt="Profile" class="w-full h-full object-cover">`;
   } else {
-    document.getElementById('header-initials').textContent = getInitials(profile.full_name || '?');
+    document.getElementById('header-initials').textContent =
+      getInitials(profile.full_name || profile.name || 'Member');
   }
 }
 
-// ── INIT ──────────────────────────────────────────────────
-(async () => {
-  const profile = await initPageGuard();
-  if (!profile) return;
-  setHeaderAvatar(profile);
-  await loadEvents();
+// ── Load events ───────────────────────────────────────────
+async function loadEvents() {
+  const container = document.getElementById('events-container');
+
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, title, description, event_date, end_date, location, category, image_url, status')
+      .order('event_date', { ascending: true });
+
+    if (error) {
+      console.error('Supabase events error:', error);
+      container.innerHTML = `
+        <div class="py-20 text-center">
+          <span class="material-symbols-outlined text-5xl text-error mb-4 block">error</span>
+          <p class="text-error font-semibold">Failed to load events.</p>
+          <p class="text-xs text-outline mt-1">${escapeHtml(error.message || 'Unknown error')}</p>
+        </div>
+      `;
+      allEvents = [];
+      renderFeatured();
+      renderStats();
+      applyFilters();
+      return;
+    }
+
+    allEvents = Array.isArray(data) ? data : [];
+    renderFeatured();
+    renderStats();
+    applyFilters();
+  } catch (err) {
+    console.error('Unexpected loadEvents error:', err);
+    container.innerHTML = `
+      <div class="py-20 text-center">
+        <span class="material-symbols-outlined text-5xl text-error mb-4 block">wifi_off</span>
+        <p class="text-error font-semibold">Unable to connect to server.</p>
+        <p class="text-xs text-outline mt-1">Check Supabase connection or browser console.</p>
+      </div>
+    `;
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────
+(async function initEventsPage() {
+  try {
+    let profile = null;
+
+    if (typeof initPageGuard === 'function') {
+      profile = await initPageGuard();
+      if (!profile) return;
+    }
+
+    if (profile) {
+      setHeaderAvatar(profile);
+    }
+
+    await loadEvents();
+    document.body.style.opacity = '1';
+  } catch (err) {
+    console.error('Init page error:', err);
+    document.body.style.opacity = '1';
+
+    document.getElementById('events-container').innerHTML = `
+      <div class="py-20 text-center">
+        <span class="material-symbols-outlined text-5xl text-error mb-4 block">warning</span>
+        <p class="text-error font-semibold">Page failed to initialize.</p>
+        <p class="text-xs text-outline mt-1">Open browser console and check the exact error.</p>
+      </div>
+    `;
+  }
 })();
 </script>
 </body>

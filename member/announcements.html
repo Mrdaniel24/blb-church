@@ -395,7 +395,7 @@ function buildCard(a) {
   const isGeneral = a.target_type === 'general';
   const deptLabel = a.departments?.name;
   const isNew     = isWithinDays(a.created_at, 7);
-  const isUrgent  = a.is_urgent;
+  const isUrgent  = a.priority === 'urgent';
 
   const borderColor = isUrgent  ? 'border-error'
                     : isGeneral ? 'border-primary'
@@ -470,7 +470,7 @@ function openModal(a) {
   const box   = document.getElementById('detail-modal-box');
 
   const isGeneral = a.target_type === 'general';
-  const isUrgent  = a.is_urgent;
+  const isUrgent  = a.priority === 'urgent';
   const deptName  = a.departments?.name;
 
   const badgeBg   = isUrgent  ? 'bg-error text-on-error'
@@ -532,8 +532,9 @@ async function loadAnnouncements(profile) {
   // Fetch general announcements
   const { data: general } = await supabase
     .from('announcements')
-    .select('id, title, content, target_type, department_id, is_urgent, created_at, expires_at, departments(name)')
+    .select('id, title, content, priority, target_type, department_id, is_active, created_at, expires_at, departments(name)')
     .eq('target_type', 'general')
+    .eq('is_active', true)
     .or(`expires_at.is.null,expires_at.gte.${now}`)
     .order('created_at', { ascending: false });
 
@@ -543,9 +544,10 @@ async function loadAnnouncements(profile) {
   if (profile.department_id) {
     const { data: dept } = await supabase
       .from('announcements')
-      .select('id, title, content, target_type, department_id, is_urgent, created_at, expires_at, departments(name)')
+      .select('id, title, content, priority, target_type, department_id, is_active, created_at, expires_at, departments(name)')
       .eq('target_type', 'department')
       .eq('department_id', profile.department_id)
+      .eq('is_active', true)
       .or(`expires_at.is.null,expires_at.gte.${now}`)
       .order('created_at', { ascending: false });
 
@@ -557,9 +559,9 @@ async function loadAnnouncements(profile) {
     }
   }
 
-  // Urgent = is_urgent flag OR from 'all'
+  // Urgent = priority === 'urgent'
   const combined = [...generalItems, ...deptItems];
-  urgentItems    = combined.filter(a => a.is_urgent)
+  urgentItems    = combined.filter(a => a.priority === 'urgent')
     .sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
 
   renderUrgent();

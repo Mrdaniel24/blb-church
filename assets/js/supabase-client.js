@@ -187,10 +187,13 @@ async function getAdminPermissions() {
         department_id: null,
         can_manage_members: true,
         can_manage_contributions: true,
+        can_view_all_contributions: true,
         can_manage_events: true,
         can_manage_announcements: true,
         can_manage_media: true,
-        can_manage_sermons: true
+        can_manage_sermons: true,
+        can_manage_departments: true,
+        can_view_reports: true,
       };
     }
 
@@ -204,32 +207,29 @@ async function getAdminPermissions() {
       .eq('admin_id', session.user.id)
       .single();
 
-    if (error) {
-      // no row found
-      if (error.code === 'PGRST116') {
-        return {
-          all: false,
-          role: profile.role,
-          admin_id: session.user.id,
-          department_id: null,
-          can_manage_members: false,
-          can_manage_contributions: false,
-          can_manage_events: false,
-          can_manage_announcements: false,
-          can_manage_media: false,
-          can_manage_sermons: false
-        };
-      }
+    const PERM_DEFAULTS = {
+      all: false,
+      role: profile.role,
+      admin_id: session.user.id,
+      department_id: null,
+      can_manage_members: false,
+      can_manage_contributions: false,
+      can_view_all_contributions: false,
+      can_manage_events: false,
+      can_manage_announcements: false,
+      can_manage_media: false,
+      can_manage_sermons: false,
+      can_manage_departments: false,
+      can_view_reports: false,
+    };
 
+    if (error) {
+      if (error.code === 'PGRST116') return PERM_DEFAULTS;
       console.error('Permissions fetch error:', error.message);
       return null;
     }
 
-    return {
-      all: false,
-      role: profile.role,
-      ...data
-    };
+    return { ...PERM_DEFAULTS, ...data, all: false, role: profile.role };
   } catch (error) {
     console.error('getAdminPermissions exception:', error);
     return null;

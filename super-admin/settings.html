@@ -130,6 +130,10 @@
       <span class="material-symbols-outlined">event</span>
       <span>All Events</span>
     </a>
+    <a href="./announcements.html" class="nav-item">
+      <span class="material-symbols-outlined">campaign</span>
+      <span>All Announcements</span>
+    </a>
     <a href="./media.html" class="nav-item">
       <span class="material-symbols-outlined">subscriptions</span>
       <span>All Media</span>
@@ -268,11 +272,16 @@ let pendingLogoFile = null;
   document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
 })();
 
+let settingsRowId = null;
+
 async function loadSettings() {
   try {
-    const { data, error } = await supabase.from('system_settings').select('*').eq('id', 1).maybeSingle();
+    const { data, error } = await supabase.from('system_settings').select('*').limit(1).maybeSingle();
     if (error) throw error;
-    if (data) fillForm(data);
+    if (data) {
+      settingsRowId = data.id;
+      fillForm(data);
+    }
   } catch (e) {
     Toast.error('Failed to load settings.');
   }
@@ -281,14 +290,14 @@ async function loadSettings() {
 function fillForm(data) {
   document.getElementById('church-name').value    = data.church_name || '';
   document.getElementById('tagline').value        = data.tagline || '';
-  document.getElementById('contact-phone').value  = data.phone || '';
-  document.getElementById('contact-email').value  = data.email || '';
-  document.getElementById('contact-address').value = data.address || '';
+  document.getElementById('contact-phone').value  = data.church_phone || '';
+  document.getElementById('contact-email').value  = data.church_email || '';
+  document.getElementById('contact-address').value = data.church_address || '';
   document.getElementById('contact-website').value = data.website || '';
 
-  if (data.logo_url) {
+  if (data.church_logo_url) {
     const preview = document.getElementById('logo-preview');
-    preview.innerHTML = `<img src="${escapeHtml(data.logo_url)}" class="w-full h-full object-cover" alt="Church Logo"/>`;
+    preview.innerHTML = `<img src="${escapeHtml(data.church_logo_url)}" class="w-full h-full object-cover" alt="Church Logo"/>`;
   } else if (data.church_name) {
     const logoInitials = document.getElementById('logo-initials');
     if (logoInitials) logoInitials.textContent = getInitials(data.church_name);
@@ -330,18 +339,21 @@ async function saveSettings() {
     }
 
     const payload = {
-      id:          1,
-      church_name: churchName,
-      tagline:     document.getElementById('tagline').value.trim() || null,
-      phone:       document.getElementById('contact-phone').value.trim() || null,
-      email:       document.getElementById('contact-email').value.trim() || null,
-      address:     document.getElementById('contact-address').value.trim() || null,
-      website:     document.getElementById('contact-website').value.trim() || null,
-      updated_at:  new Date().toISOString()
+      church_name:    churchName,
+      church_phone:   document.getElementById('contact-phone').value.trim() || null,
+      church_email:   document.getElementById('contact-email').value.trim() || null,
+      church_address: document.getElementById('contact-address').value.trim() || null,
+      updated_at:     new Date().toISOString()
     };
-    if (logoUrl) payload.logo_url = logoUrl;
+    if (logoUrl) payload.church_logo_url = logoUrl;
 
-    const { error } = await supabase.from('system_settings').upsert(payload, { onConflict: 'id' });
+    let queryResult;
+    if (settingsRowId) {
+      queryResult = await supabase.from('system_settings').update(payload).eq('id', settingsRowId);
+    } else {
+      queryResult = await supabase.from('system_settings').insert(payload);
+    }
+    const { error } = queryResult;
     if (error) throw error;
 
     const el = document.getElementById('last-updated');
