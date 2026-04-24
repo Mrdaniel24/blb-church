@@ -28,3 +28,10 @@ npm-debug.log*
 
 # Gemini / AI
 .gemini/
+
+# Sensitive files
+CREDENTIALS.md
+
+# AI assistant config
+.claude/
+CLAUDE.md
