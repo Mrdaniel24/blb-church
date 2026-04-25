@@ -1577,15 +1577,10 @@ document.addEventListener('click', (e) => {
 ───────────────────────────────────── */
 (async () => {
   try {
-    const [{ count: memberCount }, { count: deptCount }] = await Promise.all([
-      supabase.from('profiles').select('*', { count: 'exact', head: true }),
-      supabase.from('departments').select('*', { count: 'exact', head: true }).eq('is_active', true),
-    ]);
-    if (memberCount !== null) {
-      document.getElementById('stat-members').textContent = memberCount + '+';
-    }
-    if (deptCount !== null) {
-      document.getElementById('stat-departments').textContent = deptCount;
+    const { data: stats, error } = await supabase.rpc('get_public_stats');
+    if (!error && stats) {
+      if (stats.member_count   != null) document.getElementById('stat-members').textContent     = stats.member_count + '+';
+      if (stats.ministry_count != null) document.getElementById('stat-departments').textContent = stats.ministry_count;
     }
   } catch (_) { /* non-critical */ }
 
