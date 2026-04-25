@@ -47,6 +47,7 @@
     }
   </script>
   <link rel="stylesheet" href="../assets/css/shared.css"/>
+  <link rel="stylesheet" href="../assets/css/responsive-sidebar.css"/>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -548,5 +549,29 @@ async function loadSermons() {
   await loadSermons();
 })();
 </script>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <a href="./dashboard.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>Home</span>
+  </a>
+  <a href="./contributions.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">payments</span>
+    <span>Giving</span>
+  </a>
+  <a href="./events.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">event</span>
+    <span>Events</span>
+  </a>
+  <a href="./sermons.html" class="bottom-nav-item bottom-nav-active">
+    <span class="material-symbols-outlined">auto_stories</span>
+    <span>Sermons</span>
+  </a>
+  <a href="./profile.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">manage_accounts</span>
+    <span>Profile</span>
+  </a>
+</nav>
 </body>
 </html>
