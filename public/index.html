@@ -1577,11 +1577,21 @@ document.addEventListener('click', (e) => {
 ───────────────────────────────────── */
 (async () => {
   try {
-    const { data: stats, error } = await supabase.rpc('get_public_stats');
-    if (!error && stats) {
+    /* ── Try RPC function first (bypasses RLS — works for all visitors) ── */
+    const { data: stats, error: rpcErr } = await supabase.rpc('get_public_stats');
+    if (!rpcErr && stats) {
       if (stats.member_count   != null) document.getElementById('stat-members').textContent     = stats.member_count + '+';
       if (stats.ministry_count != null) document.getElementById('stat-departments').textContent = stats.ministry_count;
+      return;
     }
+
+    /* ── Fallback: direct COUNT queries (works if RLS allows anon reads) ── */
+    const [membRes, deptRes] = await Promise.all([
+      supabase.from('profiles').select('*',     { count: 'exact', head: true }).eq('status',    'active'),
+      supabase.from('departments').select('*',  { count: 'exact', head: true }).eq('is_active',  true),
+    ]);
+    if (membRes.count != null) document.getElementById('stat-members').textContent     = membRes.count + '+';
+    if (deptRes.count != null) document.getElementById('stat-departments').textContent = deptRes.count;
   } catch (_) { /* non-critical */ }
 
   /* If already logged in, swap Login → Dashboard */
