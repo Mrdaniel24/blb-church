@@ -195,7 +195,7 @@
       <span class="text-xs font-bold text-outline uppercase tracking-widest mr-1">Filter:</span>
       <button onclick="setCategory('all')"     data-cat="all"     class="cat-pill cat-pill-active   px-4 py-2 rounded-full text-xs font-bold border transition-all">All Sermons</button>
       <button onclick="setCategory('audio')"   data-cat="audio"   class="cat-pill cat-pill-inactive px-4 py-2 rounded-full text-xs font-bold border transition-all">Audio</button>
-      <button onclick="setCategory('video')"   data-cat="video"   class="cat-pill cat-pill-inactive px-4 py-2 rounded-full text-xs font-bold border transition-all">Video</button>
+      <button onclick="setCategory('video')"   data-cat="video"   class="cat-pill cat-pill-inactive px-4 py-2 rounded-full text-xs font-bold border transition-all">YouTube Video</button>
     </div>
 
     <!-- Results label -->
@@ -293,6 +293,16 @@ let currentSermon    = null;
 
 const audio          = document.getElementById('audio-player');
 
+// ── YouTube helpers ───────────────────────────────────────
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const patterns = [/[?&]v=([A-Za-z0-9_-]{11})/, /youtu\.be\/([A-Za-z0-9_-]{11})/, /embed\/([A-Za-z0-9_-]{11})/, /shorts\/([A-Za-z0-9_-]{11})/];
+  for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+  return null;
+}
+function getYouTubeEmbedUrl(url) { const id = extractYouTubeId(url); return id ? `https://www.youtube.com/embed/${id}` : null; }
+function isYouTubeUrl(url) { return !!(url && (url.includes('youtube.com') || url.includes('youtu.be'))); }
+
 // ── Format seconds to mm:ss ──────────────────────────────
 function fmtTime(s) {
   if (!isFinite(s)) return '0:00';
@@ -376,7 +386,7 @@ function buildCard(s) {
   const hasAudio = !!s.audio_url;
   const hasVideo = !!s.video_url;
   const canPlay  = hasAudio || hasVideo;
-  const data     = JSON.stringify(s).replace(/"/g, '&quot;');
+  const data = encodeURIComponent(JSON.stringify(s));
 
   return `
     <div class="sermon-card bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10"
@@ -384,23 +394,29 @@ function buildCard(s) {
       <!-- Card header -->
       <div class="relative h-40 bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
         <span class="material-symbols-outlined text-white/20" style="font-size:96px; font-variation-settings:'FILL' 1;">auto_stories</span>
-        ${hasVideo ? '<span class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">Video</span>' : ''}
+        ${hasVideo && isYouTubeUrl(s.video_url) ? '<span class="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide flex items-center gap-0.5"><span class="material-symbols-outlined text-xs" style="font-variation-settings:\'FILL\' 1;">smart_display</span>YouTube</span>' : hasVideo ? '<span class="absolute top-3 right-3 bg-secondary-container text-on-secondary-container text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">Video</span>' : ''}
         ${hasAudio && !hasVideo ? '<span class="absolute top-3 right-3 bg-primary/50 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">Audio</span>' : ''}
       </div>
       <!-- Card body -->
       <div class="p-5 space-y-3">
-        <p class="text-primary font-bold text-xs uppercase tracking-wide">${formatDate(s.date || s.created_at)}</p>
+        <p class="text-primary font-bold text-xs uppercase tracking-wide">${formatDate(s.sermon_date || s.created_at)}</p>
         <h4 class="font-bold text-primary leading-snug line-clamp-2">${escapeHtml(s.title)}</h4>
         ${s.speaker ? `<p class="text-xs text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-sm">person</span>${escapeHtml(s.speaker)}</p>` : ''}
+        ${s.series_name ? `<p class="text-xs text-secondary font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">local_library</span>${escapeHtml(s.series_name)}</p>` : ''}
+        ${s.scripture_reference ? `<p class="text-xs text-outline flex items-center gap-1"><span class="material-symbols-outlined text-sm">menu_book</span>${escapeHtml(s.scripture_reference)}</p>` : ''}
         ${s.description ? `<p class="text-xs text-outline leading-relaxed line-clamp-2">${escapeHtml(s.description)}</p>` : ''}
         <div class="pt-1 flex items-center gap-3">
           ${canPlay ? `
-            <button onclick='playSermon(${data})'
+            <button onclick='playSermon(JSON.parse(decodeURIComponent("${data}")))'
               class="play-btn flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary-container transition-all">
-              <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">play_arrow</span>
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">${hasVideo && isYouTubeUrl(s.video_url) ? 'smart_display' : 'play_arrow'}</span>
               ${hasVideo ? 'Watch' : 'Listen'}
             </button>` : ''}
-          ${hasVideo ? `
+          ${hasVideo && isYouTubeUrl(s.video_url) ? `
+            <a href="${escapeHtml(s.video_url)}" target="_blank" rel="noopener"
+              class="flex items-center gap-1 text-xs font-bold text-outline hover:text-primary transition-colors">
+              <span class="material-symbols-outlined text-sm">open_in_new</span> YouTube
+            </a>` : hasVideo ? `
             <a href="${escapeHtml(s.video_url)}" target="_blank" rel="noopener"
               class="flex items-center gap-1 text-xs font-bold text-primary hover:text-secondary transition-colors">
               <span class="material-symbols-outlined text-sm">open_in_new</span> Open
@@ -423,7 +439,12 @@ function renderLatest() {
 
   document.getElementById('latest-title').textContent   = latestSermon.title;
   document.getElementById('latest-speaker').textContent = latestSermon.speaker ? `— ${latestSermon.speaker}` : '';
-  document.getElementById('latest-date').textContent    = formatDate(latestSermon.date || latestSermon.created_at);
+  document.getElementById('latest-date').textContent    = formatDate(latestSermon.sermon_date || latestSermon.created_at);
+
+  // Update hero button icon based on media type
+  const heroIcon = latestSermon.video_url && isYouTubeUrl(latestSermon.video_url) ? 'smart_display' : 'play_arrow';
+  document.querySelector('#latest-play-btn .material-symbols-outlined').textContent = heroIcon;
+
   document.getElementById('latest-hero').classList.remove('hidden');
 }
 
@@ -431,8 +452,42 @@ function playLatest() {
   if (latestSermon) playSermon(latestSermon);
 }
 
+// ── YouTube modal ─────────────────────────────────────────
+function openYouTubeModal(s) {
+  const embedUrl = getYouTubeEmbedUrl(s.video_url);
+  if (!embedUrl) { Toast.error('Could not load video.'); return; }
+
+  Modal.show({
+    title: escapeHtml(s.title),
+    size: 'xl',
+    content: `
+      <div style="aspect-ratio:16/9;" class="rounded-xl overflow-hidden mb-4">
+        <iframe src="${embedUrl}?autoplay=1&rel=0"
+          class="w-full h-full"
+          frameborder="0" allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        </iframe>
+      </div>
+      ${s.speaker ? `<p class="text-sm font-semibold text-on-surface-variant flex items-center gap-1"><span class="material-symbols-outlined text-sm">person</span>${escapeHtml(s.speaker)}</p>` : ''}
+      <p class="text-xs text-outline mt-1">${formatDate(s.sermon_date || s.created_at)}</p>
+      ${s.description ? `<p class="text-sm text-on-surface-variant mt-3 leading-relaxed">${escapeHtml(s.description)}</p>` : ''}
+    `
+  });
+
+  // Highlight card
+  document.querySelectorAll('.sermon-card').forEach(c => c.classList.remove('playing'));
+  const el = document.querySelector(`[data-sermon-id="${s.id}"]`);
+  el?.classList.add('playing');
+}
+
 // ── Audio Player ──────────────────────────────────────────
 function playSermon(s) {
+  // YouTube video → open embedded modal instead of audio player
+  if (s.video_url && isYouTubeUrl(s.video_url)) {
+    openYouTubeModal(s);
+    return;
+  }
+
   const url = s.audio_url || s.video_url;
   if (!url) { Toast.info('No playable media for this sermon.'); return; }
 
@@ -526,8 +581,9 @@ function setHeaderAvatar(profile) {
 async function loadSermons() {
   const { data, error } = await supabase
     .from('sermons')
-    .select('id, title, speaker, date, audio_url, video_url, description, created_at')
-    .order('date', { ascending: false });
+    .select('id, title, speaker, sermon_date, series_name, scripture_reference, audio_url, video_url, description, duration_minutes, created_at')
+    .eq('is_published', true)
+    .order('sermon_date', { ascending: false });
 
   if (error || !data) {
     Toast.error('Failed to load sermons.');
