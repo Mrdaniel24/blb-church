@@ -1,4 +1,4 @@
-
+﻿
 <!-- =========================================================
   admin/events.html
   Role-aware: super_admin sees all events, admin sees own department events + general church events
@@ -40,9 +40,30 @@
     .card-hover:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(2, 6, 23, .06); }
     .calendar-chip { border-radius:9999px; padding:.35rem .75rem; font-size:.72rem; font-weight:800; }
   </style>
+  <link rel="stylesheet" href="../assets/css/responsive-sidebar.css"/>
 </head>
 <body class="bg-slate-50 text-slate-900" data-required-role="admin" style="opacity:0; transition: opacity 0.3s ease;" data-required-perm="can_manage_events">
-  <aside class="fixed inset-y-0 left-0 w-72 bg-slate-50 border-r border-slate-200 px-4 py-8 overflow-y-auto">
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<!-- Mobile Header Bar -->
+<div class="mobile-header">
+  <button data-sidebar-toggle class="hamburger-btn">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+  <div>
+    <h1>BLB Church</h1>
+    <p>Admin Portal</p>
+  </div>
+  <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center overflow-hidden border-2 border-secondary-container">
+    <span class="text-white text-sm font-bold">?</span>
+  </div>
+</div>
+  <aside id="sidebar" class="sidebar-responsive bg-slate-50 flex flex-col py-8 border-r border-slate-200/50">
+  <button class="sidebar-close-btn">
+    <span class="material-symbols-outlined" style="font-size:1.2rem;">close</span>
+  </button>
     <div class="px-6 mb-10">
       <h1 class="text-lg font-black text-primary uppercase tracking-widest">BLB Church</h1>
       <p id="sidebar-role-label-2" class="text-[10px] mt-1 font-bold uppercase tracking-[0.22em] text-slate-400">Admin</p>
@@ -60,7 +81,7 @@
     </div>
   </aside>
 
-  <main class="ml-72 min-h-screen p-10">
+  <main class="main-responsive p-4 md:p-10">
     <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
       <div>
         <p id="scope-badge-2" class="inline-flex items-center gap-2 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-extrabold uppercase tracking-widest">Department + General</p>
@@ -478,5 +499,27 @@
     }
   })();
   </script>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <a href="./dashboard.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>Home</span>
+  </a>  <a href="./members.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">group</span>
+    <span>Members</span>
+  </a>  <a href="./contributions.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">payments</span>
+    <span>Giving</span>
+  </a>  <a href="./events.html" class="bottom-nav-item bottom-nav-active">
+    <span class="material-symbols-outlined">event</span>
+    <span>Events</span>
+  </a>  <button data-sidebar-toggle class="bottom-nav-item">
+    <span class="material-symbols-outlined">menu</span>
+    <span>More</span>
+  </button>
+</nav>
+
+<script src="../assets/js/responsive-sidebar.js"></script>
 </body>
 </html>

@@ -59,6 +59,7 @@
   </script>
 
   <link rel="stylesheet" href="../assets/css/shared.css" />
+  <link rel="stylesheet" href="../assets/css/responsive-sidebar.css" />
 
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9f9; color: #1a1c1c; }
@@ -144,8 +145,28 @@
 
 <body data-required-role="admin" style="opacity:0; transition:opacity 0.3s ease;" data-required-perm="can_manage_members">
 
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<!-- Mobile Header Bar -->
+<div class="mobile-header">
+  <button data-sidebar-toggle class="hamburger-btn">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+  <div>
+    <h1>BLB Church</h1>
+    <p>Admin Portal</p>
+  </div>
+  <div id="mobile-avatar" class="w-9 h-9 rounded-full bg-primary flex items-center justify-center overflow-hidden border-2 border-secondary-container">
+    <span class="text-white text-sm font-bold" id="mobile-initials">?</span>
+  </div>
+</div>
+
   <!-- SIDEBAR -->
-  <aside class="h-screen w-72 fixed left-0 top-0 bg-slate-50 flex flex-col py-8 border-r border-slate-200/50 z-40 overflow-y-auto">
+  <aside id="sidebar" class="sidebar-responsive bg-slate-50 flex flex-col py-8 border-r border-slate-200/50">
+    <button class="sidebar-close-btn">
+      <span class="material-symbols-outlined" style="font-size:1.2rem;">close</span>
+    </button>
     <div class="px-10 mb-10">
       <h1 class="text-lg font-black text-blue-900 uppercase tracking-widest">BLB Church</h1>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Admin Portal</p>
@@ -196,7 +217,7 @@
   </aside>
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-30 ml-72 bg-white/80 backdrop-blur-xl shadow-sm flex justify-between items-center h-20 px-8 border-b border-slate-200/40">
+  <header class="sticky top-0 z-30 md:ml-72 bg-white/80 backdrop-blur-xl shadow-sm hidden md:flex justify-between items-center h-20 px-8 border-b border-slate-200/40">
     <div class="flex items-center gap-8">
       <div>
         <h2 class="text-2xl font-bold tracking-tight font-headline text-blue-900">Member Directory</h2>
@@ -238,7 +259,7 @@
   </header>
 
   <!-- MAIN -->
-  <main class="ml-72 p-12 bg-background min-h-screen">
+  <main class="main-responsive p-4 md:p-12 bg-background">
     <!-- HERO -->
     <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
       <div class="max-w-3xl">
@@ -306,12 +327,37 @@
     </div>
   </main>
 
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <a href="./dashboard.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">dashboard</span>
+    <span>Home</span>
+  </a>
+  <a href="./members.html" class="bottom-nav-item bottom-nav-active">
+    <span class="material-symbols-outlined">group</span>
+    <span>Members</span>
+  </a>
+  <a href="./contributions.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">payments</span>
+    <span>Giving</span>
+  </a>
+  <a href="./events.html" class="bottom-nav-item">
+    <span class="material-symbols-outlined">event</span>
+    <span>Events</span>
+  </a>
+  <button data-sidebar-toggle class="bottom-nav-item">
+    <span class="material-symbols-outlined">menu</span>
+    <span>More</span>
+  </button>
+</nav>
+
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../assets/js/supabase-client.js"></script>
   <script src="../assets/js/common.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/router.js"></script>
+  <script src="../assets/js/responsive-sidebar.js"></script>
 
   <script>
     const state = {

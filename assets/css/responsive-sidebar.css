@@ -1,0 +1,322 @@
+/* ============================================
+   BLB Church — Responsive Sidebar & Mobile Nav
+   
+   Provides mobile-responsive sidebar behavior
+   for Admin & Super-Admin dashboards.
+   Include this AFTER shared.css on every dashboard page.
+   ============================================ */
+
+/* ─── Sidebar Base (mobile-first) ─── */
+.sidebar-responsive {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  height: 100dvh; /* dynamic viewport height for mobile */
+  width: 18rem; /* w-72 = 288px */
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Sidebar visible (toggled by JS) */
+.sidebar-responsive.sidebar-open {
+  transform: translateX(0);
+}
+
+/* Desktop: always visible */
+@media (min-width: 768px) {
+  .sidebar-responsive {
+    transform: translateX(0) !important;
+  }
+}
+
+/* ─── Sidebar Overlay ─── */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 35, 111, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 45;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  cursor: pointer;
+}
+
+.sidebar-overlay.overlay-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ─── Mobile Header Bar ─── */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(197, 197, 211, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 768px) {
+  .mobile-header {
+    display: none !important;
+  }
+}
+
+/* Hamburger Button */
+.hamburger-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  background: #f3f3f4;
+  color: #00236f;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger-btn:hover {
+  background: #e8e8e8;
+}
+
+.hamburger-btn:active {
+  transform: scale(0.92);
+}
+
+.hamburger-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+}
+
+/* Close button inside sidebar (mobile only) */
+.sidebar-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  color: #444651;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  transform: rotate(90deg);
+}
+
+.sidebar-close-btn:active {
+  transform: scale(0.9);
+}
+
+@media (min-width: 768px) {
+  .sidebar-close-btn {
+    display: none !important;
+  }
+}
+
+/* ─── Main Content Responsive Margin ─── */
+.main-responsive {
+  margin-left: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: 5.5rem; /* space for bottom nav */
+  transition: margin-left 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .main-responsive {
+    margin-left: 18rem; /* match sidebar width */
+    padding-bottom: 2rem;
+  }
+}
+
+/* Mobile content padding override */
+@media (max-width: 767px) {
+  .main-responsive > header:first-child,
+  .main-responsive > .desktop-header {
+    display: none !important;
+  }
+  
+  .main-responsive {
+    padding-top: 0 !important;
+  }
+  
+  /* Reduce padding on mobile */
+  .main-responsive > section,
+  .main-responsive > div {
+    /* Let individual pages handle their own mobile padding */
+  }
+}
+
+/* ─── Mobile Bottom Navigation ─── */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(197, 197, 211, 0.2);
+  box-shadow: 0 -4px 24px rgba(0, 35, 111, 0.06);
+  padding: 0.35rem 0.5rem;
+  padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+@media (min-width: 768px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* Bottom nav item */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #757682;
+  transition: color 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  min-width: 56px;
+}
+
+.bottom-nav-item .material-symbols-outlined {
+  font-size: 1.35rem;
+  transition: transform 0.2s ease;
+}
+
+.bottom-nav-item span:last-child {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.bottom-nav-item:hover {
+  color: #00236f;
+  background: rgba(0, 35, 111, 0.05);
+}
+
+.bottom-nav-item:active .material-symbols-outlined {
+  transform: scale(0.85);
+}
+
+/* Active bottom nav item */
+.bottom-nav-item.bottom-nav-active {
+  color: #00236f;
+}
+
+.bottom-nav-item.bottom-nav-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: #fed01b;
+  border-radius: 0 0 4px 4px;
+}
+
+.bottom-nav-item.bottom-nav-active .material-symbols-outlined {
+  font-variation-settings: 'FILL' 1;
+}
+
+/* ─── Sidebar nav items animation (staggered) ─── */
+.sidebar-responsive .nav-item,
+.sidebar-responsive .nav-item-active,
+.sidebar-responsive a[class*="nav-"] {
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+/* ─── Mobile-specific typography adjustments ─── */
+@media (max-width: 767px) {
+  /* Reduce oversized headings on mobile */
+  .mobile-header h1 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #00236f;
+    letter-spacing: -0.02em;
+  }
+  
+  .mobile-header p {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #757682;
+    font-weight: 700;
+  }
+}
+
+/* ─── Touch optimization ─── */
+@media (pointer: coarse) {
+  .sidebar-responsive a,
+  .sidebar-responsive button {
+    min-height: 44px;
+  }
+}
+
+/* ─── Reduce motion preference ─── */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-responsive,
+  .sidebar-overlay,
+  .mobile-bottom-nav,
+  .bottom-nav-item,
+  .hamburger-btn {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Landscape phone fix ─── */
+@media (max-height: 500px) and (max-width: 767px) {
+  .sidebar-responsive {
+    overflow-y: auto;
+  }
+  
+  .mobile-bottom-nav {
+    padding: 0.2rem 0.5rem;
+  }
+  
+  .bottom-nav-item {
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .bottom-nav-item span:last-child {
+    display: none;
+  }
+}
