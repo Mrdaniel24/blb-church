@@ -454,17 +454,17 @@
       <!-- Live Badge -->
       <div class="hero-badge reveal mb-8">
         <span class="badge-dot"></span>
-        The Digital Sanctuary
+        <span id="hero-badge-text">The Digital Sanctuary</span>
       </div>
 
       <!-- Main Heading -->
       <h1 class="hero-h1 reveal reveal-delay-1 mb-6">
         Welcome to<br/>
-        <span class="gold">BLB Church</span>
+        <span class="gold" id="hero-church-name">BLB Church</span>
       </h1>
 
       <!-- Subline -->
-      <p class="reveal reveal-delay-2 mb-10 text-lg md:text-xl font-medium leading-relaxed"
+      <p id="hero-subtext" class="reveal reveal-delay-2 mb-10 text-lg md:text-xl font-medium leading-relaxed"
          style="color:rgba(220,225,255,0.88); max-width:38rem;">
         A modern stewardship of tradition. Join a community where faith meets fellowship and shared purpose — Sunday and every day.
       </p>
@@ -588,12 +588,12 @@
     </div>
 
     <!-- Cards Grid -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+    <div id="service-times-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
 
       <!-- Card 1 -->
       <div class="service-card reveal reveal-delay-1">
         <div class="service-icon-wrap">
-          <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">auto_awesome</span>
+          <span class="material-symbols-outlined" style="font-size:1.5rem;line-height:1;font-variation-settings:'FILL' 1;letter-spacing:normal;text-transform:none;">auto_awesome</span>
         </div>
         <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
                     letter-spacing:0.18em;text-transform:uppercase;color:#735c00;margin-bottom:0.75rem;">
@@ -617,7 +617,7 @@
       <div class="service-card reveal reveal-delay-2"
            style="background:#00236f; color:#fff;">
         <div class="service-icon-wrap" style="background:rgba(255,255,255,0.12);">
-          <span class="material-symbols-outlined text-2xl" style="color:#ffe083 !important;font-variation-settings:'FILL' 1;">light_mode</span>
+          <span class="material-symbols-outlined" style="color:#ffe083;font-size:1.5rem;line-height:1;font-variation-settings:'FILL' 1;letter-spacing:normal;text-transform:none;">light_mode</span>
         </div>
         <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
                     letter-spacing:0.18em;text-transform:uppercase;color:#fed01b;margin-bottom:0.75rem;">
@@ -640,7 +640,7 @@
       <!-- Card 3 -->
       <div class="service-card reveal reveal-delay-3">
         <div class="service-icon-wrap">
-          <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">sunny</span>
+          <span class="material-symbols-outlined" style="font-size:1.5rem;line-height:1;font-variation-settings:'FILL' 1;letter-spacing:normal;text-transform:none;">sunny</span>
         </div>
         <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;
                     letter-spacing:0.18em;text-transform:uppercase;color:#735c00;margin-bottom:0.75rem;">
@@ -692,7 +692,7 @@
            style="grid-column:span 12; background:#00236f; border-radius:1.25rem; overflow:hidden; position:relative; min-height:400px;"
            id="bento-featured-wrap">
         <!-- Will be overridden by md breakpoint via JS -->
-        <img style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;"
+        <img id="bento-feature-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4;"
              src="https://images.unsplash.com/photo-1438232992991-995b671e4688?w=1200&q=80"
              srcset="https://images.unsplash.com/photo-1438232992991-995b671e4688?w=600&q=75 600w,
                      https://images.unsplash.com/photo-1438232992991-995b671e4688?w=900&q=80 900w,
@@ -707,11 +707,11 @@
                        margin-bottom:1rem;">
             Welcome
           </span>
-          <h3 style="font-family:'Inter',sans-serif;font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;
+          <h3 id="bento-feature-title" style="font-family:'Inter',sans-serif;font-size:clamp(1.5rem,3vw,2.25rem);font-weight:900;
                      line-height:1.15;letter-spacing:-0.02em;color:#ffffff;margin:0 0 0.875rem;max-width:480px;">
             A Home for Every Believer
           </h3>
-          <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;
+          <p id="bento-feature-desc" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.92rem;font-weight:500;
                     color:rgba(220,225,255,0.75);max-width:420px;line-height:1.65;margin:0 0 1.5rem;">
             Discover the heart of our community through worship, fellowship, and service.
           </p>
@@ -807,20 +807,88 @@
     <!-- Images (stacked) -->
     <div class="img-stack reveal" style="position:relative;display:flex;justify-content:center;">
       <div style="position:relative;width:75%;max-width:380px;">
-        <div style="border-radius:1.25rem;overflow:hidden;box-shadow:0 32px 64px rgba(0,35,111,0.16);aspect-ratio:3/4;">
-          <img style="width:100%;height:100%;object-fit:cover;"
+        <div style="border-radius:1.25rem;overflow:hidden;box-shadow:0 32px 64px rgba(0,35,111,0.16);aspect-ratio:3/4;position:relative;">
+
+          <!-- Photo -->
+          <img id="about-main-img" style="width:100%;height:100%;object-fit:cover;display:block;"
                src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80"
                srcset="https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400&q=75 400w,
                        https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=800&q=80 800w"
                sizes="(max-width: 768px) 75vw, 30vw"
                alt="Church community" loading="lazy"/>
+
+          <!-- Gradient overlay -->
+          <div style="position:absolute;inset:0;
+                      background:linear-gradient(
+                        to top,
+                        rgba(0,35,111,0.88) 0%,
+                        rgba(0,35,111,0.45) 35%,
+                        rgba(0,35,111,0.08) 60%,
+                        transparent 80%
+                      );
+                      pointer-events:none;"></div>
+
+          <!-- Top shimmer (subtle) -->
+          <div style="position:absolute;top:0;left:0;right:0;height:30%;
+                      background:linear-gradient(to bottom,rgba(0,35,111,0.25),transparent);
+                      pointer-events:none;"></div>
+
+          <!-- Bottom branding -->
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:1.4rem 1.4rem 1.4rem 1rem;z-index:2;">
+
+            <!-- Gold accent bar -->
+            <div style="width:2.25rem;height:3px;border-radius:9999px;
+                        background:linear-gradient(90deg,#fed01b,#ffe083);
+                        margin-bottom:0.8rem;
+                        box-shadow:0 2px 8px rgba(254,208,27,0.5);"></div>
+
+            <!-- Church label -->
+            <p id="about-img-church-name"
+               style="font-family:'Plus Jakarta Sans',sans-serif;
+                      font-size:0.6rem;font-weight:800;
+                      letter-spacing:0.22em;text-transform:uppercase;
+                      color:rgba(254,208,27,0.85);
+                      margin:0 0 0.3rem;line-height:1;">
+              BLB Church
+            </p>
+
+            <!-- Tagline -->
+            <p id="about-img-tagline"
+               style="font-family:'Inter',sans-serif;
+                      font-size:clamp(0.85rem,2vw,1.05rem);font-weight:800;
+                      color:#ffffff;margin:0;
+                      letter-spacing:-0.02em;line-height:1.25;
+                      text-shadow:0 2px 12px rgba(0,0,0,0.3);">
+              The Digital Sanctuary
+            </p>
+
+          </div>
+
+          <!-- Corner badge -->
+          <div style="position:absolute;top:1rem;right:1rem;
+                      background:rgba(254,208,27,0.18);
+                      border:1px solid rgba(254,208,27,0.35);
+                      border-radius:9999px;
+                      padding:0.3rem 0.7rem;
+                      display:flex;align-items:center;gap:0.35rem;">
+            <span style="width:6px;height:6px;border-radius:9999px;
+                         background:#fed01b;
+                         box-shadow:0 0 6px rgba(254,208,27,0.8);
+                         animation:pulse-dot 2s ease infinite;
+                         display:inline-block;"></span>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif;
+                         font-size:0.6rem;font-weight:800;
+                         letter-spacing:0.12em;text-transform:uppercase;
+                         color:#ffe083;">Live</span>
+          </div>
+
         </div>
         <!-- floating accent card -->
         <div style="position:absolute;bottom:-2rem;right:-2rem;
                     width:60%;border-radius:1rem;overflow:hidden;
                     border:5px solid #ffffff;
                     box-shadow:0 16px 40px rgba(0,35,111,0.18);aspect-ratio:1/1;">
-          <img style="width:100%;height:100%;object-fit:cover;"
+          <img id="about-accent-img" style="width:100%;height:100%;object-fit:cover;"
                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
                srcset="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=75 300w,
                        https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80 600w"
@@ -837,22 +905,22 @@
 
     <!-- Text Content -->
     <div class="reveal reveal-delay-2" style="padding-top:2rem;">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+      <span id="about-label" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
                    letter-spacing:0.2em;text-transform:uppercase;color:#735c00;display:block;margin-bottom:1rem;">
         Our Presence
       </span>
-      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(1.8rem,4vw,2.75rem);font-weight:900;
+      <h2 id="about-heading" style="font-family:'Inter',sans-serif;font-size:clamp(1.8rem,4vw,2.75rem);font-weight:900;
                  letter-spacing:-0.03em;color:#00236f;line-height:1.1;margin:0 0 1rem;">
-        A Sanctuary For<br/>Every Soul
+        A Sanctuary For Every Soul
       </h2>
       <span class="gold-line" style="margin-bottom:1.75rem;display:block;"></span>
 
-      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;
+      <p id="about-quote" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;
                 color:#444651;font-style:italic;line-height:1.75;
                 border-left:3px solid #fed01b;padding-left:1.25rem;margin:0 0 1.5rem;">
         "We don't just build buildings; we cultivate spaces where the human spirit finds room to breathe and the heart finds reason to hope."
       </p>
-      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:500;
+      <p id="about-body" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:500;
                 color:#444651;line-height:1.75;margin:0 0 2.5rem;">
         Through every ministry, every fellowship gathering, and every note played in our sanctuary, we are writing a story of connection. Our community is united by a common call to love and serve.
       </p>
@@ -892,11 +960,11 @@
 
     <!-- Header -->
     <div class="reveal" style="margin-bottom:3.5rem; text-align:center;">
-      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
+      <span id="ministries-label" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.7rem;font-weight:800;
                    letter-spacing:0.2em;text-transform:uppercase;color:#fed01b;display:block;margin-bottom:1rem;">
         Our Ministries
       </span>
-      <h2 style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
+      <h2 id="ministries-heading" style="font-family:'Inter',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:900;
                  letter-spacing:-0.03em;color:#ffffff;line-height:1.1;margin:0 0 1rem;">
         Serving Together
       </h2>
@@ -1526,7 +1594,7 @@ document.addEventListener('click', (e) => {
   try {
     const [minRes, mediaRes] = await Promise.all([
       supabase.from('departments')
-              .select('id,name,description')
+              .select('id,name,description,image_url')
               .eq('is_active', true)
               .order('name'),
       supabase.from('media_items')
@@ -1666,7 +1734,7 @@ document.addEventListener('click', (e) => {
   /* ── Render a ministry by index ── */
   function renderMinistry(idx) {
     const m    = ministries[idx];
-    const url  = imageForIndex(idx);
+    const url  = m.image_url || imageForIndex(idx); // prefer admin-uploaded image
     const icon = ministryIcon(m.name);
     const pad  = n => String(n + 1).padStart(2, '0');
 
@@ -2244,6 +2312,104 @@ document.addEventListener('click', (e) => {
 
   setTimeout(openModal, DELAY_MS);
 })();
+</script>
+
+<!-- ════════════════════════════════════
+     HOMEPAGE CMS HYDRATION
+════════════════════════════════════ -->
+<script>
+(async function hydrateCMS() {
+  try {
+    const [settingsRes, servicesRes] = await Promise.all([
+      supabase.from('system_settings').select('*').limit(1).single(),
+      supabase.from('service_times').select('*').eq('is_active', true).order('display_order')
+    ]);
+
+    if (settingsRes.error) console.warn('[CMS] system_settings error:', settingsRes.error.message, settingsRes.error.code);
+    if (servicesRes.error)  console.warn('[CMS] service_times error:',  servicesRes.error.message,  servicesRes.error.code);
+
+    if (settingsRes.data) applySettings(settingsRes.data);
+    if (servicesRes.data?.length) renderServiceTimes(servicesRes.data);
+  } catch (e) {
+    console.warn('[CMS] fetch failed:', e.message);
+  }
+})();
+
+function setText(id, val) {
+  if (!val) return;
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function setImg(id, url) {
+  if (!url) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.src = url;
+  el.srcset = '';
+}
+
+function applySettings(s) {
+  setText('hero-church-name',      s.church_name);
+  setText('hero-badge-text',       s.hero_badge_text);
+  setText('hero-subtext',          s.hero_subtext);
+  setText('about-label',           s.about_label);
+  setText('about-heading',         s.about_heading);
+  setText('about-quote',           s.about_quote);
+  setText('about-body',            s.about_body);
+  setText('ministries-label',      s.ministries_label);
+  setText('ministries-heading',    s.ministries_heading);
+  setText('bento-feature-title',   s.bento_feature_title);
+  setText('bento-feature-desc',    s.bento_feature_desc);
+  // About image overlay branding
+  setText('about-img-church-name', s.church_name);
+  setText('about-img-tagline',     s.tagline);
+  setImg('about-main-img',         s.about_main_image_url);
+  setImg('about-accent-img',       s.about_accent_image_url);
+  setImg('bento-feature-img',      s.bento_feature_image_url);
+}
+
+function renderServiceTimes(services) {
+  const grid = document.getElementById('service-times-grid');
+  if (!grid) return;
+
+  grid.innerHTML = services.map((s, i) => {
+    const isDark   = i === 1;
+    const bg       = isDark ? 'background:#00236f; color:#fff;' : '';
+    const iconWrap = isDark ? 'background:rgba(255,255,255,0.12);' : '';
+    const iconClr  = isDark ? 'color:#ffe083;' : 'color:#00236f;';
+    const dayClr   = isDark ? 'color:#fed01b;' : 'color:#735c00;';
+    const titleClr = isDark ? 'color:#ffffff;' : 'color:#00236f;';
+    const descClr  = isDark ? 'color:rgba(220,225,255,0.75);' : 'color:#444651;';
+    const timeClr  = isDark ? 'color:#ffe083;' : 'color:#00236f;';
+    const ampmClr  = isDark ? 'color:rgba(255,255,255,0.55);' : 'color:#735c00;';
+
+    const timeParts = (s.time_label || '').split(' ');
+    const timeNum   = timeParts[0] || s.time_label;
+    const timeAmPm  = timeParts[1] || '';
+
+    const iconName = (s.icon || 'church').trim();
+
+    return `
+      <div class="service-card reveal visible${i===0?' reveal-delay-1':i===1?' reveal-delay-2':' reveal-delay-3'}" style="${bg}">
+        <div class="service-icon-wrap" style="${iconWrap}">
+          <span class="material-symbols-outlined" style="${iconClr}font-size:1.5rem;line-height:1;font-variation-settings:'FILL' 1;letter-spacing:normal;text-transform:none;">${iconName}</span>
+        </div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.65rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;${dayClr}margin-bottom:0.75rem;">
+          ${escapeHtml(s.day_label)}
+        </div>
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.3rem;font-weight:800;${titleClr}margin:0 0 0.6rem;letter-spacing:-0.02em;">
+          ${escapeHtml(s.title)}
+        </h3>
+        <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:500;${descClr}line-height:1.65;margin:0 0 1.5rem;">
+          ${escapeHtml(s.description || '')}
+        </p>
+        <div style="font-family:'Inter',sans-serif;font-size:2rem;font-weight:900;${timeClr}letter-spacing:-0.03em;">
+          ${escapeHtml(timeNum)} <span style="font-size:1rem;${ampmClr}">${escapeHtml(timeAmPm)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
 </script>
 
 </body>
