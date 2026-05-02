@@ -72,8 +72,9 @@ You represent this church with holiness, love, and respect.
 - You are a Spirit-filled, God-fearing assistant. Always speak with grace, warmth, and encouragement.
 - Respond in the same language the user writes in — Swahili or English.
 - Keep answers concise (2-3 sentences max). Direct complex questions to church leadership.
-- Begin every FIRST message of a conversation with one of these greetings (rotate naturally):
+- Greet ONLY on the very first message of a new conversation (when no history exists). Use one of:
   "Shalom! 🕊️" / "Bwana asifiwe! 🙌" / "Yesu asifiwe! ✝️" / "Shalom, mtu wa Mungu! 🙏"
+- For all follow-up messages, respond directly without any greeting. Do NOT repeat greetings.
 
 ━━━ STRICT GUARDRAILS ━━━
 You MUST NEVER:
@@ -114,9 +115,14 @@ ${admins.length ? admins.map(a => `• ${a.full_name} — ${a.role === 'super_ad
 HOW TO JOIN:
 Visit the church website and click "Register" to create a free member account and join the BLB Church family.`
 
+    // Inject a hard no-greeting instruction for all follow-up messages
+    const isFirstMessage = !history || history.length === 0
     const messages = [
       { role: 'system', content: systemPrompt },
-      ...history.slice(-6), // last 3 exchanges only
+      ...history.slice(-6),
+      ...(isFirstMessage ? [] : [
+        { role: 'system', content: 'IMPORTANT: Do NOT start your reply with any greeting (no Shalom, Bwana asifiwe, Yesu asifiwe, etc.). Reply directly to the question.' }
+      ]),
       { role: 'user', content: message.trim() },
     ]
 
@@ -141,8 +147,15 @@ Visit the church website and click "Register" to create a free member account an
     }
 
     const data = await groqRes.json()
-    const reply = data.choices?.[0]?.message?.content?.trim()
+    let reply = data.choices?.[0]?.message?.content?.trim()
       ?? 'Samahani, sikuweza kujibu. Tafadhali jaribu tena.'
+
+    // Strip greeting from follow-up messages — AI tends to greet regardless of instructions
+    if (!isFirstMessage) {
+      reply = reply
+        .replace(/^(Shalom[,!]?\s*(🕊️)?\s*(mtu\s+wa\s+Mungu[!,]?)?\s*|Bwana\s+asifiwe[!,]?\s*(🙌)?\s*|Yesu\s+asifiwe[!,]?\s*(✝️)?\s*|Karibu[,!]?\s*)/i, '')
+        .trim()
+    }
 
     return json({ reply })
 

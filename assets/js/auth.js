@@ -275,6 +275,17 @@ async function initPageGuard() {
       document.body.style.opacity = '1';
     });
 
+    // WhatsApp prompt — show on first visit after login if not yet set
+    if ((profile.role === 'admin' || profile.role === 'super_admin') && !profile.whatsapp) {
+      const snooze = localStorage.getItem('blb_wa_snoozed');
+      const snoozed = snooze && (Date.now() - parseInt(snooze) < 24 * 60 * 60 * 1000);
+      if (!snoozed) {
+        setTimeout(() => showWhatsAppPrompt(profile, (val) => {
+          profile.whatsapp = val;
+        }), 1000);
+      }
+    }
+
     return profile;
   } catch (e) {
     console.error('initPageGuard error:', e);
@@ -424,8 +435,10 @@ window.canAccessRole = canAccessRole;
 window.prettyRole = prettyRole;
 window.hydrateUserIdentity = hydrateUserIdentity;
 
-// WhatsApp number is managed via the Profile page (admin/profile.html, super-admin/profile.html)
-
+// ── WhatsApp Prompt ───────────────────────────────────────────────────────────
+// Called from profile pages when admin hasn't set their WhatsApp number yet.
+async function showWhatsAppPrompt(profile, onSaved) {
+  if (!document.getElementById('blb-wa-css')) {
     const s = document.createElement('style');
     s.id = 'blb-wa-css';
     s.textContent = `
@@ -464,8 +477,7 @@ window.hydrateUserIdentity = hydrateUserIdentity;
         color:rgba(220,225,255,0.62);line-height:1.7;margin:0 0 1.25rem;}
       .blb-wa-input-wrap{position:relative;margin-bottom:0.5rem;}
       .blb-wa-input-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);
-        color:rgba(255,255,255,0.3);font-size:18px;pointer-events:none;
-        font-variation-settings:'FILL' 1;}
+        color:rgba(255,255,255,0.3);font-size:18px;pointer-events:none;}
       #blb-wa-input{width:100%;background:rgba(255,255,255,0.06);
         border:1.5px solid rgba(255,255,255,0.1);border-radius:0.625rem;
         padding:0.72rem 0.875rem 0.72rem 2.4rem;font-family:'Plus Jakarta Sans',sans-serif;
@@ -475,7 +487,7 @@ window.hydrateUserIdentity = hydrateUserIdentity;
       #blb-wa-input:focus{border-color:rgba(37,211,102,0.45);background:rgba(255,255,255,0.08);}
       #blb-wa-error{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.77rem;
         color:#f87171;margin:0.35rem 0 0.75rem;display:none;}
-      #blb-wa-error.blb-wa-err-show{display:block;}
+      #blb-wa-error.show{display:block;}
       #blb-wa-save{width:100%;padding:0.72rem;background:#25d166;border:none;
         border-radius:0.625rem;font-family:'Plus Jakarta Sans',sans-serif;
         font-size:0.875rem;font-weight:700;color:#fff;cursor:pointer;
@@ -518,12 +530,11 @@ window.hydrateUserIdentity = hydrateUserIdentity;
         </div>
         <p id="blb-wa-error"></p>
         <button id="blb-wa-save">Hifadhi Namba</button>
-        <button id="blb-wa-later">Nitaweka baadaye</button>
+        <button id="blb-wa-later">Sasa hivi si huru</button>
       </div>
-      <div id="blb-wa-footer">Unaweza kubadilisha namba yako wakati wowote kwenye ukurasa wa Profile.</div>
+      <div id="blb-wa-footer">Unaweza kubadilisha namba yako wakati wowote hapa kwenye Profile.</div>
     </div>`;
   document.body.appendChild(overlay);
-
   setTimeout(() => overlay.classList.add('blb-wa-show'), 60);
 
   function closePrompt() {
@@ -536,38 +547,35 @@ window.hydrateUserIdentity = hydrateUserIdentity;
     const errorEl = document.getElementById('blb-wa-error');
     const saveBtn = document.getElementById('blb-wa-save');
     const val     = input.value.trim();
-
-    errorEl.classList.remove('blb-wa-err-show');
-
+    errorEl.classList.remove('show');
     if (!val || val.replace(/\D/g, '').length < 9) {
       errorEl.textContent = 'Tafadhali weka namba sahihi (angalau tarakimu 9).';
-      errorEl.classList.add('blb-wa-err-show');
+      errorEl.classList.add('show');
       input.focus();
       return;
     }
-
     saveBtn.disabled = true;
     saveBtn.textContent = 'Inahifadhi...';
-
     const { error } = await supabase
       .from('profiles')
       .update({ whatsapp: val })
       .eq('id', profile.id);
-
     if (error) {
       saveBtn.disabled = false;
       saveBtn.textContent = 'Hifadhi Namba';
       errorEl.textContent = 'Imeshindwa kuhifadhi. Tafadhali jaribu tena.';
-      errorEl.classList.add('blb-wa-err-show');
+      errorEl.classList.add('show');
       return;
     }
-
     closePrompt();
-    if (typeof Toast !== 'undefined') Toast.success('Namba ya WhatsApp imehifadhiwa!');
+    if (typeof Toast !== 'undefined') Toast.success('Namba ya WhatsApp imehifadhiwa! 🎉');
+    if (typeof onSaved === 'function') onSaved(val);
   });
 
   document.getElementById('blb-wa-later').addEventListener('click', () => {
-    localStorage.setItem(SNOOZE_KEY, Date.now().toString());
+    localStorage.setItem('blb_wa_snoozed', Date.now().toString());
     closePrompt();
   });
 }
+window.showWhatsAppPrompt = showWhatsAppPrompt;
+
