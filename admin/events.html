@@ -1,4 +1,4 @@
-﻿
+
 <!-- =========================================================
   admin/events.html
   Role-aware: super_admin sees all events, admin sees own department events + general church events
@@ -80,6 +80,7 @@
       <a class="nav-item" href="./sermons.html" data-perm="can_manage_sermons"><span class="material-symbols-outlined">mic</span><span>Sermons</span></a>
       <a class="nav-item" href="./reports.html" data-perm="can_view_reports"><span class="material-symbols-outlined">bar_chart</span><span>Reports</span></a>
       <a class="nav-item" href="./departments.html" data-perm="can_manage_departments"><span class="material-symbols-outlined">account_tree</span><span>Departments</span></a>
+      <a href="./messages.html" class="nav-item"><span class="material-symbols-outlined">chat</span><span>Group Chat</span></a>
       <a href="./profile.html" class="nav-item">
         <span class="material-symbols-outlined">manage_accounts</span>
         <span>My Profile</span>
@@ -88,27 +89,15 @@
       <div class="px-10 pt-5 pb-1">
         <p class="text-[9px] uppercase tracking-[0.25em] text-slate-400 font-black">My Church Life</p>
       </div>
-      <a href="../member/contributions.html" class="nav-item">
-        <span class="material-symbols-outlined">payments</span>
-        <span>My Giving</span>
-      </a>
-      <a href="../member/sermons.html" class="nav-item">
-        <span class="material-symbols-outlined">mic</span>
-        <span>Sermons</span>
-      </a>
-      <a href="../member/announcements.html" class="nav-item">
-        <span class="material-symbols-outlined">campaign</span>
-        <span>Announcements</span>
-      </a>
-      <a href="../member/events.html" class="nav-item">
-        <span class="material-symbols-outlined">event</span>
-        <span>Events</span>
+      <a href="../member/dashboard.html" class="nav-item">
+        <span class="material-symbols-outlined">home</span>
+        <span>Member Dashboard</span>
       </a>
     </div>
   </aside>
 
   <main class="main-responsive p-4 md:p-10">
-    <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10">
       <div>
         <p id="scope-badge-2" class="inline-flex items-center gap-2 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-extrabold uppercase tracking-widest">Department + General</p>
         <h2 class="mt-4 text-4xl font-headline font-extrabold tracking-tight text-primary">Events</h2>
@@ -121,7 +110,7 @@
           Create Event
         </button>
       </div>
-    </header>
+    </div>
 
     <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
       <div class="card-hover rounded-3xl bg-white p-6 shadow-sm">
