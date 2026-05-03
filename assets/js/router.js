@@ -64,10 +64,10 @@ async function initPageGuard() {
 
   populateUserUI(profile);
 
-  // ── WhatsApp contact prompt (admins only, if not yet set) ─────────────────
-  if ((profile.role === 'admin' || profile.role === 'super_admin') && !profile.whatsapp) {
-    console.log('[BLB] WhatsApp not set — showing prompt for', profile.role);
-    setTimeout(() => _showWhatsAppPrompt(profile), 900);
+  // Show "Back to Admin" banner when admin/super_admin visits member pages
+  if ((profile.role === 'admin' || profile.role === 'super_admin')
+      && window.location.pathname.includes('/member/')) {
+    _showAdminBackBanner(profile.role);
   }
 
   // Attach permissions to profile so page scripts can read profile.permissions
@@ -184,6 +184,37 @@ window.setActiveNavLink = setActiveNavLink;
 window.supabase.auth.onAuthStateChange((event) => {
   if (event === 'SIGNED_OUT') _redirect('/public/login.html');
 });
+
+function _showAdminBackBanner(role) {
+  const adminUrl = role === 'super_admin'
+    ? '/super-admin/dashboard.html'
+    : '/admin/dashboard.html';
+
+  const bar = document.createElement('div');
+  bar.id = 'blb-admin-back-bar';
+  bar.style.cssText = [
+    'position:fixed;top:0;left:0;right:0;z-index:9990;',
+    'background:#00236f;padding:7px 20px;',
+    'display:flex;align-items:center;justify-content:space-between;',
+    'font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.78rem;',
+    'font-weight:600;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.2);',
+  ].join('');
+  bar.innerHTML = `
+    <span style="display:flex;align-items:center;gap:6px;">
+      <span class="material-symbols-outlined" style="font-size:15px;color:#fed01b;font-variation-settings:'FILL' 1;">visibility</span>
+      Viewing as member
+    </span>
+    <a href="${adminUrl}" style="display:flex;align-items:center;gap:4px;color:#fed01b;
+      font-weight:700;text-decoration:none;background:rgba(254,208,27,0.15);
+      padding:3px 12px;border-radius:20px;font-size:0.75rem;">
+      <span class="material-symbols-outlined" style="font-size:14px;">arrow_back</span>
+      Back to Admin
+    </a>`;
+  document.body.prepend(bar);
+  // Push content down so banner doesn't cover page header
+  const current = parseInt(document.body.style.paddingTop || '0', 10);
+  document.body.style.paddingTop = (current + 36) + 'px';
+}
 
 // ── WhatsApp Contact Prompt ───────────────────────────────────────────────────
 // Shown to admins/super_admins who haven't set their WhatsApp number yet.

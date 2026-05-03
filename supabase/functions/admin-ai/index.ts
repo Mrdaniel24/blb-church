@@ -181,7 +181,7 @@ Example response when creating an announcement:
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages,
-        max_tokens: 500,
+        max_tokens: 700,
         temperature: 0.4,
       }),
     })

@@ -168,9 +168,23 @@
         </div>
       </div>
 
+      <!-- Remember Me -->
+      <div class="flex items-center justify-between mb-5 -mt-2">
+        <label class="flex items-center gap-2 cursor-pointer select-none group">
+          <input
+            type="checkbox"
+            id="remember-me"
+            class="w-4 h-4 rounded border-outline-variant accent-primary cursor-pointer"
+          />
+          <span class="text-xs text-on-surface-variant font-medium group-hover:text-primary transition-colors">
+            Remember me
+          </span>
+        </label>
+      </div>
+
       <!-- Submit Button -->
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         id="login-btn"
         class="btn-primary-login w-full py-4 rounded-xl text-on-secondary-fixed font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2"
       >
@@ -247,12 +261,20 @@
       }
     });
 
+    // Auto-fill saved email
+    const savedEmail = localStorage.getItem('blb_remember_email');
+    if (savedEmail) {
+      document.getElementById('email').value = savedEmail;
+      document.getElementById('remember-me').checked = true;
+    }
+
     // Handle login form submission
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const email = document.getElementById('email').value.trim();
+
+      const email    = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember-me').checked;
       const errorDiv = document.getElementById('login-error');
       const errorText = document.getElementById('login-error-text');
       const btn = document.getElementById('login-btn');
@@ -269,6 +291,15 @@
 
       try {
         const result = await handleLogin(email, password);
+
+        if (result.success) {
+          // Save or clear remembered email
+          if (remember) {
+            localStorage.setItem('blb_remember_email', email);
+          } else {
+            localStorage.removeItem('blb_remember_email');
+          }
+        }
 
         if (!result.success) {
           errorDiv.classList.remove('hidden');
