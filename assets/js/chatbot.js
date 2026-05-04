@@ -125,6 +125,19 @@
     }
     .blb-chip:hover  { background: #f0f4ff; border-color: #00236f; }
     .blb-chip:active { transform: scale(0.95); }
+    /* ── Map button inside chat ── */
+    .blb-map-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      margin-top: 10px; padding: 9px 16px;
+      background: #00236f; color: #fff !important;
+      border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+      text-decoration: none !important; cursor: pointer; border: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .blb-map-btn:hover  { background: #1e3a8a; }
+    .blb-map-btn:active { transform: scale(0.95); }
+    .blb-map-btn .material-symbols-outlined { font-size: 16px; }
     /* ── Contact cards inside chat ── */
     .blb-contact-card {
       background: #fff; border: 1.5px solid #e0e7ff; border-radius: 12px;
@@ -317,7 +330,25 @@
     const msgs = document.getElementById('blb-msgs');
     const div  = document.createElement('div');
     div.className = 'blb-msg bot';
+
+    // Detect [SHOW_MAP] token injected by the AI for location responses
+    let showMap = false;
+    if (text.includes('[SHOW_MAP]')) {
+      text    = text.replace(/\[SHOW_MAP\]/g, '').trim();
+      showMap = true;
+    }
+
     div.innerHTML = esc(text).replace(/\n/g, '<br>');
+
+    if (showMap) {
+      const btn = document.createElement('button');
+      btn.className = 'blb-map-btn';
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1">location_on</span> Fungua Ramani / Open Map';
+      btn.addEventListener('click', onDirections);
+      div.appendChild(document.createElement('br'));
+      div.appendChild(btn);
+    }
+
     msgs.appendChild(div);
     scrollBottom();
     if (!isOpen) document.getElementById('blb-chat-btn').classList.add('has-msg');
