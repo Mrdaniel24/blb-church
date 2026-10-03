@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karibu | BLB Church — Usajili wa Wageni</title>
+  <meta name="description" content="Karibu Bonde la Baraka Church. Tunafurahi kukujua — jaza taarifa zako kama mgeni wetu." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#00236f" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Tokens — design-system/blb-church/MASTER.md (The Reverent Editorial) */
+    :root {
+      --primary: #00236f;
+      --primary-container: #1e3a8a;
+      --gold: #fed01b;
+      --on-gold: #231b00;
+      --gold-muted: #735c00;
+      --surface-low: #f3f3f4;
+      --on-surface: #1a1c1c;
+      --on-surface-variant: #444651;
+      --outline: #757682;
+      --outline-variant: #c5c5d3;
+      --error: #ba1a1a;
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; background: #1e3a8a; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--on-surface);
+      background: linear-gradient(135deg, #00236f 0%, #1e3a8a 50%, #264191 100%);
+    }
+
+    .glow { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+    .glow::before, .glow::after { content: ""; position: absolute; border-radius: 50%; filter: blur(64px); }
+    .glow::before { top: 8%; right: -6%; width: 20rem; height: 20rem; background: rgba(255,255,255,.06); }
+    .glow::after  { bottom: 8%; left: -4%; width: 16rem; height: 16rem; background: rgba(254,208,27,.12); }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 34rem;
+      background: rgba(255,255,255,.97);
+      border-radius: 2rem;
+      box-shadow: 0 32px 80px rgba(0,0,0,.28);
+      overflow: hidden;
+      animation: rise .65s ease both;
+    }
+    main::before {
+      content: "";
+      display: block;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--gold));
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+
+    .pad { padding: 2.25rem 1.5rem 2rem; }
+    @media (min-width: 560px) { .pad { padding: 2.75rem 2.5rem 2.25rem; } body { padding: 32px; } }
+
+    header { text-align: center; margin-bottom: 2rem; }
+
+    .badge {
+      width: 3.5rem; height: 3.5rem;
+      margin: 0 auto 1.25rem;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--primary);
+      border-radius: 1rem;
+      box-shadow: 0 12px 28px rgba(0,35,111,.28);
+    }
+    .badge svg { width: 1.6rem; height: 1.6rem; fill: var(--gold); }
+
+    .eyebrow {
+      margin: 0 0 .6rem;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold-muted);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: clamp(2rem, 8vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+      color: var(--primary);
+    }
+
+    .gold-line { width: 3rem; height: 3px; margin: 1rem auto; background: var(--gold); border-radius: 2px; }
+
+    header p.lead {
+      margin: 0 auto;
+      max-width: 30ch;
+      font-size: .95rem;
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--on-surface-variant);
+    }
+
+    .field { margin-bottom: 1.15rem; }
+
+    .field label, legend {
+      display: block;
+      padding: 0;
+      margin-bottom: .5rem;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+
+    .field input {
+      display: block;
+      width: 100%;
+      min-height: 3.25rem;
+      padding: .85rem 1rem;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--on-surface);
+      background: var(--surface-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: .75rem;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .field input::placeholder { color: var(--outline); font-weight: 400; }
+    .field input:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(254,208,27,.35); }
+    .field.invalid input { border-color: var(--error); }
+
+    fieldset { border: 0; padding: 0; margin: 1.5rem 0 0; min-width: 0; }
+    legend {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: normal;
+      text-transform: none;
+      line-height: 1.35;
+      color: var(--primary);
+      margin-bottom: .75rem;
+    }
+
+    .choices { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+
+    .choice { position: relative; }
+    .choice input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+    .choice span {
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      min-height: 3.25rem;
+      padding: .75rem 1rem;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #fff;
+      border: 2px solid var(--outline-variant);
+      border-radius: .75rem;
+      transition: background .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+    .choice span::before {
+      content: "";
+      flex: none;
+      width: 1.15rem; height: 1.15rem;
+      border: 2px solid var(--outline);
+      border-radius: 50%;
+      transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .choice input:checked + span {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(0,35,111,.22);
+    }
+    .choice input:checked + span::before {
+      border-color: var(--gold);
+      background: var(--gold);
+      box-shadow: inset 0 0 0 3px var(--primary);
+    }
+    .choice input:focus-visible + span { outline: 3px solid var(--gold); outline-offset: 2px; }
+    .invalid .choice span { border-color: var(--error); }
+
+    .hint { display: none; margin: .45rem 0 0; font-size: .82rem; font-weight: 600; color: var(--error); }
+    .invalid .hint { display: block; }
+
+    /* Mtego wa bots — binadamu hawaoni */
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+    .form-error {
+      display: none;
+      margin: 1.25rem 0 0;
+      padding: .9rem 1rem;
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--error);
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: .75rem;
+    }
+    .form-error.show { display: block; }
+
+    button[type="submit"] {
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      width: 100%;
+      min-height: 3.5rem;
+      margin-top: 1.75rem;
+      font: inherit;
+      font-size: .85rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--on-gold);
+      background: var(--gold);
+      border: 0;
+      border-radius: 9999px;
+      box-shadow: 0 12px 32px rgba(254,208,27,.35);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    button[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(254,208,27,.45); }
+    button[type="submit"]:active { transform: none; }
+    button[type="submit"]:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+    button[type="submit"][disabled] { opacity: .7; cursor: progress; transform: none; }
+
+    .spinner {
+      display: none;
+      width: 1.1rem; height: 1.1rem;
+      border: 2.5px solid rgba(35,27,0,.25);
+      border-top-color: var(--on-gold);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    button[disabled] .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .privacy { margin: 1.1rem 0 0; font-size: .8rem; line-height: 1.5; text-align: center; color: var(--outline); }
+
+    /* Baada ya kutuma */
+    #thanks { display: none; text-align: center; outline: none; }
+    #thanks .badge { background: var(--gold); box-shadow: 0 12px 32px rgba(254,208,27,.35); }
+    #thanks .badge svg { fill: none; stroke: var(--primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    #thanks p.lead { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    #thanks p.sub { margin: .9rem auto 0; max-width: 30ch; font-size: .95rem; font-weight: 500; line-height: 1.6; color: var(--on-surface-variant); }
+    #thanks a {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 3.25rem;
+      margin-top: 1.75rem;
+      padding: .9rem 1.75rem;
+      font-size: .8rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 9999px;
+      transition: background .2s ease, color .2s ease;
+    }
+    #thanks a:hover { background: var(--primary); color: #fff; }
+    #thanks a:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+    body.done #form-view { display: none; }
+    body.done #thanks { display: block; animation: rise .5s ease both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+
+  <main>
+   <div class="pad">
+    <div id="form-view">
+      <header>
+        <div class="badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M10.5 2h3v5.5H19v3h-5.5V22h-3V10.5H5v-3h5.5z"/></svg>
+        </div>
+        <p class="eyebrow">Bonde la Baraka Church</p>
+        <h1>Karibu</h1>
+        <div class="gold-line"></div>
+        <p class="lead">Tunafurahi kukujua. Tafadhali jaza taarifa zako hapa chini.</p>
+      </header>
+
+      <form id="visitor-form" novalidate>
+        <div class="field" data-field="full_name">
+          <label for="full_name">Jina kamili</label>
+          <input id="full_name" name="full_name" type="text" autocomplete="name" autocapitalize="words" maxlength="120" placeholder="Andika jina lako kamili" required />
+          <p class="hint">Tafadhali andika jina lako kamili.</p>
+        </div>
+
+        <div class="field" data-field="phone">
+          <label for="phone">Namba ya simu</label>
+          <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" maxlength="20" required />
+          <p class="hint">Andika namba sahihi ya simu, mfano 0712 345 678.</p>
+        </div>
+
+        <div class="field" data-field="area">
+          <label for="area">Unapoishi (Eneo/Mtaa)</label>
+          <input id="area" name="area" type="text" autocomplete="address-level2" autocapitalize="words" maxlength="160" placeholder="Mfano: Sakina" required />
+          <p class="hint">Tafadhali andika eneo au mtaa unaoishi.</p>
+        </div>
+
+        <fieldset data-field="first_time">
+          <legend>Je, ni mara ya kwanza kuabudu kanisani kwetu?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="first_time" value="true" required /><span>Ndio</span></label>
+            <label class="choice"><input type="radio" name="first_time" value="false" /><span>Hapana</span></label>
+          </div>
+          <p class="hint">Tafadhali chagua Ndio au Hapana.</p>
+        </fieldset>
+
+        <fieldset data-field="wants_contact">
+          <legend>Je, ungependa tuendelee kuwasiliana nawe?</legend>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="wants_contact" value="true" required /><span>Ndio</span></label>
+            <label class="choice"><input type="radio" name="wants_contact" value="false" /><span>Hapana</span></label>
+          </div>
+          <p class="hint">Tafadhali chagua Ndio au Hapana.</p>
+        </fieldset>
+
+        <div class="hp" aria-hidden="true">
+          <label for="website">Usijaze hapa</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <p class="form-error" id="form-error" role="alert"></p>
+
+        <button type="submit" id="submit-btn">
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="submit-label">Tuma</span>
+        </button>
+
+        <p class="privacy">Taarifa zako zinaonekana kwa uongozi wa kanisa pekee.</p>
+      </form>
+    </div>
+
+    <section id="thanks" aria-live="polite" tabindex="-1">
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </div>
+      <p class="eyebrow">Bonde la Baraka Church</p>
+      <h1>Asante</h1>
+      <div class="gold-line"></div>
+      <p class="lead">Wewe ni mgeni maalumu kwetu</p>
+      <p class="sub" id="thanks-sub">Tumepokea taarifa zako. Mungu akubariki!</p>
+      <a href="/">Tembelea tovuti ya kanisa</a>
+    </section>
+   </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/assets/js/supabase-client.js"></script>
+  <script>
+    (function () {
+      const form   = document.getElementById('visitor-form');
+      const btn    = document.getElementById('submit-btn');
+      const label  = document.getElementById('submit-label');
+      const errBox = document.getElementById('form-error');
+
+      // 0712 345 678 / 255712345678 / +255 712-345-678  →  tarakimu tu (na + ya mwanzo)
+      function cleanPhone(raw) {
+        const t = String(raw || '').trim();
+        return (t.startsWith('+') ? '+' : '') + t.replace(/\D/g, '');
+      }
+
+      function setInvalid(name, bad) {
+        const wrap = form.querySelector('[data-field="' + name + '"]');
+        wrap.classList.toggle('invalid', bad);
+        const input = wrap.querySelector('input');
+        if (input && input.type !== 'radio') input.setAttribute('aria-invalid', bad ? 'true' : 'false');
+        return bad;
+      }
+
+      function readForm() {
+        const fd = new FormData(form);
+        return {
+          full_name: String(fd.get('full_name') || '').trim().replace(/\s+/g, ' '),
+          phone: cleanPhone(fd.get('phone')),
+          area: String(fd.get('area') || '').trim().replace(/\s+/g, ' '),
+          first_time: fd.get('first_time'),
+          wants_contact: fd.get('wants_contact'),
+          website: String(fd.get('website') || '')
+        };
+      }
+
+      function validate(v) {
+        const bad = [
+          setInvalid('full_name', v.full_name.length < 2),
+          setInvalid('phone', !/^\+?[0-9]{9,15}$/.test(v.phone)),
+          setInvalid('area', v.area.length < 2),
+          setInvalid('first_time', v.first_time === null),
+          setInvalid('wants_contact', v.wants_contact === null)
+        ];
+        return !bad.some(Boolean);
+      }
+
+      // Ondoa alama ya kosa mara mtu anaporekebisha
+      form.addEventListener('input', function (e) {
+        const wrap = e.target.closest('[data-field]');
+        if (wrap) wrap.classList.remove('invalid');
+        errBox.classList.remove('show');
+      });
+
+      function showThanks(wantsContact) {
+        if (!wantsContact) {
+          document.getElementById('thanks-sub').textContent = 'Tumepokea taarifa zako. Mungu akubariki!';
+        } else {
+          document.getElementById('thanks-sub').textContent = 'Tumepokea taarifa zako, tutawasiliana nawe hivi karibuni. Mungu akubariki!';
+        }
+        document.body.classList.add('done');
+        window.scrollTo(0, 0);
+        document.getElementById('thanks').focus();
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (btn.disabled) return;
+
+        const v = readForm();
+        if (!validate(v)) {
+          const first = form.querySelector('.invalid input');
+          if (first) first.focus();
+          return;
+        }
+
+        // Bot amejaza sehemu iliyofichwa — onyesha asante bila kuhifadhi
+        if (v.website) { showThanks(false); return; }
+
+        btn.disabled = true;
+        label.textContent = 'Inatuma…';
+        errBox.classList.remove('show');
+
+        try {
+          if (!window.supabase || typeof window.supabase.from !== 'function') throw new Error('offline');
+
+          const { error } = await window.supabase.from('visitors').insert({
+            full_name: v.full_name,
+            phone: v.phone,
+            area: v.area,
+            first_time: v.first_time === 'true',
+            wants_contact: v.wants_contact === 'true'
+          });
+          if (error) throw error;
+
+          form.reset();
+          showThanks(v.wants_contact === 'true');
+        } catch (err) {
+          console.error('[BLB Karibu]', err);
+          errBox.textContent = navigator.onLine === false
+            ? 'Hakuna mtandao. Angalia intaneti yako kisha bonyeza Tuma tena.'
+            : 'Samahani, taarifa hazijatumwa. Tafadhali bonyeza Tuma tena.';
+          errBox.classList.add('show');
+        } finally {
+          btn.disabled = false;
+          label.textContent = 'Tuma';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
