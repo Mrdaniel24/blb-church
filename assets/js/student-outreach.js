@@ -50,14 +50,14 @@
       document.body.classList.add('call-only-mode');
       $('main-page-intro').classList.add('hidden');
       $('call-only-heading').classList.remove('hidden');
-      $('call-only-title').textContent = state.previewOnly ? 'Preview ya mpigaji' : 'Orodha yako ya simu';
-      $('call-only-caption').textContent = state.previewOnly ? 'Huu ni preview ya kusoma tu. Mtumie mpigaji link yake binafsi; link hiyo inatosha bila akaunti ya BLB.' : 'Piga simu, chagua matokeo na ongeza maelezo.';
+      $('call-only-title').textContent = state.previewOnly ? 'Preview ya mwenyekiti' : 'Orodha yako ya simu';
+      $('call-only-caption').textContent = state.previewOnly ? 'Hii ni preview tu; haiwezi kupiga simu wala kuhifadhi mrejesho. Tumia “Nakili link” kumtumia mpigaji link inayofanya kazi bila akaunti.' : 'Piga simu, chagua matokeo na ongeza maelezo.';
       $('dashboard-summary').classList.add('hidden');
       $('campus-summary').classList.add('hidden');
       $('bulk-assign-panel').classList.add('hidden');
       $('caller-feedback-panel').classList.add('hidden');
       $('coordinator-actions').classList.add('hidden');
-      $('list-caption').textContent = state.previewOnly ? 'Orodha ya mpigaji (preview ya kusoma tu)' : 'Namba ulizogawiwa na kumbukumbu za simu';
+      $('list-caption').textContent = state.previewOnly ? 'Preview ya mwenyekiti — tumia “Nakili link” kumtumia mpigaji' : 'Namba ulizogawiwa na kumbukumbu za simu';
     }
     if (state.coordinator) {
       $('coordinator-actions').classList.remove('hidden');
@@ -211,7 +211,7 @@
       const confirmed = assigned.filter(student => student.call_status === 'confirmed').length;
       const notConfirmed = assigned.filter(student => student.call_status === 'not_confirmed').length;
       const noAnswer = assigned.filter(student => student.call_status === 'no_answer').length;
-      return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || 'Mpigaji')}</h4><p class="text-xs text-slate-500">Mpigaji wa link binafsi</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Ona orodha</button><button data-caller-action="copy" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
+      return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || 'Mpigaji')}</h4><p class="text-xs text-slate-500">Mpigaji wa link binafsi</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Preview</button><button data-caller-action="copy" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
     }).join('') || '<p class="text-sm text-slate-500">Bado hakuna mpigaji aliyegawiwa wanafunzi.</p>';
   }
 
