@@ -20,6 +20,10 @@
     .status-pending { background:#fff7df;color:#8a6500 }.status-confirmed {background:#e5f7ed;color:#167044}.status-not_confirmed {background:#feeceb;color:#a3322e}.status-no_answer {background:#eaf0ff;color:#3654a0}
     .table-wrap { overflow:auto }.table-wrap table { min-width:820px }
     @media(max-width:767px) { .table-wrap table {min-width:720px} }
+    .call-only-mode #sidebar,.call-only-mode #sidebar-overlay,.call-only-mode .mobile-header,.call-only-mode .mobile-bottom-nav,.call-only-mode header { display:none !important; }
+    .call-only-mode .main-responsive { margin-left:auto !important; margin-right:auto !important; max-width:1200px; }
+    .call-only-mode #campus-filter,.call-only-mode #caller-filter,.call-only-mode #campus-head,.call-only-mode #caller-head,.call-only-mode .campus-cell { display:none !important; }
+    @media(max-width:767px) { .call-only-mode .table-wrap table { min-width:600px; } }
   </style>
 </head>
 <body data-required-role="member" style="opacity:0;transition:opacity .3s ease">
@@ -47,10 +51,11 @@
 </header>
 
 <main class="main-responsive p-4 md:p-10">
-  <section class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
+  <section id="main-page-intro" class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
     <div><span class="inline-flex items-center gap-2 rounded-full bg-blue-50 text-blue-900 px-3 py-1 text-xs font-extrabold uppercase tracking-widest mb-3"><span class="material-symbols-outlined text-sm">call</span> Huduma ya wanafunzi</span><h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-blue-950">Simu za mwaliko</h2><p class="mt-2 text-sm md:text-base text-slate-600">Gawa wanafunzi kwa wapigaji, hifadhi matokeo na andaa orodha ya madereva.</p></div>
     <div id="coordinator-actions" class="hidden flex-wrap gap-2"><button id="import-btn" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-blue-950 hover:bg-slate-50"><span class="material-symbols-outlined">upload_file</span>Ingiza CSV</button><button id="add-btn" class="inline-flex items-center gap-2 rounded-xl bg-blue-950 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-900"><span class="material-symbols-outlined">person_add</span>Ongeza mwanafunzi</button><input id="csv-file" type="file" accept=".csv,text/csv" class="hidden" /></div>
   </section>
+  <section id="call-only-heading" class="hidden mb-5 rounded-2xl bg-blue-950 p-5 text-white"><p class="text-xs font-bold uppercase tracking-widest text-blue-200">Simu za mwaliko</p><h2 id="call-only-title" class="mt-1 text-2xl font-extrabold">Orodha yako ya simu</h2><p id="call-only-caption" class="mt-1 text-sm text-blue-100">Piga simu, chagua matokeo na ongeza maelezo.</p></section>
 
   <section id="dashboard-summary" class="grid grid-cols-2 xl:grid-cols-5 gap-3 mb-6">
     <article class="stat-card rounded-2xl bg-white p-4 md:p-5"><div class="text-xs font-bold uppercase tracking-wider text-slate-500">Wanafunzi</div><div id="stat-total" class="mt-2 text-3xl font-extrabold text-blue-950">—</div></article>
@@ -66,7 +71,12 @@
     <div class="flex items-start gap-3"><span class="material-symbols-outlined text-blue-900">assignment_ind</span><div><h3 class="font-extrabold text-blue-950">Gawa simu kwa chuo</h3><p class="mt-1 text-sm text-slate-600">Chagua chuo na mpigaji; wanafunzi wote wa chuo hicho watagawiwa kwake.</p></div></div>
     <div class="mt-4 grid gap-3 sm:grid-cols-1 lg:grid-cols-[1fr_1.4fr_auto]">
       <select id="assign-campus" class="rounded-xl border-slate-200 text-sm"><option value="">Chagua chuo</option></select>
-      <textarea id="assign-callers" rows="3" maxlength="2000" placeholder="Jina moja kwa kila mstari au tenganisha kwa koma: Daniel, Neema, Asha" class="rounded-xl border-slate-200 text-sm"></textarea>
+      <textarea id="assign-callers" rows="5" maxlength="2000" class="rounded-xl border-slate-200 text-sm">Revival Mahali
+Daniel Matope
+Kelvin Pastory
+Jose Mororo
+Victor Kapalale
+Deborah</textarea>
       <button id="assign-campus-btn" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-blue-950 px-4 py-2 text-sm font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">assignment_turned_in</span>Gawa kwa usawa</button>
     </div>
     <p class="mt-2 text-xs text-slate-500">Mfumo utagawa wanafunzi wa chuo hiki kwa usawa kati ya majina uliyoandika. Tumia majina kamili kama yalivyo kwenye akaunti za wanachama wa BLB; kila mpigaji atahitaji kuingia kwenye akaunti yake kupitia link binafsi.</p>
@@ -83,7 +93,7 @@
     <div id="page-error" class="hidden m-4 rounded-xl bg-rose-50 border border-rose-200 p-4 text-sm text-rose-800"></div>
     <div id="loading-state" class="p-12 text-center text-sm text-slate-500"><span class="material-symbols-outlined animate-spin align-middle mr-2">progress_activity</span>Inapakia orodha…</div>
     <div id="empty-state" class="hidden p-12 text-center"><span class="material-symbols-outlined text-4xl text-slate-400">group_off</span><h4 class="mt-2 font-extrabold text-blue-950">Hakuna wanafunzi hapa bado</h4><p class="mt-1 text-sm text-slate-500">Ongeza majina au omba mwenyekiti akugawie wanafunzi.</p></div>
-    <div class="table-wrap"><table class="hidden w-full text-left" id="students-table"><thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500"><tr><th class="px-5 py-3">Mwanafunzi</th><th class="px-5 py-3">Chuo</th><th id="caller-head" class="hidden px-5 py-3">Mpigaji</th><th class="px-5 py-3">Hali ya simu</th><th class="px-5 py-3">Simu ya karibuni</th><th class="px-5 py-3">Vitendo</th></tr></thead><tbody id="students-body" class="divide-y divide-slate-100"></tbody></table></div>
+    <div class="table-wrap"><table class="hidden w-full text-left" id="students-table"><thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500"><tr><th class="px-5 py-3">Mwanafunzi / namba</th><th id="campus-head" class="px-5 py-3">Chuo</th><th id="caller-head" class="hidden px-5 py-3">Mpigaji</th><th class="px-5 py-3">Hali ya simu</th><th class="px-5 py-3">Simu ya karibuni</th><th class="px-5 py-3">Vitendo</th></tr></thead><tbody id="students-body" class="divide-y divide-slate-100"></tbody></table></div>
     <div class="flex items-center justify-between border-t border-slate-100 p-4"><p id="result-count" class="text-xs text-slate-500"></p><button id="export-btn" class="hidden items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">download</span>Orodha ya dereva (CSV)</button></div>
   </section>
 </main>
@@ -94,4 +104,5 @@
 <script src="../assets/js/student-outreach.js"></script>
 </body>
 </html>
+
 
