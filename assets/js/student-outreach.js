@@ -8,7 +8,7 @@
     not_confirmed: { label: 'Hajathibitisha', icon: 'cancel' },
     no_answer: { label: 'Hakupokea simu', icon: 'call_missed' }
   };
-  const state = { profile: null, coordinator: false, students: [], history: [], callers: [], lastAttempt: {} };
+  const state = { profile: null, coordinator: false, students: [], history: [], callers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
   const $ = id => document.getElementById(id);
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -19,6 +19,8 @@
     if (state.coordinator) {
       $('coordinator-actions').classList.remove('hidden');
       $('campus-summary').classList.remove('hidden');
+      $('bulk-assign-panel').classList.remove('hidden');
+      $('caller-feedback-panel').classList.remove('hidden');
       $('campus-filter').classList.remove('hidden');
       $('caller-filter').classList.remove('hidden');
       $('caller-head').classList.remove('hidden');
@@ -42,6 +44,8 @@
     $('csv-file').addEventListener('change', importCsv);
     $('export-btn').addEventListener('click', exportDriverList);
     $('students-body').addEventListener('click', handleRowAction);
+    $('assign-campus-btn').addEventListener('click', assignCampus);
+    $('caller-feedback-list').addEventListener('click', handleCallerLink);
   }
 
   async function loadAll() {
@@ -56,7 +60,10 @@
       if (historyError) throw historyError;
       state.history = history || [];
       if (state.coordinator) await loadCallers();
-      populateFilters(); render();
+      populateFilters();
+      populateAssignmentControls();
+      renderCallerFeedback();
+      render();
     } catch (error) {
       showError(`Haikuweza kupakia orodha. Hakikisha migration ya Supabase ${'20261114_student_outreach.sql'} imeendeshwa. Maelezo: ${error.message || error}`);
     } finally { $('loading-state').classList.add('hidden'); }
@@ -78,6 +85,69 @@
     $('campus-filter').innerHTML = '<option value="">Vyuo vyote</option>' + campuses.map(campus => `<option value="${escapeHtml(campus)}">${escapeHtml(campus)}</option>`).join('');
     const callerIds = [...new Set(state.students.map(student => student.assigned_caller).filter(Boolean))];
     $('caller-filter').innerHTML = '<option value="">Wapigaji wote</option>' + callerIds.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(callerName(id))}</option>`).join('');
+    if (state.coordinator && state.requestedCaller && callerIds.includes(state.requestedCaller)) $('caller-filter').value = state.requestedCaller;
+  }
+
+  function populateAssignmentControls() {
+    if (!state.coordinator) return;
+    const campuses = [...new Set(state.students.map(student => student.campus).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+    $('assign-campus').innerHTML = '<option value="">Chagua chuo</option>' + campuses.map(campus => `<option value="${escapeHtml(campus)}">${escapeHtml(campus)}</option>`).join('');
+    $('assign-caller').innerHTML = '<option value="">Chagua mpigaji</option>' + state.callers.map(caller => `<option value="${escapeHtml(caller.id)}">${escapeHtml(caller.full_name || caller.email || caller.id)}</option>`).join('');
+  }
+
+  function renderCallerFeedback() {
+    if (!state.coordinator) return;
+    $('caller-feedback-list').innerHTML = state.callers.map(caller => {
+      const assigned = state.students.filter(student => student.assigned_caller === caller.id);
+      const contacted = state.history.filter(entry => entry.caller_id === caller.id);
+      const confirmed = assigned.filter(student => student.call_status === 'confirmed').length;
+      const notConfirmed = assigned.filter(student => student.call_status === 'not_confirmed').length;
+      const noAnswer = assigned.filter(student => student.call_status === 'no_answer').length;
+      const link = `${window.location.origin}${window.location.pathname}?mpigaji=${encodeURIComponent(caller.id)}`;
+      return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || caller.email || 'Mpigaji')}</h4><p class="text-xs text-slate-500">${escapeHtml(caller.email || '')}</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Ona orodha</button><button data-caller-action="copy" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
+    }).join('') || '<p class="text-sm text-slate-500">Hakuna wapigaji hai waliopatikana.</p>';
+  }
+
+  async function handleCallerLink(event) {
+    const button = event.target.closest('button[data-caller-action]');
+    if (!button) return;
+    const link = button.dataset.link;
+    if (button.dataset.callerAction === 'open') {
+      $('caller-filter').value = new URL(link).searchParams.get('mpigaji') || '';
+      render();
+      $('students-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(link);
+      button.innerHTML = '<span class="material-symbols-outlined text-base">check</span>Link imenakiliwa';
+      setTimeout(() => { if (button.isConnected) button.innerHTML = '<span class="material-symbols-outlined text-base">link</span>Nakili link'; }, 1800);
+    } catch (_) {
+      window.prompt('Nakili link hii na umtumie mpigaji:', link);
+    }
+  }
+
+  async function assignCampus() {
+    const campus = $('assign-campus').value;
+    const callerId = $('assign-caller').value;
+    const students = state.students.filter(student => student.campus === campus);
+    if (!campus || !callerId || !students.length) {
+      showAssignmentFeedback('Chagua chuo na mpigaji. Hakikisha chuo kina wanafunzi.', false);
+      return;
+    }
+    const name = callerName(callerId);
+    if (!window.confirm(`Unataka kuwagawia wanafunzi ${students.length} wa ${campus} kwa ${name}?`)) return;
+    const { error } = await supabase.from('student_outreach_students').update({ assigned_caller: callerId }).eq('campus', campus);
+    if (error) { showAssignmentFeedback(`Mgawo haujahifadhiwa: ${error.message}`, false); return; }
+    showAssignmentFeedback(`Wanafunzi ${students.length} wa ${campus} wamegawiwa kwa ${name}.`, true);
+    await loadAll();
+  }
+
+  function showAssignmentFeedback(message, success) {
+    const el = $('assign-feedback');
+    el.textContent = message;
+    el.classList.remove('hidden', 'text-emerald-700', 'text-rose-700');
+    el.classList.add(success ? 'text-emerald-700' : 'text-rose-700');
   }
 
   function render() {
