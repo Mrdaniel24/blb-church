@@ -8,10 +8,32 @@
     not_confirmed: { label: 'Hajathibitisha', icon: 'cancel' },
     no_answer: { label: 'Hakupokea simu', icon: 'call_missed' }
   };
-  const state = { profile: null, coordinator: false, callOnly: false, previewOnly: false, students: [], history: [], callers: [], selectedCallers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
+  const params = new URLSearchParams(window.location.search);
+  const state = { profile: null, coordinator: false, callOnly: false, previewOnly: false, guestMode: false, guestToken: params.get('mgeni'), guestCaller: null, students: [], history: [], callers: [], memberCallers: [], selectedCallers: [], lastAttempt: {}, requestedCaller: params.get('mpigaji') };
   const $ = id => document.getElementById(id);
 
   document.addEventListener('DOMContentLoaded', async () => {
+    if (state.guestToken) {
+      state.guestMode = true;
+      state.callOnly = true;
+      document.body.classList.add('call-only-mode');
+      $('main-page-intro').classList.add('hidden');
+      $('call-only-heading').classList.remove('hidden');
+      $('call-only-title').textContent = 'Orodha ya simu';
+      $('call-only-caption').textContent = 'Piga simu, chagua matokeo na ongeza maelezo.';
+      $('dashboard-summary').classList.add('hidden');
+      $('campus-summary').classList.add('hidden');
+      $('bulk-assign-panel').classList.add('hidden');
+      $('caller-feedback-panel').classList.add('hidden');
+      $('coordinator-actions').classList.add('hidden');
+      $('empty-state').querySelector('h4').textContent = 'Bado hujagawiwa namba';
+      $('empty-state').querySelector('p').textContent = 'Wasiliana na mwenyekiti wa kikundi chako.';
+      $('list-caption').textContent = 'Namba ulizogawiwa na kumbukumbu za simu';
+      document.body.style.opacity = '1';
+      bindEvents();
+      await loadGuest();
+      return;
+    }
     state.profile = await initPageGuard();
     if (!state.profile) return;
     const permissions = state.profile.permissions;
@@ -60,7 +82,7 @@
   });
 
   function bindEvents() {
-    $('refresh-btn').addEventListener('click', loadAll);
+    $('refresh-btn').addEventListener('click', () => state.guestMode ? loadGuest() : loadAll());
     $('search').addEventListener('input', render);
     $('status-filter').addEventListener('change', render);
     $('campus-filter').addEventListener('change', render);
@@ -92,6 +114,26 @@
     $('caller-feedback-list').addEventListener('click', handleCallerLink);
   }
 
+  async function loadGuest() {
+    showError('');
+    $('loading-state').classList.remove('hidden');
+    $('students-table').classList.add('hidden');
+    $('empty-state').classList.add('hidden');
+    try {
+      const { data, error } = await supabase.rpc('student_outreach_open_manual_caller', { p_token: state.guestToken });
+      if (error) throw error;
+      state.guestCaller = data.caller;
+      state.callers = [data.caller];
+      state.students = data.students || [];
+      state.history = data.history || [];
+      $('call-only-title').textContent = `Simu za ${state.guestCaller.full_name}`;
+      populateFilters();
+      render();
+    } catch (error) {
+      showError(`Link hii si sahihi au imebatilishwa. Omba mwenyekiti akutumie link mpya. ${error.message || ''}`);
+    } finally { $('loading-state').classList.add('hidden'); }
+  }
+
   async function loadAll() {
     showError(''); $('loading-state').classList.remove('hidden'); $('students-table').classList.add('hidden'); $('empty-state').classList.add('hidden');
     try {
@@ -100,36 +142,43 @@
       const { data, error } = await query;
       if (error) throw error;
       state.students = data || [];
-      const { data: history, error: historyError } = await supabase.from('student_outreach_call_history').select('id,student_id,caller_id,call_status,note,called_at').order('called_at', { ascending: false });
+      const { data: history, error: historyError } = await supabase.from('student_outreach_call_history').select('id,student_id,caller_id,manual_caller_id,call_status,note,called_at').order('called_at', { ascending: false });
       if (historyError) throw historyError;
       state.history = history || [];
-      if (state.coordinator) await loadCallers();
+      if (state.coordinator) { await loadCallers(); await loadMemberCallers(); }
       populateFilters();
       populateAssignmentControls();
       renderCallerFeedback();
       render();
     } catch (error) {
-      showError(`Haikuweza kupakia orodha. Hakikisha migration za Supabase 20261114_student_outreach.sql na 20261115_student_outreach_even_assignment.sql zimeendeshwa. Maelezo: ${error.message || error}`);
+      showError(`Haikuweza kupakia orodha. Hakikisha migrations za Supabase 20261114_student_outreach.sql, 20261115_student_outreach_even_assignment.sql na 20261116_student_outreach_guest_callers.sql zimeendeshwa. Maelezo: ${error.message || error}`);
     } finally { $('loading-state').classList.add('hidden'); }
   }
 
   async function loadCallers() {
-    const { data, error } = await supabase.rpc('student_outreach_callers');
+    const { data, error } = await supabase.rpc('student_outreach_manual_callers');
     if (error) throw error;
     state.callers = data || [];
   }
 
+  async function loadMemberCallers() {
+    const { data, error } = await supabase.rpc('student_outreach_callers');
+    if (error) throw error;
+    state.memberCallers = data || [];
+  }
+
   function callerName(id) {
-    const caller = state.callers.find(person => person.id === id);
-    return caller?.full_name || caller?.email || 'Hajapangiwa';
+    const manualId = String(id || '').startsWith('manual:') ? String(id).slice(7) : id;
+    const caller = state.callers.find(person => person.id === manualId) || state.memberCallers.find(person => person.id === id);
+    return caller?.full_name || caller?.email || state.guestCaller?.full_name || 'Hajapangiwa';
   }
 
   function populateFilters() {
     const campuses = [...new Set(state.students.map(student => student.campus).filter(Boolean))].sort((a,b) => a.localeCompare(b));
     $('campus-filter').innerHTML = '<option value="">Vyuo vyote</option>' + campuses.map(campus => `<option value="${escapeHtml(campus)}">${escapeHtml(campus)}</option>`).join('');
-    const callerIds = [...new Set(state.students.map(student => student.assigned_caller).filter(Boolean))];
-    $('caller-filter').innerHTML = '<option value="">Wapigaji wote</option>' + callerIds.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(callerName(id))}</option>`).join('');
-    if (state.coordinator && state.requestedCaller && callerIds.includes(state.requestedCaller)) $('caller-filter').value = state.requestedCaller;
+    const callerValues = [...new Set(state.students.map(student => student.assigned_caller_manual_id ? `manual:${student.assigned_caller_manual_id}` : student.assigned_caller).filter(Boolean))];
+    $('caller-filter').innerHTML = '<option value="">Wapigaji wote</option>' + callerValues.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(callerName(value))}</option>`).join('');
+    if (state.coordinator && state.requestedCaller && callerValues.includes(state.requestedCaller)) $('caller-filter').value = state.requestedCaller;
   }
 
   function populateAssignmentControls() {
@@ -155,34 +204,37 @@
 
   function renderCallerFeedback() {
     if (!state.coordinator) return;
-    const assignedCallerIds = new Set(state.students.map(student => student.assigned_caller).filter(Boolean));
+    const assignedCallerIds = new Set(state.students.map(student => student.assigned_caller_manual_id).filter(Boolean));
     $('caller-feedback-list').innerHTML = state.callers.filter(caller => assignedCallerIds.has(caller.id)).map(caller => {
-      const assigned = state.students.filter(student => student.assigned_caller === caller.id);
-      const contacted = state.history.filter(entry => entry.caller_id === caller.id);
+      const assigned = state.students.filter(student => student.assigned_caller_manual_id === caller.id);
+      const contacted = state.history.filter(entry => entry.manual_caller_id === caller.id);
       const confirmed = assigned.filter(student => student.call_status === 'confirmed').length;
       const notConfirmed = assigned.filter(student => student.call_status === 'not_confirmed').length;
       const noAnswer = assigned.filter(student => student.call_status === 'no_answer').length;
-      const link = `${window.location.origin}${window.location.pathname}?mpigaji=${encodeURIComponent(caller.id)}`;
-      return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || caller.email || 'Mpigaji')}</h4><p class="text-xs text-slate-500">${escapeHtml(caller.email || '')}</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Ona orodha</button><button data-caller-action="copy" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
+      return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || 'Mpigaji')}</h4><p class="text-xs text-slate-500">Mpigaji wa link binafsi</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Ona orodha</button><button data-caller-action="copy" data-caller-id="${escapeHtml(caller.id)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
     }).join('') || '<p class="text-sm text-slate-500">Bado hakuna mpigaji aliyegawiwa wanafunzi.</p>';
   }
 
   async function handleCallerLink(event) {
     const button = event.target.closest('button[data-caller-action]');
     if (!button) return;
-    const link = button.dataset.link;
+    const callerId = button.dataset.callerId;
     if (button.dataset.callerAction === 'open') {
-      $('caller-filter').value = new URL(link).searchParams.get('mpigaji') || '';
+      $('caller-filter').value = `manual:${callerId}`;
       render();
       $('students-table').scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     try {
-      await navigator.clipboard.writeText(link);
-      button.innerHTML = '<span class="material-symbols-outlined text-base">check</span>Link imenakiliwa';
+      const { data: token, error } = await supabase.rpc('student_outreach_make_manual_caller_link', { p_caller_id: callerId });
+      if (error) throw error;
+      const link = `${window.location.origin}${window.location.pathname}?mgeni=${encodeURIComponent(token)}`;
+      try { await navigator.clipboard.writeText(link); }
+      catch (_) { window.prompt('Nakili link hii ya faragha na umtumie mpigaji:', link); }
+      button.innerHTML = '<span class="material-symbols-outlined text-base">check</span>Link mpya imenakiliwa';
       setTimeout(() => { if (button.isConnected) button.innerHTML = '<span class="material-symbols-outlined text-base">link</span>Nakili link'; }, 1800);
-    } catch (_) {
-      window.prompt('Nakili link hii na umtumie mpigaji:', link);
+    } catch (error) {
+      showError(`Link haijatengenezwa: ${error.message || error}`);
     }
   }
 
@@ -191,28 +243,14 @@
     const names = state.selectedCallers;
     const students = state.students.filter(student => student.campus === campus);
     if (!campus || !names.length || !students.length) {
-      showAssignmentFeedback('Chagua chuo, chagua jina kwenye list au andika jina jipya, na hakikisha chuo kina wanafunzi. Majina lazima yawe na akaunti hai ya mwanachama wa BLB.', false);
+      showAssignmentFeedback('Chagua chuo, chagua jina kwenye list au andika jina jipya, na hakikisha chuo kina wanafunzi.', false);
       return;
     }
     const uniqueNames = [...new Map(names.map(name => [name.toLocaleLowerCase(), name])).values()];
-    const callerIds = [];
-    for (const name of uniqueNames) {
-      const normalized = name.toLocaleLowerCase();
-      const exact = state.callers.filter(caller => String(caller.full_name || '').trim().toLocaleLowerCase() === normalized);
-      const matches = exact.length ? exact : state.callers.filter(caller => {
-        const profileName = String(caller.full_name || '').trim().toLocaleLowerCase();
-        return profileName && (profileName.includes(normalized) || normalized.includes(profileName));
-      });
-      if (matches.length !== 1) {
-        showAssignmentFeedback(matches.length ? `Jina “${name}” linafanana na akaunti zaidi ya moja. Tumia jina kamili tofauti.` : `“${name}” hana akaunti hai ya BLB. Muombe aingie au afungue akaunti kwanza, kisha andika jina lake kama lilivyo kwenye akaunti.`, false);
-        return;
-      }
-      callerIds.push(matches[0].id);
-    }
     if (!window.confirm(`Unataka kuwagawa wanafunzi ${students.length} wa ${campus} kwa wapigaji ${uniqueNames.join(', ')} kwa usawa?`)) return;
-    const { data, error } = await supabase.rpc('student_outreach_assign_campus', { p_campus: campus, p_caller_ids: callerIds });
+    const { data, error } = await supabase.rpc('student_outreach_assign_manual_campus', { p_campus: campus, p_names: uniqueNames });
     if (error) { showAssignmentFeedback(`Mgawo haujahifadhiwa: ${error.message}`, false); return; }
-    const summary = (data.callers || []).map(item => `${callerName(item.id)}: ${item.assigned}`).join(' · ');
+    const summary = (data.callers || []).map(item => `${item.full_name}: ${item.assigned}`).join(' · ');
     showAssignmentFeedback(`${data.total} wamegawiwa kwa usawa — ${summary}`, true);
     state.selectedCallers = [];
     renderSelectedCallers();
@@ -233,7 +271,8 @@
     const caller = $('caller-filter').value;
     const filtered = state.students.filter(student => {
       const matchesTerm = !term || [student.full_name, student.phone, student.campus, student.latest_note].some(value => String(value || '').toLocaleLowerCase().includes(term));
-      return matchesTerm && (!status || student.call_status === status) && (!campus || student.campus === campus) && (!caller || student.assigned_caller === caller);
+      const callerValue = student.assigned_caller_manual_id ? `manual:${student.assigned_caller_manual_id}` : student.assigned_caller;
+      return matchesTerm && (!status || student.call_status === status) && (!campus || student.campus === campus) && (!caller || callerValue === caller);
     });
     updateStats(filtered);
     updateCampusSummary(filtered);
@@ -247,7 +286,7 @@
     const latestCall = state.history.find(entry => entry.student_id === student.id);
     const status = STATUSES[student.call_status] || STATUSES.pending;
     const initial = getInitials(student.full_name || 'M');
-    const callerCell = state.coordinator && !state.callOnly ? `<td class="px-5 py-4 text-sm text-slate-600"><span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-slate-400">person</span>${escapeHtml(callerName(student.assigned_caller))}</span></td>` : '';
+    const callerCell = state.coordinator && !state.callOnly ? `<td class="px-5 py-4 text-sm text-slate-600"><span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-slate-400">person</span>${escapeHtml(callerName(student.assigned_caller_manual_id || student.assigned_caller))}</span></td>` : '';
     const dialNumber = String(student.phone || '').replace(/[^\d+*#,;]/g, '');
     const callButton = state.previewOnly
       ? `<button type="button" disabled class="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-slate-200 px-3 py-2 text-xs font-extrabold text-slate-500"><span class="material-symbols-outlined text-base">call</span><span>Piga simu</span></button>`
@@ -272,7 +311,7 @@
     $('campus-cards').innerHTML = campuses.map(campus => {
       const list = students.filter(student => student.campus === campus);
       const confirmed = list.filter(student => student.call_status === 'confirmed').length;
-      const assigned = list.filter(student => student.assigned_caller).length;
+      const assigned = list.filter(student => student.assigned_caller || student.assigned_caller_manual_id).length;
       return `<article class="rounded-xl border border-slate-200 bg-slate-50/70 p-4"><div class="flex items-start justify-between gap-2"><h4 class="font-extrabold text-blue-950">${escapeHtml(campus)}</h4><span class="rounded-full bg-white px-2 py-1 text-xs font-bold text-slate-600">${list.length} watu</span></div><div class="mt-3 flex items-center justify-between text-xs text-slate-600"><span>✓ ${confirmed} wamethibitisha</span><span>${assigned}/${list.length} wamegawiwa</span></div><div class="mt-3 h-1.5 rounded-full bg-slate-200"><div class="h-1.5 rounded-full bg-emerald-500" style="width:${list.length ? Math.round(confirmed/list.length*100) : 0}%"></div></div></article>`;
     }).join('') || '<p class="text-sm text-slate-500">Vyuo vitaonekana baada ya kuongeza wanafunzi.</p>';
   }
@@ -297,6 +336,14 @@
     state.lastAttempt[studentId] = Date.now();
     const now = new Date().toISOString();
     try {
+      if (state.guestMode) {
+        const { error } = await supabase.rpc('student_outreach_record_manual_call', { p_token: state.guestToken, p_student_id: studentId, p_status: nextStatus, p_note: null });
+        if (error) throw error;
+        student.call_status = nextStatus;
+        state.history.unshift({ id: crypto.randomUUID(), student_id: studentId, manual_caller_id: state.guestCaller.id, call_status: nextStatus, note: null, called_at: now });
+        render();
+        return;
+      }
       const { error: historyError } = await supabase.from('student_outreach_call_history').insert({ student_id: studentId, call_status: nextStatus, note: null });
       if (historyError) throw historyError;
       const { error } = await supabase.from('student_outreach_students').update({ call_status: nextStatus }).eq('id', studentId);
@@ -312,6 +359,14 @@
     if (note === null) return;
     const clean = note.trim();
     try {
+      if (state.guestMode) {
+        const { error } = await supabase.rpc('student_outreach_record_manual_call', { p_token: state.guestToken, p_student_id: student.id, p_status: student.call_status || 'pending', p_note: clean });
+        if (error) throw error;
+        student.latest_note = clean || null;
+        state.history.unshift({ id: crypto.randomUUID(), student_id: student.id, manual_caller_id: state.guestCaller.id, call_status: student.call_status || 'pending', note: clean || null, called_at: new Date().toISOString() });
+        render();
+        return;
+      }
       const { error: historyError } = await supabase.from('student_outreach_call_history').insert({ student_id: student.id, call_status: student.call_status || 'pending', note: clean || null });
       if (historyError) throw historyError;
       const { error } = await supabase.from('student_outreach_students').update({ latest_note: clean || null }).eq('id', student.id);
@@ -325,7 +380,7 @@
     const history = state.history.filter(entry => entry.student_id === student.id);
     const content = history.length ? history.map(entry => {
       const status = STATUSES[entry.call_status] || STATUSES.pending;
-      const caller = callerName(entry.caller_id);
+      const caller = callerName(entry.manual_caller_id || entry.caller_id) || state.guestCaller?.full_name;
       return `<article class="border-l-2 border-blue-200 pl-4 pb-5 last:pb-0"><div class="flex flex-wrap items-center justify-between gap-2"><span class="status-pill status-${statusClass(entry.call_status)}">${status.label}</span><time class="text-xs text-slate-500">${formatDate(entry.called_at)}</time></div><p class="mt-2 text-sm text-slate-700">${escapeHtml(entry.note || 'Hakuna maelezo ya ziada.')}</p><p class="mt-1 text-xs text-slate-400">Mpigaji: ${escapeHtml(caller)}</p></article>`;
     }).join('') : '<p class="text-sm text-slate-500">Bado hakuna historia ya simu.</p>';
     showModal(`Historia · ${student.full_name}`, `<div class="max-h-[55vh] space-y-1 overflow-auto">${content}</div>`);
@@ -333,15 +388,19 @@
 
   async function openStudentForm(student = null) {
     if (!state.coordinator) return;
-    const { data: users, error } = await supabase.rpc('student_outreach_callers');
-    if (error) { showError(`Wapigaji hawakupatikana: ${error.message}`); return; }
-    const callerOptions = (users || []).map(user => `<option value="${escapeHtml(user.id)}" ${student?.assigned_caller === user.id ? 'selected' : ''}>${escapeHtml(user.full_name || user.email || user.id)}</option>`).join('');
-    const body = `<form id="student-form" class="space-y-4"><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Jina kamili *</label><input name="full_name" required maxlength="160" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.full_name || '')}" /></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Namba ya simu</label><input name="phone" maxlength="40" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.phone || '')}" /></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Chuo *</label><input name="campus" required maxlength="160" list="campus-options" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.campus || '')}" /><datalist id="campus-options">${[...new Set(state.students.map(item => item.campus))].map(campus => `<option value="${escapeHtml(campus)}"></option>`).join('')}</datalist></div></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Mpigaji wa simu</label><select name="assigned_caller" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800"><option value="">— Hajapangiwa bado —</option>${callerOptions}</select></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Mwaliko ni wa Jumapili gani?</label><input name="invited_for" type="date" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.invited_for || '')}" /></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Note</label><textarea name="latest_note" rows="3" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" placeholder="Maelezo muhimu…">${escapeHtml(student?.latest_note || '')}</textarea></div><button class="w-full rounded-xl bg-blue-950 py-3 font-bold text-white hover:bg-blue-900">${student ? 'Hifadhi mabadiliko' : 'Ongeza na gawa'}</button></form>`;
+    const body = `<form id="student-form" class="space-y-4"><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Jina kamili *</label><input name="full_name" required maxlength="160" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.full_name || '')}" /></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Namba ya simu</label><input name="phone" maxlength="40" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.phone || '')}" /></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Chuo *</label><input name="campus" required maxlength="160" list="campus-options" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.campus || '')}" /><datalist id="campus-options">${[...new Set(state.students.map(item => item.campus))].map(campus => `<option value="${escapeHtml(campus)}"></option>`).join('')}</datalist></div></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Jina la mpigaji (si lazima)</label><input name="caller_name" maxlength="120" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" placeholder="Andika jina; akaunti haihitajiki" value="${escapeHtml(student?.assigned_caller_manual_id ? callerName(student.assigned_caller_manual_id) : '')}" /></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Mwaliko ni wa Jumapili gani?</label><input name="invited_for" type="date" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" value="${escapeHtml(student?.invited_for || '')}" /></div><div><label class="mb-1 block text-xs font-extrabold uppercase tracking-wider text-slate-600">Note</label><textarea name="latest_note" rows="3" class="w-full rounded-xl border-slate-200 focus:border-blue-800 focus:ring-blue-800" placeholder="Maelezo muhimu…">${escapeHtml(student?.latest_note || '')}</textarea></div><button class="w-full rounded-xl bg-blue-950 py-3 font-bold text-white hover:bg-blue-900">${student ? 'Hifadhi mabadiliko' : 'Ongeza mwanafunzi'}</button></form>`;
     showModal(student ? 'Hariri mwanafunzi na mgawo' : 'Ongeza mwanafunzi', body);
     $('student-form').addEventListener('submit', async event => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
-      const payload = { full_name: String(form.get('full_name')).trim(), phone: String(form.get('phone') || '').trim() || null, campus: String(form.get('campus')).trim(), assigned_caller: String(form.get('assigned_caller') || '') || null, invited_for: String(form.get('invited_for') || '') || null, latest_note: String(form.get('latest_note') || '').trim() || null };
+      const callerNameInput = String(form.get('caller_name') || '').trim();
+      let manualCallerId = student?.assigned_caller_manual_id || null;
+      if (callerNameInput) {
+        const { data: caller, error } = await supabase.from('student_outreach_manual_callers').upsert({ full_name: callerNameInput }, { onConflict: 'normalized_name' }).select('id').single();
+        if (error) { showError(`Jina la mpigaji halijahifadhiwa: ${error.message}`); return; }
+        manualCallerId = caller.id;
+      }
+      const payload = { full_name: String(form.get('full_name')).trim(), phone: String(form.get('phone') || '').trim() || null, campus: String(form.get('campus')).trim(), assigned_caller: callerNameInput ? null : (student?.assigned_caller || null), assigned_caller_manual_id: manualCallerId, invited_for: String(form.get('invited_for') || '') || null, latest_note: String(form.get('latest_note') || '').trim() || null };
       if (!payload.full_name || !payload.campus) return;
       const response = student ? await supabase.from('student_outreach_students').update(payload).eq('id', student.id) : await supabase.from('student_outreach_students').insert(payload);
       if (response.error) { showError(`Taarifa hazijahifadhiwa: ${response.error.message}`); return; }
@@ -357,8 +416,8 @@
       if (!rows.length) throw new Error('Faili halina data.');
       const header = rows[0].map(value => value.trim().toLocaleLowerCase());
       const normalized = ['jina','name','full_name','jina kamili'].includes(header[0]) ? rows.slice(1) : rows;
-      const students = normalized.map(row => ({ full_name: (row[0] || '').trim(), phone: (row[1] || '').trim() || null, campus: (row[2] || '').trim(), assigned_caller: (row[3] || '').trim() || null, created_by: state.profile.id })).filter(row => row.full_name && row.campus);
-      if (!students.length) throw new Error('Tumia safu: Jina, Simu, Chuo, UUID ya mpigaji (ya hiari).');
+      const students = normalized.map(row => ({ full_name: (row[0] || '').trim(), phone: (row[1] || '').trim() || null, campus: (row[2] || '').trim(), created_by: state.profile.id })).filter(row => row.full_name && row.campus);
+      if (!students.length) throw new Error('Tumia safu: Jina, Simu, Chuo. Gawa wapigaji kwenye sehemu ya mgawo wa chuo.');
       const phones = students.map(student => student.phone).filter(Boolean);
       const existingPhones = new Set();
       for (let offset = 0; offset < phones.length; offset += 100) {
@@ -372,7 +431,7 @@
       const { error } = await supabase.from('student_outreach_students').insert(unseen);
       if (error) throw error;
       window.alert(`${unseen.length} wameingizwa${students.length > unseen.length ? `; ${students.length - unseen.length} waliokuwepo tayari wameachwa` : ''}.`); await loadAll();
-    } catch (error) { showError(`CSV haijaingizwa. Tumia safu Jina, Simu, Chuo, UUID ya mpigaji (ya hiari). ${error.message || error}`); }
+    } catch (error) { showError(`CSV haijaingizwa. Tumia safu Jina, Simu, Chuo. ${error.message || error}`); }
     finally { event.target.value = ''; }
   }
 
@@ -392,8 +451,8 @@
   function exportDriverList() {
     const campus = $('campus-filter').value; const caller = $('caller-filter').value;
     const status = $('status-filter').value; const term = $('search').value.trim().toLocaleLowerCase();
-    const list = state.students.filter(student => (!campus || student.campus===campus) && (!caller || student.assigned_caller===caller) && (!status || student.call_status===status) && (!term || [student.full_name,student.phone,student.campus].some(value=>String(value||'').toLocaleLowerCase().includes(term))) && student.call_status==='confirmed');
-    const rows = [['Jina','Simu','Chuo','Mpigaji','Hali','Note'], ...list.map(student=>[student.full_name,student.phone,student.campus,callerName(student.assigned_caller),'Amethibitisha',student.latest_note])];
+    const list = state.students.filter(student => (!campus || student.campus===campus) && (!caller || (student.assigned_caller_manual_id ? `manual:${student.assigned_caller_manual_id}` : student.assigned_caller)===caller) && (!status || student.call_status===status) && (!term || [student.full_name,student.phone,student.campus].some(value=>String(value||'').toLocaleLowerCase().includes(term))) && student.call_status==='confirmed');
+    const rows = [['Jina','Simu','Chuo','Mpigaji','Hali','Note'], ...list.map(student=>[student.full_name,student.phone,student.campus,callerName(student.assigned_caller_manual_id || student.assigned_caller),'Amethibitisha',student.latest_note])];
     const csv='\uFEFF'+rows.map(row=>row.map(value=>`"${String(value||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
     const link=document.createElement('a'); link.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); link.download=`wanafunzi-dereva-${new Date().toISOString().slice(0,10)}.csv`; link.click(); URL.revokeObjectURL(link.href);
   }
