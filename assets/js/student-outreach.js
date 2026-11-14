@@ -8,7 +8,7 @@
     not_confirmed: { label: 'Hajathibitisha', icon: 'cancel' },
     no_answer: { label: 'Hakupokea simu', icon: 'call_missed' }
   };
-  const state = { profile: null, coordinator: false, students: [], history: [], callers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
+  const state = { profile: null, coordinator: false, callOnly: false, previewOnly: false, students: [], history: [], callers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
   const $ = id => document.getElementById(id);
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -16,6 +16,27 @@
     if (!state.profile) return;
     const permissions = state.profile.permissions;
     state.coordinator = state.profile.role === 'super_admin' || Boolean(permissions?.all || permissions?.can_manage_members);
+    state.callOnly = Boolean(state.requestedCaller);
+    state.previewOnly = state.callOnly && state.coordinator && state.requestedCaller !== state.profile.id;
+    if (state.callOnly) {
+      if (!state.coordinator && state.requestedCaller !== state.profile.id) {
+        showError('Link hii imegawiwa kwa akaunti nyingine. Ingia kwenye akaunti yako ya BLB kisha fungua link yako binafsi.');
+        $('loading-state').classList.add('hidden');
+        document.body.style.opacity = '1';
+        return;
+      }
+      document.body.classList.add('call-only-mode');
+      $('main-page-intro').classList.add('hidden');
+      $('call-only-heading').classList.remove('hidden');
+      $('call-only-title').textContent = state.previewOnly ? 'Preview ya mpigaji' : 'Orodha yako ya simu';
+      $('call-only-caption').textContent = state.previewOnly ? 'Huu ni muonekano wa kusoma tu; mpigaji mwenye akaunti hii ndiye anayeweza kurekodi matokeo.' : 'Piga simu, chagua matokeo na ongeza maelezo.';
+      $('dashboard-summary').classList.add('hidden');
+      $('campus-summary').classList.add('hidden');
+      $('bulk-assign-panel').classList.add('hidden');
+      $('caller-feedback-panel').classList.add('hidden');
+      $('coordinator-actions').classList.add('hidden');
+      $('list-caption').textContent = state.previewOnly ? 'Orodha ya mpigaji (preview ya kusoma tu)' : 'Namba ulizogawiwa na kumbukumbu za simu';
+    }
     if (state.coordinator) {
       $('coordinator-actions').classList.remove('hidden');
       $('campus-summary').classList.remove('hidden');
@@ -52,7 +73,7 @@
     showError(''); $('loading-state').classList.remove('hidden'); $('students-table').classList.add('hidden'); $('empty-state').classList.add('hidden');
     try {
       let query = supabase.from('student_outreach_students').select('*').order('campus').order('full_name');
-      if (!state.coordinator) query = query.eq('assigned_caller', state.profile.id);
+      if (!state.coordinator || state.callOnly) query = query.eq('assigned_caller', state.requestedCaller || state.profile.id);
       const { data, error } = await query;
       if (error) throw error;
       state.students = data || [];
@@ -138,7 +159,12 @@
     const uniqueNames = [...new Map(names.map(name => [name.toLocaleLowerCase(), name])).values()];
     const callerIds = [];
     for (const name of uniqueNames) {
-      const matches = state.callers.filter(caller => String(caller.full_name || '').trim().toLocaleLowerCase() === name.toLocaleLowerCase());
+      const normalized = name.toLocaleLowerCase();
+      const exact = state.callers.filter(caller => String(caller.full_name || '').trim().toLocaleLowerCase() === normalized);
+      const matches = exact.length ? exact : state.callers.filter(caller => {
+        const profileName = String(caller.full_name || '').trim().toLocaleLowerCase();
+        return profileName && (profileName.includes(normalized) || normalized.includes(profileName));
+      });
       if (matches.length !== 1) {
         showAssignmentFeedback(matches.length ? `Jina “${name}” linafanana na akaunti zaidi ya moja. Tumia jina kamili tofauti.` : `“${name}” hana akaunti hai ya BLB. Muombe aingie au afungue akaunti kwanza, kisha andika jina lake kama lilivyo kwenye akaunti.`, false);
         return;
@@ -182,13 +208,17 @@
     const latestCall = state.history.find(entry => entry.student_id === student.id);
     const status = STATUSES[student.call_status] || STATUSES.pending;
     const initial = getInitials(student.full_name || 'M');
-    const callerCell = state.coordinator ? `<td class="px-5 py-4 text-sm text-slate-600"><span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-slate-400">person</span>${escapeHtml(callerName(student.assigned_caller))}</span></td>` : '';
+    const callerCell = state.coordinator && !state.callOnly ? `<td class="px-5 py-4 text-sm text-slate-600"><span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-slate-400">person</span>${escapeHtml(callerName(student.assigned_caller))}</span></td>` : '';
     const dialNumber = String(student.phone || '').replace(/[^\d+*#,;]/g, '');
-    const callButton = dialNumber
+    const callButton = state.previewOnly
+      ? `<button type="button" disabled class="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-slate-200 px-3 py-2 text-xs font-extrabold text-slate-500"><span class="material-symbols-outlined text-base">call</span><span>Piga simu</span></button>`
+      : dialNumber
       ? `<a href="tel:${encodeURIComponent(dialNumber)}" aria-label="Piga simu kwa ${escapeHtml(student.full_name)}" class="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"><span class="material-symbols-outlined text-base">call</span><span>Piga simu</span></a>`
       : `<button type="button" disabled aria-label="Hakuna namba ya simu kwa ${escapeHtml(student.full_name)}" title="Hakuna namba ya simu" class="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-slate-200 px-3 py-2 text-xs font-extrabold text-slate-500"><span class="material-symbols-outlined text-base">call</span><span>Piga simu</span></button>`;
-    const controls = `<div class="flex min-w-[280px] flex-wrap items-center gap-2">${callButton}<select data-action="status" data-id="${escapeHtml(student.id)}" aria-label="Hali ya simu kwa ${escapeHtml(student.full_name)}" class="min-h-11 rounded-lg border-slate-200 py-2 text-xs font-bold focus:border-blue-800 focus:ring-blue-800">${Object.entries(STATUSES).map(([value,item]) => `<option value="${value}" ${student.call_status === value ? 'selected' : ''}>${item.label}</option>`).join('')}</select><button data-action="note" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Ongeza note"><span class="material-symbols-outlined text-lg">edit_note</span></button>${state.coordinator ? `<button data-action="edit" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Hariri mgawo"><span class="material-symbols-outlined text-lg">tune</span></button>` : ''}<button data-action="history" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Historia ya simu"><span class="material-symbols-outlined text-lg">history</span></button></div>`;
-    return `<tr class="hover:bg-slate-50/70"><td class="px-5 py-4"><div class="flex items-center gap-3"><div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-extrabold text-blue-900">${escapeHtml(initial)}</div><div><div class="font-bold text-blue-950">${escapeHtml(student.full_name)}</div><div class="text-xs text-slate-500">${escapeHtml(student.phone || 'Hakuna namba')}${student.latest_note ? ` · <span title="${escapeHtml(student.latest_note)}">${escapeHtml(trimText(student.latest_note,32))}</span>` : ''}</div></div></div></td><td class="px-5 py-4 text-sm font-semibold text-slate-700">${escapeHtml(student.campus)}</td>${callerCell}<td class="px-5 py-4"><span class="status-pill status-${statusClass(student.call_status)}"><span class="material-symbols-outlined text-sm">${status.icon}</span>${status.label}</span></td><td class="px-5 py-4 text-xs text-slate-500">${latestCall ? `${formatDate(latestCall.called_at)}<br/><span class="text-slate-400">${escapeHtml(trimText(latestCall.note || 'Hakuna note', 40))}</span>` : 'Bado hajapigiwa'}</td><td class="px-5 py-4">${controls}</td></tr>`;
+    const disabled = state.previewOnly ? 'disabled' : '';
+    const noteButton = state.previewOnly ? '' : `<button data-action="note" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Ongeza note"><span class="material-symbols-outlined text-lg">edit_note</span></button>`;
+    const controls = `<div class="flex min-w-[280px] flex-wrap items-center gap-2">${callButton}<select ${disabled} data-action="status" data-id="${escapeHtml(student.id)}" aria-label="Hali ya simu kwa ${escapeHtml(student.full_name)}" class="min-h-11 rounded-lg border-slate-200 py-2 text-xs font-bold focus:border-blue-800 focus:ring-blue-800">${Object.entries(STATUSES).map(([value,item]) => `<option value="${value}" ${student.call_status === value ? 'selected' : ''}>${item.label}</option>`).join('')}</select>${noteButton}${state.coordinator && !state.callOnly ? `<button data-action="edit" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Hariri mgawo"><span class="material-symbols-outlined text-lg">tune</span></button>` : ''}<button data-action="history" data-id="${escapeHtml(student.id)}" class="min-h-11 min-w-11 rounded-lg border border-slate-200 p-2 text-slate-600 hover:bg-blue-50 hover:text-blue-900" title="Historia ya simu"><span class="material-symbols-outlined text-lg">history</span></button></div>`;
+    return `<tr class="hover:bg-slate-50/70"><td class="px-5 py-4"><div class="flex items-center gap-3"><div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-extrabold text-blue-900">${escapeHtml(initial)}</div><div><div class="font-bold text-blue-950">${escapeHtml(student.full_name)}</div><div class="text-xs text-slate-500">${escapeHtml(student.phone || 'Hakuna namba')}${student.latest_note ? ` · <span title="${escapeHtml(student.latest_note)}">${escapeHtml(trimText(student.latest_note,32))}</span>` : ''}</div></div></div></td><td class="campus-cell px-5 py-4 text-sm font-semibold text-slate-700">${escapeHtml(student.campus)}</td>${callerCell}<td class="px-5 py-4"><span class="status-pill status-${statusClass(student.call_status)}"><span class="material-symbols-outlined text-sm">${status.icon}</span>${status.label}</span></td><td class="px-5 py-4 text-xs text-slate-500">${latestCall ? `${formatDate(latestCall.called_at)}<br/><span class="text-slate-400">${escapeHtml(trimText(latestCall.note || 'Hakuna note', 40))}</span>` : 'Bado hajapigiwa'}</td><td class="px-5 py-4">${controls}</td></tr>`;
   }
 
   function updateStats(students) {
@@ -342,4 +372,5 @@
   function trimText(value, length) { const text=String(value||''); return text.length>length ? text.slice(0,length-1)+'…' : text; }
   function formatDate(value) { if(!value)return '—'; const date=new Date(value); return Number.isNaN(date.getTime())?'—':date.toLocaleString('sw-TZ',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
 })();
+
 
