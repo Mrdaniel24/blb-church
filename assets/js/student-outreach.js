@@ -65,7 +65,7 @@
       renderCallerFeedback();
       render();
     } catch (error) {
-      showError(`Haikuweza kupakia orodha. Hakikisha migration ya Supabase ${'20261114_student_outreach.sql'} imeendeshwa. Maelezo: ${error.message || error}`);
+      showError(`Haikuweza kupakia orodha. Hakikisha migration za Supabase 20261114_student_outreach.sql na 20261115_student_outreach_even_assignment.sql zimeendeshwa. Maelezo: ${error.message || error}`);
     } finally { $('loading-state').classList.add('hidden'); }
   }
 
@@ -105,7 +105,7 @@
       const noAnswer = assigned.filter(student => student.call_status === 'no_answer').length;
       const link = `${window.location.origin}${window.location.pathname}?mpigaji=${encodeURIComponent(caller.id)}`;
       return `<article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><h4 class="font-extrabold text-blue-950">${escapeHtml(caller.full_name || caller.email || 'Mpigaji')}</h4><p class="text-xs text-slate-500">${escapeHtml(caller.email || '')}</p></div><div class="flex flex-wrap gap-2"><button data-caller-action="open" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-bold text-blue-900 hover:bg-blue-50"><span class="material-symbols-outlined text-base">visibility</span>Ona orodha</button><button data-caller-action="copy" data-link="${escapeHtml(link)}" class="inline-flex min-h-10 items-center gap-1 rounded-lg bg-blue-950 px-3 text-xs font-bold text-white hover:bg-blue-900"><span class="material-symbols-outlined text-base">link</span>Nakili link</button></div></div><div class="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4"><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Waliogawiwa</span><strong class="text-base text-blue-950">${assigned.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Simu/historia</span><strong class="text-base text-blue-950">${contacted.length}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Ndiyo</span><strong class="text-base text-emerald-700">${confirmed}</strong></div><div class="rounded-lg bg-white p-2"><span class="block text-slate-500">Hapana / hakupokea</span><strong class="text-base text-rose-700">${notConfirmed} / ${noAnswer}</strong></div></div></article>`;
-    }).join('') || '<p class="text-sm text-slate-500">Hakuna wapigaji hai waliopatikana.</p>';
+    }).join('') || '<p class="text-sm text-slate-500">Bado hakuna mpigaji aliyegawiwa wanafunzi.</p>';
   }
 
   async function handleCallerLink(event) {
