@@ -295,16 +295,14 @@
     const student = state.students.find(item => item.id === studentId);
     if (!student || !STATUSES[nextStatus]) return;
     state.lastAttempt[studentId] = Date.now();
-    const note = window.prompt(`Maelezo ya simu hii kwa ${student.full_name} (si lazima):`, student.latest_note || '');
-    if (note === null) { render(); return; }
     const now = new Date().toISOString();
     try {
-      const { error: historyError } = await supabase.from('student_outreach_call_history').insert({ student_id: studentId, call_status: nextStatus, note: note.trim() || null });
+      const { error: historyError } = await supabase.from('student_outreach_call_history').insert({ student_id: studentId, call_status: nextStatus, note: null });
       if (historyError) throw historyError;
-      const { error } = await supabase.from('student_outreach_students').update({ call_status: nextStatus, latest_note: note.trim() || null }).eq('id', studentId);
+      const { error } = await supabase.from('student_outreach_students').update({ call_status: nextStatus }).eq('id', studentId);
       if (error) throw error;
-      student.call_status = nextStatus; student.latest_note = note.trim() || null;
-      state.history.unshift({ id: crypto.randomUUID(), student_id: studentId, caller_id: state.profile.id, call_status: nextStatus, note: note.trim() || null, called_at: now });
+      student.call_status = nextStatus;
+      state.history.unshift({ id: crypto.randomUUID(), student_id: studentId, caller_id: state.profile.id, call_status: nextStatus, note: null, called_at: now });
       render();
     } catch (error) { showError(`Hali ya simu haijahifadhiwa: ${error.message || error}`); }
   }
