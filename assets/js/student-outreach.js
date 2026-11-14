@@ -50,6 +50,11 @@
     } else {
       $('dashboard-summary').classList.add('hidden');
     }
+    if (state.callOnly) {
+      ['coordinator-actions','dashboard-summary','campus-summary','bulk-assign-panel','caller-feedback-panel','export-btn','campus-filter','caller-filter','caller-head'].forEach(id => $(id)?.classList.add('hidden'));
+      $('empty-state').querySelector('h4').textContent = 'Bado huna namba ulizogawiwa';
+      $('empty-state').querySelector('p').textContent = 'Mwasiliane na mwenyekiti akugawie wanafunzi wa kuwapigia.';
+    }
     bindEvents();
     await loadAll();
   });
