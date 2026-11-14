@@ -8,7 +8,7 @@
     not_confirmed: { label: 'Hajathibitisha', icon: 'cancel' },
     no_answer: { label: 'Hakupokea simu', icon: 'call_missed' }
   };
-  const state = { profile: null, coordinator: false, callOnly: false, previewOnly: false, students: [], history: [], callers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
+  const state = { profile: null, coordinator: false, callOnly: false, previewOnly: false, students: [], history: [], callers: [], selectedCallers: [], lastAttempt: {}, requestedCaller: new URLSearchParams(window.location.search).get('mpigaji') };
   const $ = id => document.getElementById(id);
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -71,6 +71,24 @@
     $('export-btn').addEventListener('click', exportDriverList);
     $('students-body').addEventListener('click', handleRowAction);
     $('assign-campus-btn').addEventListener('click', assignCampus);
+    $('assign-caller-choice').addEventListener('change', event => {
+      addCallerName(event.currentTarget.value);
+      event.currentTarget.value = '';
+    });
+    $('add-caller-name').addEventListener('click', () => {
+      addCallerName($('assign-new-caller').value);
+      $('assign-new-caller').value = '';
+    });
+    $('assign-new-caller').addEventListener('keydown', event => {
+      if (event.key === 'Enter') { event.preventDefault(); $('add-caller-name').click(); }
+    });
+    $('selected-callers-list').addEventListener('click', event => {
+      const remove = event.target.closest('button[data-remove-caller]');
+      if (!remove) return;
+      state.selectedCallers = state.selectedCallers.filter(name => name !== remove.dataset.removeCaller);
+      renderSelectedCallers();
+    });
+    renderSelectedCallers();
     $('caller-feedback-list').addEventListener('click', handleCallerLink);
   }
 
@@ -120,6 +138,21 @@
     $('assign-campus').innerHTML = '<option value="">Chagua chuo</option>' + campuses.map(campus => `<option value="${escapeHtml(campus)}">${escapeHtml(campus)}</option>`).join('');
   }
 
+  function addCallerName(value) {
+    const name = String(value || '').trim();
+    if (!name) return;
+    if (!state.selectedCallers.some(existing => existing.toLocaleLowerCase() === name.toLocaleLowerCase())) {
+      state.selectedCallers.push(name);
+      renderSelectedCallers();
+    }
+  }
+
+  function renderSelectedCallers() {
+    $('selected-callers-list').innerHTML = state.selectedCallers.map(name =>
+      `<span class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-950">${escapeHtml(name)}<button type="button" data-remove-caller="${escapeHtml(name)}" aria-label="Ondoa ${escapeHtml(name)}" class="ml-1 rounded-full px-1 text-blue-700 hover:bg-blue-200">×</button></span>`
+    ).join('') || '<span class="text-xs text-slate-400">Bado hujachagua wapigaji</span>';
+  }
+
   function renderCallerFeedback() {
     if (!state.coordinator) return;
     const assignedCallerIds = new Set(state.students.map(student => student.assigned_caller).filter(Boolean));
@@ -155,10 +188,10 @@
 
   async function assignCampus() {
     const campus = $('assign-campus').value;
-    const names = $('assign-callers').value.split(/[\n,;]+/).map(name => name.trim()).filter(Boolean);
+    const names = state.selectedCallers;
     const students = state.students.filter(student => student.campus === campus);
     if (!campus || !names.length || !students.length) {
-      showAssignmentFeedback('Chagua chuo, andika angalau jina moja la mpigaji mwenye akaunti hai ya BLB, na hakikisha chuo kina wanafunzi.', false);
+      showAssignmentFeedback('Chagua chuo, chagua jina kwenye list au andika jina jipya, na hakikisha chuo kina wanafunzi. Majina lazima yawe na akaunti hai ya mwanachama wa BLB.', false);
       return;
     }
     const uniqueNames = [...new Map(names.map(name => [name.toLocaleLowerCase(), name])).values()];
@@ -181,7 +214,8 @@
     if (error) { showAssignmentFeedback(`Mgawo haujahifadhiwa: ${error.message}`, false); return; }
     const summary = (data.callers || []).map(item => `${callerName(item.id)}: ${item.assigned}`).join(' · ');
     showAssignmentFeedback(`${data.total} wamegawiwa kwa usawa — ${summary}`, true);
-    $('assign-callers').value = '';
+    state.selectedCallers = [];
+    renderSelectedCallers();
     await loadAll();
   }
 
