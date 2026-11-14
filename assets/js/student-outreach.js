@@ -51,7 +51,7 @@
       $('main-page-intro').classList.add('hidden');
       $('call-only-heading').classList.remove('hidden');
       $('call-only-title').textContent = state.previewOnly ? 'Preview ya mpigaji' : 'Orodha yako ya simu';
-      $('call-only-caption').textContent = state.previewOnly ? 'Huu ni muonekano wa kusoma tu; mpigaji mwenye akaunti hii ndiye anayeweza kurekodi matokeo.' : 'Piga simu, chagua matokeo na ongeza maelezo.';
+      $('call-only-caption').textContent = state.previewOnly ? 'Huu ni preview ya kusoma tu. Mtumie mpigaji link yake binafsi; link hiyo inatosha bila akaunti ya BLB.' : 'Piga simu, chagua matokeo na ongeza maelezo.';
       $('dashboard-summary').classList.add('hidden');
       $('campus-summary').classList.add('hidden');
       $('bulk-assign-panel').classList.add('hidden');
