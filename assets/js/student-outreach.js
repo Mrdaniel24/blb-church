@@ -92,12 +92,12 @@
     if (!state.coordinator) return;
     const campuses = [...new Set(state.students.map(student => student.campus).filter(Boolean))].sort((a,b) => a.localeCompare(b));
     $('assign-campus').innerHTML = '<option value="">Chagua chuo</option>' + campuses.map(campus => `<option value="${escapeHtml(campus)}">${escapeHtml(campus)}</option>`).join('');
-    $('assign-caller').innerHTML = '<option value="">Chagua mpigaji</option>' + state.callers.map(caller => `<option value="${escapeHtml(caller.id)}">${escapeHtml(caller.full_name || caller.email || caller.id)}</option>`).join('');
   }
 
   function renderCallerFeedback() {
     if (!state.coordinator) return;
-    $('caller-feedback-list').innerHTML = state.callers.map(caller => {
+    const assignedCallerIds = new Set(state.students.map(student => student.assigned_caller).filter(Boolean));
+    $('caller-feedback-list').innerHTML = state.callers.filter(caller => assignedCallerIds.has(caller.id)).map(caller => {
       const assigned = state.students.filter(student => student.assigned_caller === caller.id);
       const contacted = state.history.filter(entry => entry.caller_id === caller.id);
       const confirmed = assigned.filter(student => student.call_status === 'confirmed').length;
@@ -129,17 +129,28 @@
 
   async function assignCampus() {
     const campus = $('assign-campus').value;
-    const callerId = $('assign-caller').value;
+    const names = $('assign-callers').value.split(/[\n,;]+/).map(name => name.trim()).filter(Boolean);
     const students = state.students.filter(student => student.campus === campus);
-    if (!campus || !callerId || !students.length) {
-      showAssignmentFeedback('Chagua chuo na mpigaji. Hakikisha chuo kina wanafunzi.', false);
+    if (!campus || !names.length || !students.length) {
+      showAssignmentFeedback('Chagua chuo, andika angalau jina moja la mpigaji mwenye akaunti hai ya BLB, na hakikisha chuo kina wanafunzi.', false);
       return;
     }
-    const name = callerName(callerId);
-    if (!window.confirm(`Unataka kuwagawia wanafunzi ${students.length} wa ${campus} kwa ${name}?`)) return;
-    const { error } = await supabase.from('student_outreach_students').update({ assigned_caller: callerId }).eq('campus', campus);
+    const uniqueNames = [...new Map(names.map(name => [name.toLocaleLowerCase(), name])).values()];
+    const callerIds = [];
+    for (const name of uniqueNames) {
+      const matches = state.callers.filter(caller => String(caller.full_name || '').trim().toLocaleLowerCase() === name.toLocaleLowerCase());
+      if (matches.length !== 1) {
+        showAssignmentFeedback(matches.length ? `Jina “${name}” linafanana na akaunti zaidi ya moja. Tumia jina kamili tofauti.` : `“${name}” hana akaunti hai ya BLB. Muombe aingie au afungue akaunti kwanza, kisha andika jina lake kama lilivyo kwenye akaunti.`, false);
+        return;
+      }
+      callerIds.push(matches[0].id);
+    }
+    if (!window.confirm(`Unataka kuwagawa wanafunzi ${students.length} wa ${campus} kwa wapigaji ${uniqueNames.join(', ')} kwa usawa?`)) return;
+    const { data, error } = await supabase.rpc('student_outreach_assign_campus', { p_campus: campus, p_caller_ids: callerIds });
     if (error) { showAssignmentFeedback(`Mgawo haujahifadhiwa: ${error.message}`, false); return; }
-    showAssignmentFeedback(`Wanafunzi ${students.length} wa ${campus} wamegawiwa kwa ${name}.`, true);
+    const summary = (data.callers || []).map(item => `${callerName(item.id)}: ${item.assigned}`).join(' · ');
+    showAssignmentFeedback(`${data.total} wamegawiwa kwa usawa — ${summary}`, true);
+    $('assign-callers').value = '';
     await loadAll();
   }
 
